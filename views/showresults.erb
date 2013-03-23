@@ -1,0 +1,27 @@
+
+ 
+<%      
+
+aForm = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">"
+aForm = aForm + " <form action=\"/board\" method=\"post\"> "
+aForm = aForm + "<html xmlns=\"http://www.w3.org/1999/xhtml\" lang=\"en\" xml:lang=\"en\"> "
+aForm = aForm + "<head> <title>Results</title> </head> <body> <div> <table> "
+aForm = aForm + "<th>Score</th> <th>Word</th> <th>X</th> <th>Y</th> <th>Drx</th> <th>Choose</th>"
+$aWordfriend.possiblewords.each {|aSW|
+aForm = aForm + "<tr>"
+aForm = aForm + "<td> <input type = \"text\" value =\"#{aSW.score}\" size = \"4\"</td>"
+aForm = aForm + "<td> <input type = \"text\" value =\"#{aSW.astring}\" </td>"
+aForm = aForm + "<td> <input type = \"text\" value =\"#{aSW.xcoordinate}\" size = \"2\"</td>"
+aForm = aForm + "<td> <input type = \"text\" value =\"#{aSW.ycoordinate}\" size = \"2\"</td>"
+aForm = aForm + "<td> <input type = \"text\" value =\"#{aSW.direction}\" size = \"4\"</td>"
+aForm = aForm  + "<td> <input type = \"submit\" name = \"Choose\"/> </td> "
+}
+aForm = aForm + "</table></div>"
+
+
+aForm = aForm + "</body> </form> </html>"
+
+return aForm
+%>
+ 
+ 

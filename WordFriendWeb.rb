@@ -1,0 +1,97 @@
+require 'rubygems'
+require 'sinatra'
+require './resource_Wordfriend'
+
+
+
+get '/' do
+"Welcome to Word Friend!"
+end
+
+get '/board' do
+    i=0
+    @posname = {}
+    while i < 15
+        j = 0
+        lhash = {}
+        while j < 15
+            lhash[j] = ":i" + i.to_s + "j" + j.to_s
+            j += 1
+        end
+        @posname[i] = lhash
+        i += 1
+    end
+     $aWordfriend = Wordfriend.new
+     $aWordfriend.initialvalues
+    
+    erb:showboard
+end
+
+
+post '/board' do
+    i=0
+    @posname = {}
+    while i < 15
+        j = 0
+        lhash = {}
+        while j < 15
+            lhash[j] = ":i" + i.to_s + "j" + j.to_s
+            j += 1
+        end
+        @posname[i] = lhash
+        i += 1
+    end
+    
+    @tilename = {}
+    i = 0
+    while i < 7
+        @tilename[i] = "tile" + i.to_s
+        i += 1
+    end
+    
+    afile = File.open("Games/" + $aWordfriend.boardfile + ".txt", "w")
+    i = 0
+    while i < 15
+        j = 0
+        rowletters = ""
+        while j < 15
+            rowletters = rowletters + params[@posname[i][j]]
+            $aWordfriend.myboard.lettergrid[i][j] = params[@posname[i][j]]
+            j += 1
+        end
+        afile.puts(rowletters)
+        i += 1
+    end
+    afile.close
+    
+    $aWordfriend.myboard.writeboard("Games/confirm.txt")
+    
+    i=0
+    anarray = []
+    while i < 7
+        anarray.push(params[@tilename[i]])
+        i += 1
+    end
+    $aWordfriend.tileword = anarray.join('')
+    
+    afile = File.open("Games/lastgame.txt", "w")
+    afile.puts($aWordfriend.gamefile[0])
+    afile.puts($aWordfriend.tileword)
+    afile.close
+    
+    $aWordfriend.updatevalues
+    $aWordfriend.wordfind
+    
+    erb:showresults
+end
+
+
+get '/over' do
+    ":method_override  is set to " + settings.method_override.to_s
+end
+
+
+get '/reset' do
+    set :method_override, false
+    "set method_override to false"
+end

@@ -1,0 +1,31 @@
+
+ 
+<%      rows = File.readlines("board.txt").map { |line| line.chomp } #this is an array of the board rows each as a string
+
+       aForm = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">"
+	aForm = aForm + " <form action=\"/board\" method=\"post\"> "
+	aForm = aForm + "<html xmlns=\"http://www.w3.org/1999/xhtml\" lang=\"en\" xml:lang=\"en\"> "
+	aForm = aForm + "<head> <title>Current Board</title> </head> <body> <div> <table> "
+       i = 0
+	while i < 15
+			aForm = aForm + "<tr>"
+            j = 0
+			rowletters = rows[i].scan(/./)
+			while j < 15
+				aForm = aForm + "<td>"
+                aForm = aForm + "<input type = \"text\" "
+                aForm = aForm + "value ="
+                aForm = aForm + "\"" + rowletters[j] + "\""
+                aForm = aForm + " size =\"1\" name =\"#{@posname[i][j]}\""
+                j += 1
+                aForm = aForm + " </td>"
+			end
+	aForm = aForm +"</tr>"
+       i += 1
+	end
+        aForm = aForm  + " </table></div> <div> <input type = \"submit\" /> </div> </body> </form> </html>"
+
+       return aForm
+%>
+ 
+ 

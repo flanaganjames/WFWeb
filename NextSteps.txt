@@ -1,0 +1,2 @@
+Bug: allows words that use multiples of letters in the tiles even thought there is only one of each
+Need to support use of the "blank" wild-card tile
