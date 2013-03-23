@@ -1,1 +1,3 @@
-require 'WordFriendWeb' run Sinatra::Application
+require 'WordFriendWeb' 
+
+run Sinatra::Application
