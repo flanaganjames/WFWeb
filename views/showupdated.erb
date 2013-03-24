@@ -9,6 +9,37 @@ aForm = aForm + "<head> <title>Updated Board</title> </head> <body> <div> <table
 aForm = aForm + "<th>Choice #{@choice}</th> <th>Score #{@score}</th> <th>Word #{@word}</th> <th>Row #{@xcoordinate}</th> <th>Col #{@ycoordinate}</th> <th>Drx #{@direction}</th>"
 aForm = aForm + "</table></div>"
 
+aForm = aForm + " <div> Resulting Board <table> "
+       i = 0
+	while i < 15
+			aForm = aForm + "<tr>"
+            j = 0
+			while j < 15
+				aForm = aForm + "<td>"
+                aForm = aForm + "<input type = \"text\""
+                aForm = aForm + " value =\"#{$aWordfriend.myboard.lettergrid[i][j]}\""
+                aForm = aForm + " size =\"1\" name =\"#{@posname[i][j]}\""
+                j += 1
+                aForm = aForm + " </td>"
+			end
+	aForm = aForm + "</tr>"
+       i += 1
+	end
+
+aForm = aForm + "</table></div>"
+
+aForm = aForm +  " <div> Enter New Tiles <table> <tr> "
+aForm = aForm + "<td> <input type = \"text\" size =\"1\" name =\"tile0\" value =\"\" </td> "
+aForm = aForm + "<td> <input type = \"text\" size =\"1\" name =\"tile1\" value =\"\" </td> "
+aForm = aForm + "<td> <input type = \"text\" size =\"1\" name =\"tile2\" value =\"\" </td> "
+aForm = aForm + "<td> <input type = \"text\" size =\"1\" name =\"tile3\" value =\"\" </td> "
+aForm = aForm + "<td> <input type = \"text\" size =\"1\" name =\"tile4\" value =\"\" </td> "
+aForm = aForm + "<td> <input type = \"text\" size =\"1\" name =\"tile5\" value =\"\" </td> "
+aForm = aForm + "<td> <input type = \"text\" size =\"1\" name =\"tile6\" value =\"\" </td> "
+aForm = aForm +  " </tr> </table> </div>"
+
+aForm = aForm  + "<div> <input type = \"submit\" value = \"Save Board & Tiles\" formaction = \"/saveboard\"/> "
+aForm = aForm  + "<input type = \"submit\" value = \"Undo\" formaction = \"/revert\"/> </div> "
 
 aForm = aForm + "</body> </form> </html>"
 

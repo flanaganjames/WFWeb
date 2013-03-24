@@ -85,12 +85,48 @@ post '/results' do
 end
 
 post '/updated' do
+    i=0
+    @posname = {}
+    while i < 15
+        j = 0
+        lhash = {}
+        while j < 15
+            lhash[j] = ":i" + i.to_s + "j" + j.to_s
+            j += 1
+        end
+        @posname[i] = lhash
+        i += 1
+    end
+    
+    @tilename = {}
+    i = 0
+    while i < 7
+        @tilename[i] = "tile" + i.to_s
+        i += 1
+    end
+    
     @choice = params["choice"]
     @word = params["word"+@choice.to_s]
     @xcoordinate = params["xcoordinate"+@choice.to_s]
     @ycoordinate = params["ycoordinate"+@choice.to_s]
     @direction = params["direction"+@choice.to_s]
     @score = params["score"+@choice.to_s]
+    
+    case
+		when @direction == "right"
+        i = 0
+        while i < @word.length
+            $aWordfriend.myboard.lettergrid[@xcoordinate.to_i][@ycoordinate.to_i + i] = @word[i]
+            i += 1
+        end
+		when @direction == "down"
+        i = 0
+        while i < @word.length
+           $aWordfriend.myboard.lettergrid[@xcoordinate.to_i + i][@ycoordinate.to_i] = @word[i]
+            i += 1
+        end	
+    end
+    
     erb:showupdated
 end
 
