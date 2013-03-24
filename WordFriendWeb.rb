@@ -27,8 +27,7 @@ get '/board' do
     erb:showboard
 end
 
-
-post '/board' do
+post '/results' do
     i=0
     @posname = {}
     while i < 15
@@ -83,6 +82,16 @@ post '/board' do
     $aWordfriend.wordfind
     
     erb:showresults
+end
+
+post '/updated' do
+    @choice = params["choice"]
+    @word = params["word"+@choice.to_s]
+    @xcoordinate = params["xcoordinate"+@choice.to_s]
+    @ycoordinate = params["ycoordinate"+@choice.to_s]
+    @direction = params["direction"+@choice.to_s]
+    @score = params["score"+@choice.to_s]
+    erb:showupdated
 end
 
 
