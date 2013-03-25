@@ -27,6 +27,11 @@ get '/board' do
     erb:showboard
 end
 
+post '/revert' do
+    $aWordfriend.myboard.readboard("Games/" + $aWordfriend.boardfile + ".txt")
+    erb:showresults
+end
+
 post '/results' do
     i=0
     @posname = {}
