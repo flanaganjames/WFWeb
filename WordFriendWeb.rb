@@ -175,7 +175,8 @@ post '/saveboard' do
         j = 0
         rowletters = ""
         while j < 15
-            rowletters = rowletters + $aWordfriend.myboard.lettergrid[i][j]
+            rowletters = rowletters + params[@posname[i][j]]
+            $aWordfriend.myboard.lettergrid[i][j] = params[@posname[i][j]]
             j += 1
         end
         afile.puts(rowletters)
@@ -185,6 +186,14 @@ post '/saveboard' do
     
     $aWordfriend.myboard.writeboard("Games/confirm.txt")
     
+    i=0
+    anarray = []
+    while i < 7
+        anarray.push(params[@tilename[i]])
+        i += 1
+    end
+    $aWordfriend.tileword = anarray.join('')
+    
     afile = File.open("Games/lastgame.txt", "w")
     afile.puts($aWordfriend.gamefile[0])
     afile.puts($aWordfriend.tileword)
@@ -192,16 +201,6 @@ post '/saveboard' do
     
     $aWordfriend.updatevalues
     
-    erb:getboard
+    erb:showboard
 end
 
-
-get '/over' do
-    ":method_override  is set to " + settings.method_override.to_s
-end
-
-
-get '/reset' do
-    set :method_override, false
-    "set method_override to false"
-end
