@@ -1,10 +1,11 @@
 class ScrabbleBoard
-	attr_accessor :lettergrid, :scoregrid, :dimension, :lettervalues, :boardSWs, :boardLetters
+	attr_accessor :lettergrid, :scoregrid, :newgrid, :dimension, :lettervalues, :boardSWs, :boardLetters
 	
 	
 	def initialvalues #this method fills the letter grid array dimension x dimension with nil, the scoregrid with 1s except as defined
 		self.dimension = 15
 		self.lettergrid = {}
+        self.newgrid = {}
 		self.scoregrid = []
 		self.boardLetters = []
 		self.lettervalues = {'a' => 1, 'b' => 4, 'c' => 4, 'd' => 2, 'e' => 1, 'f' => 4, 'g' => 3, 'h' => 3, 
@@ -15,13 +16,16 @@ class ScrabbleBoard
 			j = 0
 			lhash = {}
 			shash = {}
+            nhash = {}
 			while j < self.dimension
 				lhash[j] = '-'
 				shash[j] = 1
+                nhash[j] = '-'
 				j += 1
 			end
 			self.lettergrid[i] = lhash
 			self.scoregrid[i] = shash
+            self.newgrid[i] = nhash
 			i += 1
 		end
 	end

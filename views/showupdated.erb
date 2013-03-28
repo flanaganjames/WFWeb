@@ -15,14 +15,15 @@ aForm = aForm + " <div> Resulting Board <table> "
 		aForm = aForm + "<tr>"
 		j = 0
 		while j < 15
-			aForm = aForm + "<td>"
-                	aForm = aForm + "<input type = \"text\""
-
-                	aForm = aForm + " value =\"#{$aWordfriend.myboard.lettergrid[i][j]}\""
-               		aForm = aForm + " size =\"1\" name =\"#{@posname[i][j]}\""
-                	j += 1
-                	aForm = aForm + " </td>"
-			end
+			aForm = aForm + "<td"
+            aForm = aForm + " bgcolor=#00FF00" if ($aWordfriend.myboard.newgrid[i][j] == 'n')
+            aForm = aForm + ">"
+            aForm = aForm + "<input type = \"text\""
+            aForm = aForm + " value =\"#{$aWordfriend.myboard.lettergrid[i][j]}\""
+            aForm = aForm + " size =\"1\" name =\"#{@posname[i][j]}\""
+            j += 1
+            aForm = aForm + " </td>"
+        end
 	aForm = aForm + "</tr>"
        	i += 1
 	end
