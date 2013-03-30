@@ -1,5 +1,5 @@
 class ScrabbleBoard
-	attr_accessor :lettergrid, :scoregrid, :newgrid, :dimension, :lettervalues, :boardSWs, :boardLetters
+	attr_accessor :lettergrid, :tileword, :scoregrid, :newgrid, :dimension, :lettervalues, :boardSWs, :boardLetters
 	
 	
 	def initialvalues #this method fills the letter grid array dimension x dimension with nil, the scoregrid with 1s except as defined
@@ -523,20 +523,19 @@ class ScrabbleBoard
 	end
 
 	def readboard (afilename)
-		rows = File.readlines(afilename).map { |line| line.chomp } #this is an array of the board rows each as a string
-			rows.each_index {|i| 
-			rowletters = rows[i].to_chars # this is an array of characters for one of the rows
-			rowletters.each_index {|j|
-			self.lettergrid[i][j] = rowletters[j]
-			}
+		rows = File.readlines(afilename).map { |line| line.chomp } #this is an array of the board rows each as a string, the last row being the tiles
+        rows.each_index {|i| 
+			if i < self.dimension
+                rowletters = rows[i].to_chars # this is an array of characters for one of the rows
+                rowletters.each_index {|j|
+                self.lettergrid[i][j] = rowletters[j]
+                }
+            end
+                 
 		}
-		
+        self.tileword = rows[self.dimension]
 	end
 
-	def readtiles (afilename)
-		rows = File.readlines(afilename).map { |line| line.chomp } #this is an array of the board rows each as a string
-		tileword = rows[0]
-	end
 	
 	def writeboard (afilename)
 		afile = File.open(afilename, "w")
@@ -551,16 +550,10 @@ class ScrabbleBoard
 			afile.puts(anarray.join())
 		i += 1
 		end
+        afile.puts(self.tileword)
 		afile.close
 	end
     
-
-	def writelastgame (afilename, gamename, tileword)
-		afile = File.open(afilename, "w")
-		afile.puts(gamename)
-		afile.puts(tileword)
-		afile.close
-	end
 
 	def readscores (afilename)
 		rows = File.readlines(afilename).map { |line| line.chomp } #this is an array of the board rows each as a string
@@ -717,10 +710,10 @@ class ScrabbleBoard
 		end
 	end
 	
-	def findPossibleWords(tiles) #finds all words that can be made with tiles plus one of the letters on the board
+	def findPossibleWords #finds all words that can be made with tiles plus one of the letters on the board
 		allpossiblewords = []
 		boardLetters.each do |aletter |
-			tilesplus = tiles + aletter
+			tilesplus = self.tileword + aletter
 			tilewords = tilesplus.permutedset.select {|astring| astring.isaword}
 			tilewords.each {|aword| allpossiblewords.push(aword) if !allpossiblewords.include?(aword)}
 		end

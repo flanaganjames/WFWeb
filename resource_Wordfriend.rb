@@ -1,24 +1,22 @@
 class Wordfriend
-	attr_accessor :myboard, :gamefile, :boardfile, :tileword, :possiblewords
+	attr_accessor :username, :myboard, :gamefile, :possiblewords
     
     require './resource_methodsOO'
 	require './resource_classSW'
     require './resource_classBoard'
     
+    
 
 	def initialvalues
-		self.gamefile = File.readlines("Games/lastgame.txt").map { |line| line.chomp }
-		self.boardfile = self.gamefile[0]
-		self.tileword = self.gamefile[1]
-
+        self.gamefile = "lastgame"
 		self.myboard = ScrabbleBoard.new
 		self.myboard.initialvalues
-		self.myboard.readboard("Games/" + self.boardfile + ".txt")
-		
+		self.myboard.readboard("Games/" + self.gamefile + ".txt")
 		self.myboard.readscores("SWscoreResource.txt")
 		self.myboard.findBoardSWs
 		self.myboard.findBoardLetters
-		$tilepermutedset = @tileword.permutedset
+        $tiles = self.myboard.tileword
+		$tilepermutedset = $tiles.permutedset
 		$words = {}
 		wordarray = File.readlines("wordlist.txt").map { |line| line.chomp }
 		i = 0
@@ -27,24 +25,26 @@ class Wordfriend
 			i += 1
 		end
 		$tilewords = $tilepermutedset.select {|astring| astring.isaword} #words that can be made with the tiles
-		$possibleWords = self.myboard.findPossibleWords(@tileword) #finds all words that can be made with tiles plus one of the letters on the board
+		$possibleWords = self.myboard.findPossibleWords #finds all words that can be made with tiles plus one of the letters on the board
 	end
     
     def updatevalues
         self.myboard.findBoardSWs
 		self.myboard.findBoardLetters
-		$tilepermutedset = @tileword.permutedset
+		$tilepermutedset = $tiles.permutedset
 		$tilewords = $tilepermutedset.select {|astring| astring.isaword} #words that can be made with the tiles
-		$possibleWords = self.myboard.findPossibleWords(@tileword) #finds all words that can be made with tiles plus one of the letters on the board
+		$possibleWords = self.myboard.findPossibleWords#finds all words that can be made with tiles plus one of the letters on the board
     end
 
 	def SaveBoard
-	self.myboard.writeboard("Games/" + @boardfile  + ".txt")
-	self.myboard.writelastgame("Games/lastgame.txt", @boardfile, @tileword)
+	self.myboard.writeboard("Games/" + self.gamefile  + ".txt")
 	end
 
 	def RevertBoard
-		self.myboard.readboard("Games/" + @Gameboard  + ".txt")  
+		self.myboard.readboard("Games/" + self.gamefile  + ".txt")
+        $tiles = self.myboard.tileword
+        $tilepermutedset = $tiles.permutedset
+        $tilewords = $tilepermutedset.select {|astring| astring.isaword}
 	end
 
     def wordfind
@@ -82,9 +82,9 @@ class Wordfriend
         while arraySWs.size > 0
             currentSW = arraySWs.pop
             aSWpossibles = []
-            currentSW.wordfindortho(@tileword).each {|aSW| aSWpossibles << aSW }
-            currentSW.wordfindorthomid(@tileword).each {|aSW| aSWpossibles << aSW }
-            currentSW.wordfindinline(@tileword).each {|aSW| aSWpossibles << aSW }
+            currentSW.wordfindortho.each {|aSW| aSWpossibles << aSW }
+            currentSW.wordfindorthomid.each {|aSW| aSWpossibles << aSW }
+            currentSW.wordfindinline.each {|aSW| aSWpossibles << aSW }
             aSWpossibles = aSWpossibles.uniqSWs
             aSWonboard = aSWpossibles.select {|aSW| self.myboard.testwordonboard(aSW)}
             aSWquarterfinals = aSWonboard.select {|possible| self.myboard.testwordoverlap(possible)}

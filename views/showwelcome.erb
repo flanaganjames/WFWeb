@@ -1,0 +1,26 @@
+
+ 
+<%      
+
+aForm = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">"
+aForm = aForm + " <form action=\"/board\" method=\"post\"> "
+aForm = aForm + "<html xmlns=\"http://www.w3.org/1999/xhtml\" lang=\"en\" xml:lang=\"en\"> "
+aForm = aForm + "<head> <title>Word Friend Welcome</title> </head> <body>"
+aForm = aForm + " <div> Welcome to Word Friend </div> "
+
+
+aForm = aForm + " <div> <table> "
+aForm = aForm + "<th>Game File Name</th>"
+aForm = aForm + "<tr>"
+aForm = aForm + "<td> <input type = \"text\" name = \"gamefile\" value =\"enter a file name\" size = \"20\"</td>"
+aForm = aForm  + "<td> <input type = \"submit\" name=\"Open\" value = \"#{i}\" formaction = \"/board\"/> </td> "
+}
+aForm = aForm + "</table></div>"
+
+
+aForm = aForm + "</body> </form> </html>"
+
+return aForm
+%>
+ 
+ 

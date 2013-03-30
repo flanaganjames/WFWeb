@@ -28,7 +28,7 @@ get '/board' do
 end
 
 post '/revert' do
-    $aWordfriend.myboard.readboard("Games/" + $aWordfriend.boardfile + ".txt")
+    $aWordfriend.myboard.readboard("Games/" + $aWordfriend.gamefile + ".txt")
     i = 0
     while i < $aWordfriend.myboard.dimension
         j = 0
@@ -64,7 +64,6 @@ post '/results' do
         i += 1
     end
     
-    afile = File.open("Games/" + $aWordfriend.boardfile + ".txt", "w")
     i = 0
     while i < 15
         j = 0
@@ -74,12 +73,8 @@ post '/results' do
             $aWordfriend.myboard.lettergrid[i][j] = params[@posname[i][j]]
             j += 1
         end
-        afile.puts(rowletters)
         i += 1
     end
-    afile.close
-    
-    $aWordfriend.myboard.writeboard("Games/confirm.txt")
     
     i=0
     anarray = []
@@ -87,12 +82,9 @@ post '/results' do
         anarray.push(params[@tilename[i]])
         i += 1
     end
-    $aWordfriend.tileword = anarray.join('')
+    $aWordfriend.myboard.tileword = anarray.join('')
     
-    afile = File.open("Games/lastgame.txt", "w")
-    afile.puts($aWordfriend.gamefile[0])
-    afile.puts($aWordfriend.tileword)
-    afile.close
+    $aWordfriend.myboard.writeboard($aWordfriend.gamefile)
     
     $aWordfriend.updatevalues
     $aWordfriend.wordfind

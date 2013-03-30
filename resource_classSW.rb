@@ -14,10 +14,10 @@ class ScrabbleWord
 		puts "#{source}>  #{self.astring}, x=#{self.xcoordinate}, y=#{self.ycoordinate}, dirx: #{self.direction}, score: #{self.score}, suppl: #{self.supplement}, total: #{self.score + self.supplement}"
 	end
 	
-	def wordfindcontains (tileset)
+	def wordfindcontains
 	possibles = []
-	tiles = tileset.to_chars
-	tiles_plus_anchor = tiles + self.astring.to_chars
+	sometiles = $tiles.to_chars
+	tiles_plus_anchor = sometiles + self.astring.to_chars
 	tilepower = tiles_plus_anchor.powerset
 	anchorword_plus = self.astring.iscontainedwords
 	tilepower_words = []
@@ -38,7 +38,7 @@ class ScrabbleWord
 	return possibles
 	end
 		
-	def wordfindinline (tiles) #tiles is a set of letters as a single string
+	def wordfindinline #$tiles is a set of letters as a single string
 	possibles = []
 	strings = $tilepermutedset.collect {|astring| self.astring + astring} #words that can be made with the the target word + tiles placed after the target word
 	words = strings.select {|astring| astring.isaword} 
@@ -64,7 +64,7 @@ class ScrabbleWord
 		possibles.push(possible)
 		}
 
-	strings = strings + tiles.permutaround(self.astring).select {|astring| astring.isaword} #words that can be made with the the target word + tiles placed both before and after the target word
+	strings = strings + $tiles.permutaround(self.astring).select {|astring| astring.isaword} #words that can be made with the the target word + tiles placed both before and after the target word
 	words.each { |word|
 		offset = (word =~ /#{Regexp.quote(self.astring)}/)
 		case
@@ -81,11 +81,11 @@ class ScrabbleWord
 	return possibles
 	end
 
-	def wordfindortho(tiles)
+	def wordfindortho
 	#Orthogonal to the begining or the end of self
 		possibles = []
 		tilewords = $tilepermutedset.select {|astring| astring.isaword}
-		tileset = tiles.to_chars
+		tileset = $tiles.to_chars
 		tileset.each do |aletter|
 			case
 				when (self.astring + aletter).isaword
@@ -121,12 +121,12 @@ class ScrabbleWord
 		return possibles
 	end
 
-	def wordfindorthomid(tiles)
+	def wordfindorthomid
 		possibles = []
-		tilearray = tiles.to_chars
+		tilearray = $tiles.to_chars
 		letters = self.astring.to_chars #take the basword and create an array of letters
 		letters.each_index do |index| #for each letter of self find words that can be made orthogonal to self
-			tilesplus = tiles + letters[index]
+			tilesplus = $tiles + letters[index]
 			indexletterarray = [letters[index]]
 			#puts tilesplus
 			#tilewords = tilesplus.permutedset.select {|astring| astring.isaword} #words that can be made with the tiles plus one letter of of self
