@@ -27,8 +27,9 @@ class Wordfriend
         end
     end
     
-    def creategamefile #create the game file if +  it does not exist
-        if not(File.exist?("./Users/" + self.gameuser + "/" + self.gamefile))
+    def creategamefile #create the game file if it does not exist
+        #        if !(File.exist?("./Users/" + self.gameuser + "/" + self.gamefile))
+        if not(self.usergames.include? self.gamefile)
             aFile = File.open("./Users/" + self.gameuser + "/" + self.gamefile + ".txt", "w")
             i = 0
             while i < self.myboard.dimension

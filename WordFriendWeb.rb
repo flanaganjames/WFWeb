@@ -14,7 +14,7 @@ end
 
 post '/usergames' do
     $aWordfriend.gameuser = params["ausername"] + params["pin1"] + params["pin2"] + params["pin3"] + params["pin4"]
-    $aWordfriend.createuserdirectory
+    $aWordfriend.createuserdirectory #creates the user directory if it does not exist already
     $aWordfriend.getusergames
     
     erb:showgames
@@ -36,7 +36,7 @@ post '/board' do
     
     @choice = params["choice"]
     $aWordfriend.gamefile = params["game"+@choice.to_s]
-    $aWordfriend.createuserdirectory #creates the user directory if it does not exist already
+
     $aWordfriend.creategamefile #creates game file and fills it with '-' if it does not exist already
     $aWordfriend.updatevalues
     erb:showboard
