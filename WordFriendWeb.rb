@@ -5,7 +5,30 @@ require './resource_Wordfriend'
 
 
 get '/' do
-"Welcome to Word Friend!"
+    $aWordfriend = Wordfriend.new
+    $aWordfriend.initialvalues
+    
+
+    erb:showwelcome
+end
+
+post '/board' do
+    i= 0
+    @posname = {}
+    while i < 15
+        j = 0
+        lhash = {}
+        while j < 15
+            lhash[j] = ":i" + i.to_s + "j" + j.to_s
+            j += 1
+        end
+        @posname[i] = lhash
+        i += 1
+    end
+    $aWordfriend.gameuser = params["ausername"]
+    $aWordfriend.gamefile = params["agamefile"]
+    $aWordfriend.updatevalues
+    erb:showboard
 end
 
 get '/board' do
@@ -21,14 +44,11 @@ get '/board' do
         @posname[i] = lhash
         i += 1
     end
-     $aWordfriend = Wordfriend.new
-     $aWordfriend.initialvalues
-    
     erb:showboard
 end
 
 post '/revert' do
-    $aWordfriend.myboard.readboard("Games/" + $aWordfriend.gamefile + ".txt")
+    $aWordfriend.readboard
     i = 0
     while i < $aWordfriend.myboard.dimension
         j = 0
@@ -84,7 +104,7 @@ post '/results' do
     end
     $aWordfriend.myboard.tileword = anarray.join('')
     
-    $aWordfriend.myboard.writeboard($aWordfriend.gamefile)
+    $aWordfriend.saveboard
     
     $aWordfriend.updatevalues
     $aWordfriend.wordfind
@@ -161,7 +181,6 @@ post '/saveboard' do
         i += 1
     end
     
-    afile = File.open("Games/" + $aWordfriend.boardfile + ".txt", "w")
     i = 0
     while i < 15
         j = 0
@@ -171,12 +190,8 @@ post '/saveboard' do
             $aWordfriend.myboard.lettergrid[i][j] = params[@posname[i][j]]
             j += 1
         end
-        afile.puts(rowletters)
         i += 1
     end
-    afile.close
-    
-    $aWordfriend.myboard.writeboard("Games/confirm.txt")
     
     i=0
     anarray = []
@@ -184,12 +199,9 @@ post '/saveboard' do
         anarray.push(params[@tilename[i]])
         i += 1
     end
-    $aWordfriend.tileword = anarray.join('')
+    $aWordfriend.myboard.tileword = anarray.join('')
     
-    afile = File.open("Games/lastgame.txt", "w")
-    afile.puts($aWordfriend.gamefile[0])
-    afile.puts($aWordfriend.tileword)
-    afile.close
+    $aWordfriend.saveboard
     
     $aWordfriend.updatevalues
     

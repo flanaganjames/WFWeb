@@ -1,5 +1,5 @@
 class Wordfriend
-	attr_accessor :username, :myboard, :gamefile, :possiblewords
+	attr_accessor :myboard, :gameuser, :gamefile, :possiblewords
     
     require './resource_methodsOO'
 	require './resource_classSW'
@@ -8,15 +8,16 @@ class Wordfriend
     
 
 	def initialvalues
+        self.gameuser = "Games"
         self.gamefile = "lastgame"
 		self.myboard = ScrabbleBoard.new
 		self.myboard.initialvalues
-		self.myboard.readboard("Games/" + self.gamefile + ".txt")
+		# self.readboard
 		self.myboard.readscores("SWscoreResource.txt")
-		self.myboard.findBoardSWs
-		self.myboard.findBoardLetters
-        $tiles = self.myboard.tileword
-		$tilepermutedset = $tiles.permutedset
+		#self.myboard.findBoardSWs
+		#self.myboard.findBoardLetters
+        #$tiles = self.myboard.tileword
+		#$tilepermutedset = $tiles.permutedset
 		$words = {}
 		wordarray = File.readlines("wordlist.txt").map { |line| line.chomp }
 		i = 0
@@ -24,20 +25,26 @@ class Wordfriend
 			$words[wordarray[i]] = 'true'
 			i += 1
 		end
-		$tilewords = $tilepermutedset.select {|astring| astring.isaword} #words that can be made with the tiles
-		$possibleWords = self.myboard.findPossibleWords #finds all words that can be made with tiles plus one of the letters on the board
+		#$tilewords = $tilepermutedset.select {|astring| astring.isaword} #words that can be made with the tiles
+		#$possibleWords = self.myboard.findPossibleWords #finds all words that can be made with tiles plus one of the letters on the board
 	end
     
+    def readboard
+        self.myboard.readboard("./" + self.gameuser + "/" + self.gamefile + ".txt")
+    end
+    
     def updatevalues
+        self.readboard
         self.myboard.findBoardSWs
 		self.myboard.findBoardLetters
+        $tiles = self.myboard.tileword
 		$tilepermutedset = $tiles.permutedset
 		$tilewords = $tilepermutedset.select {|astring| astring.isaword} #words that can be made with the tiles
 		$possibleWords = self.myboard.findPossibleWords#finds all words that can be made with tiles plus one of the letters on the board
     end
 
-	def SaveBoard
-	self.myboard.writeboard("Games/" + self.gamefile  + ".txt")
+	def saveboard
+	self.myboard.writeboard("./" + self.gameuser + "/" + self.gamefile + ".txt")
 	end
 
 	def RevertBoard

@@ -523,6 +523,7 @@ class ScrabbleBoard
 	end
 
 	def readboard (afilename)
+        afile = File.open(afilename, "r")
 		rows = File.readlines(afilename).map { |line| line.chomp } #this is an array of the board rows each as a string, the last row being the tiles
         rows.each_index {|i| 
 			if i < self.dimension
@@ -534,6 +535,7 @@ class ScrabbleBoard
                  
 		}
         self.tileword = rows[self.dimension]
+        afile.close
 	end
 
 	
