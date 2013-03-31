@@ -191,6 +191,7 @@ class ScrabbleBoard
 	
 	def testwordoverlap (word) #this method tests a possible word addition, rejects if goes beyond dimension or requires a letter grid position to change from one letter to another
 			status = "true"
+            tilearray = self.tileword # this word starts with each of the tileword letters
 			case
 			when word.direction == "right"
 				i = 0
@@ -200,7 +201,14 @@ class ScrabbleBoard
 					then 
 						status = "true"
 						count += 1
-					elsif  (self.lettergrid[word.xcoordinate][word.ycoordinate + i] == word.astring[i])
+                        if tilearray.include? word.astring[i]
+                            then
+                            achar = [word.astring[i]]
+                            tilearray = tilearray.sub(word.astring[i],'') #remove one letter from the array as it "has been used"
+                            else
+                            status = nil #if the tilearray does not have a letter remaining to fill this need then the word is not possible;  this screens out the double use of a tileword letter
+                        end
+                    elsif  (self.lettergrid[word.xcoordinate][word.ycoordinate + i] == word.astring[i])
 					then 
 						status = "true"
 					else
@@ -219,7 +227,13 @@ class ScrabbleBoard
 					then 
 						status = "true"
 						count += 1
-					elsif  (self.lettergrid[word.xcoordinate + i][word.ycoordinate] == word.astring[i])
+                        if tilearray.include? word.astring[i]
+                            then
+                            tilearray = tilearray.sub(word.astring[i],'') #remove one letter from the array as it "has been used"
+                            else
+                            status = nil #if the tilearray does not have a letter remaining to fill this need then the word is not possible;  this screens out the double use of a tileword letter
+                        end
+                    elsif  (self.lettergrid[word.xcoordinate + i][word.ycoordinate] == word.astring[i])
 					then 
 						status = "true"
 					else
