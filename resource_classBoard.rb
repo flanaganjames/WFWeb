@@ -1,5 +1,5 @@
 class ScrabbleBoard
-	attr_accessor :lettergrid, :tileword, :scoregrid, :newgrid, :dimension, :lettervalues, :boardSWs, :boardLetters
+	attr_accessor :lettergrid, :tileword, :newtileword, :scoregrid, :newgrid, :dimension, :lettervalues, :boardSWs, :boardLetters
 	
 	
 	def initialvalues #this method fills the letter grid array dimension x dimension with nil, the scoregrid with 1s except as defined

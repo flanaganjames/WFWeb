@@ -27,17 +27,13 @@ aForm = aForm + " <div> Resulting Board <table> "
 	aForm = aForm + "</tr>"
        	i += 1
 	end
-
 aForm = aForm + "</table></div>"
-
-aForm = aForm +  " <div> Enter New Tiles <table> <tr> "
-aForm = aForm + "<td> <input type = \"text\" size =\"1\" name =\"tile0\" value =\"\" </td> "
-aForm = aForm + "<td> <input type = \"text\" size =\"1\" name =\"tile1\" value =\"\" </td> "
-aForm = aForm + "<td> <input type = \"text\" size =\"1\" name =\"tile2\" value =\"\" </td> "
-aForm = aForm + "<td> <input type = \"text\" size =\"1\" name =\"tile3\" value =\"\" </td> "
-aForm = aForm + "<td> <input type = \"text\" size =\"1\" name =\"tile4\" value =\"\" </td> "
-aForm = aForm + "<td> <input type = \"text\" size =\"1\" name =\"tile5\" value =\"\" </td> "
-aForm = aForm + "<td> <input type = \"text\" size =\"1\" name =\"tile6\" value =\"\" </td> "
+aForm = aForm +  " <div> Remaining Tiles <table> <tr> "
+i = 0
+while i < 7
+    aForm = aForm + "<td> <input type = \"text\" size =\"1\" name =\"tile#{i}\" value =\"#{$aWordfriend.myboard.newtileword[i]}\" </td> "
+    i += 1
+end
 aForm = aForm +  " </tr> </table> </div>"
 
 aForm = aForm  + "<div> <input type = \"submit\" value = \"Save Board & Tiles\" formaction = \"/saveboard\"/> "

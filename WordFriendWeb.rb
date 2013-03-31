@@ -145,18 +145,27 @@ post '/updated' do
     @direction = params["direction"+@choice.to_s]
     @score = params["score"+@choice.to_s]
     
+    $aWordfriend.myboard.newtileword = $aWordfriend.myboard.tileword
     case
 		when @direction == "right"
         i = 0
         while i < @word.length
-            $aWordfriend.myboard.lettergrid[@xcoordinate.to_i][@ycoordinate.to_i + i] = @word[i]
+            if $aWordfriend.myboard.lettergrid[@xcoordinate.to_i][@ycoordinate.to_i + i] == '-'
+                then
+                    $aWordfriend.myboard.lettergrid[@xcoordinate.to_i][@ycoordinate.to_i + i] = @word[i]
+                    $aWordfriend.myboard.newtileword = $aWordfriend.myboard.newtileword.sub(@word[i],'')
+            end         
             $aWordfriend.myboard.newgrid[@xcoordinate.to_i][@ycoordinate.to_i + i] = 'n'
             i += 1
         end
 		when @direction == "down"
         i = 0
         while i < @word.length
-           $aWordfriend.myboard.lettergrid[@xcoordinate.to_i + i][@ycoordinate.to_i] = @word[i]
+            if $aWordfriend.myboard.lettergrid[@xcoordinate.to_i + i][@ycoordinate.to_i] == '-'
+                then
+                    $aWordfriend.myboard.lettergrid[@xcoordinate.to_i + i][@ycoordinate.to_i] = @word[i]
+                    $aWordfriend.myboard.newtileword = $aWordfriend.myboard.newtileword.sub(@word[i],'')
+            end
             $aWordfriend.myboard.newgrid[@xcoordinate.to_i + i][@ycoordinate.to_i] = 'n'
             i += 1
         end	
