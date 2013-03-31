@@ -1,5 +1,5 @@
 class Wordfriend
-	attr_accessor :myboard, :gameuser, :gamefile, :possiblewords
+	attr_accessor :myboard, :gameuser, :gamefile, :possiblewords, :usergames
     
     require './resource_methodsOO'
 	require './resource_classSW'
@@ -8,16 +8,10 @@ class Wordfriend
     
 
 	def initialvalues
-        self.gameuser = "Games"
-        self.gamefile = "lastgame"
-		self.myboard = ScrabbleBoard.new
+		self.usergames = []
+        self.myboard = ScrabbleBoard.new
 		self.myboard.initialvalues
-		# self.readboard
 		self.myboard.readscores("SWscoreResource.txt")
-		#self.myboard.findBoardSWs
-		#self.myboard.findBoardLetters
-        #$tiles = self.myboard.tileword
-		#$tilepermutedset = $tiles.permutedset
 		$words = {}
 		wordarray = File.readlines("wordlist.txt").map { |line| line.chomp }
 		i = 0
@@ -25,13 +19,42 @@ class Wordfriend
 			$words[wordarray[i]] = 'true'
 			i += 1
 		end
-		#$tilewords = $tilepermutedset.select {|astring| astring.isaword} #words that can be made with the tiles
-		#$possibleWords = self.myboard.findPossibleWords #finds all words that can be made with tiles plus one of the letters on the board
 	end
     
-    def readboard
-        self.myboard.readboard("./" + self.gameuser + "/" + self.gamefile + ".txt")
+    def createuserdirectory #create user directory if it does not exist
+        if not(FileTest::directory?("./Users/" + self.gameuser))
+            Dir::mkdir("./Users/" + self.gameuser)
+        end
     end
+    
+    def creategamefile #create the game file if +  it does not exist
+        if not(File.exist?("./Users/" + self.gameuser + "/" + self.gamefile))
+            aFile = File.open("./Users/" + self.gameuser + "/" + self.gamefile + ".txt", "w")
+            i = 0
+            while i < self.myboard.dimension
+               aFile.puts("---------------")
+               i += 1
+            end
+            aFile.puts("-------")
+            aFile.close
+        end
+    end
+    
+    def getusergames
+        Dir.foreach("./Users/" + self.gameuser + "/") {|aFile|
+            self.usergames.push(aFile.gsub(".txt", "")) if (aFile != "." && aFile != "..")
+        }
+    
+    end
+    
+    
+    def readboard
+        self.myboard.readboard("./Users/" + self.gameuser + "/" + self.gamefile + ".txt")
+    end
+ 
+    def saveboard
+        self.myboard.writeboard("./Users/" + self.gameuser + "/" + self.gamefile + ".txt")
+	end
     
     def updatevalues
         self.readboard
@@ -42,10 +65,6 @@ class Wordfriend
 		$tilewords = $tilepermutedset.select {|astring| astring.isaword} #words that can be made with the tiles
 		$possibleWords = self.myboard.findPossibleWords#finds all words that can be made with tiles plus one of the letters on the board
     end
-
-	def saveboard
-	self.myboard.writeboard("./" + self.gameuser + "/" + self.gamefile + ".txt")
-	end
 
 	def RevertBoard
 		self.myboard.readboard("Games/" + self.gamefile  + ".txt")

@@ -1,27 +1,32 @@
-
- 
-<%      
+<%
 
 aForm = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">"
+
 aForm = aForm + " <form action=\"/board\" method=\"post\"> "
 aForm = aForm + "<html xmlns=\"http://www.w3.org/1999/xhtml\" lang=\"en\" xml:lang=\"en\"> "
-aForm = aForm + "<head> <title>Word Friend Welcome</title> </head> <body>"
-aForm = aForm + " <div> Welcome to Word Friend </div> "
+
+aForm = aForm + "<head> <title>Welcome</title> </head> <body>"
+aForm = aForm + " <div> Welcome to The Arcane Word </div> "
 
 
 aForm = aForm + " <div> <table> "
-aForm = aForm + "<th>Game File Name</th>"
+aForm = aForm + "<th>User Name</th> <th>PIN </th>"
 aForm = aForm + "<tr>"
-aForm = aForm + "<td> <input type = \"text\" name = \"ausername\" value =\"enter a user ID\" size = \"20\"</td>"
-aForm = aForm + "<td> <input type = \"text\" name = \"agamefile\" value =\"enter a file name\" size = \"20\"</td>"
-aForm = aForm  + "<td> <input type = \"submit\" name=\"Open\" value = \"Open\" formaction = \"/board\"/> </td> "
+
+
+aForm = aForm + "<td> <input type = \"text\" name = \"ausername\" value =\"\" size = \"20\"</td>"
+aForm = aForm + "<td> <input type = \"text\" name = \"pin1\" value =\"\" size = \"2\"</td>"
+aForm = aForm + "<td> <input type = \"text\" name = \"pin2\" value =\"\" size = \"2\"</td>"
+aForm = aForm + "<td> <input type = \"text\" name = \"pin3\" value =\"\" size = \"2\"</td>"
+aForm = aForm + "<td> <input type = \"text\" name = \"pin4\" value =\"\" size = \"2\"</td>"
+aForm = aForm  + "<td> <input type = \"submit\" name=\"Open\" value = \"Open\" formaction = \"/usergames\"/> </td> "
 
 aForm = aForm + "</table></div>"
 
+aForm = aForm + "</body> </form> "
 
-aForm = aForm + "</body> </form> </html>"
+aForm = aForm + "</html>"
 
 return aForm
 %>
- 
- 
+

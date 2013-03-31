@@ -12,6 +12,14 @@ get '/' do
     erb:showwelcome
 end
 
+post '/usergames' do
+    $aWordfriend.gameuser = params["ausername"] + params["pin1"] + params["pin2"] + params["pin3"] + params["pin4"]
+    $aWordfriend.createuserdirectory
+    $aWordfriend.getusergames
+    
+    erb:showgames
+end
+
 post '/board' do
     i= 0
     @posname = {}
@@ -25,26 +33,17 @@ post '/board' do
         @posname[i] = lhash
         i += 1
     end
-    $aWordfriend.gameuser = params["ausername"]
-    $aWordfriend.gamefile = params["agamefile"]
+    
+    @choice = params["choice"]
+    $aWordfriend.gamefile = params["game"+@choice.to_s]
+    $aWordfriend.createuserdirectory #creates the user directory if it does not exist already
+    $aWordfriend.creategamefile #creates game file and fills it with '-' if it does not exist already
     $aWordfriend.updatevalues
     erb:showboard
 end
 
 get '/board' do
-    i=0
-    @posname = {}
-    while i < 15
-        j = 0
-        lhash = {}
-        while j < 15
-            lhash[j] = ":i" + i.to_s + "j" + j.to_s
-            j += 1
-        end
-        @posname[i] = lhash
-        i += 1
-    end
-    erb:showboard
+"Direct access to the \"/board\" URL has been deprecated. Try going to the root (\"http://dry-brushlands-6613.herokuapp.com/\")"
 end
 
 post '/revert' do

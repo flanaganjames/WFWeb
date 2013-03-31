@@ -1,9 +1,9 @@
 ---d-horn------
----r-i---------
--quags----m----
+---r-i-------f-
+-quags----m--i-
 ti-g-----fazed-
-e-------zap----
-ever----o------
+e-------zap--g-
+ever----o----e-
 n---j--pong----
 s--hello---k---
 ya--s--x--pilot
@@ -13,4 +13,4 @@ u--adhesives--e
 tour-----e----d
 e--triad-reel--
 ---y--wow--ma--
-efghijk
+abcdefg

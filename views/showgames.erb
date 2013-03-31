@@ -1,0 +1,29 @@
+
+ 
+<%      
+
+aForm = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">"
+aForm = aForm + " <form action=\"/board\" method=\"post\"> "
+aForm = aForm + "<html xmlns=\"http://www.w3.org/1999/xhtml\" lang=\"en\" xml:lang=\"en\"> "
+aForm = aForm + "<head> <title>Results</title> </head> <body> <div> <table> "
+aForm = aForm + "<th>Game</th> <th>Choose</th>"
+
+newi = $aWordfriend.usergames.size + 1
+$aWordfriend.usergames.each_index {|i| agame = $aWordfriend.usergames[i]
+aForm = aForm + "<tr>"
+aForm = aForm + "<td> <input type = \"text\" name = \"game#{i}\" value =\"#{agame}\" size = \"20\"</td>"
+aForm = aForm  + "<td> <input type = \"submit\" name=\"choice\" value = \"#{i}\" formaction = \"/board\"/> </td> "
+}
+aForm = aForm + "<tr>"
+aForm = aForm + "<td> <input type = \"text\" name = \"game#{newi}\" value =\"\" size = \"20\"</td>"
+aForm = aForm  + "<td> <input type = \"submit\" name=\"choice\" value = \"#{newi}\" formaction = \"/board\"/> </td> "
+
+aForm = aForm + "</table></div>"
+
+
+aForm = aForm + "</body> </form> </html>"
+
+return aForm
+%>
+ 
+ 
