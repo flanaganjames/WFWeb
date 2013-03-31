@@ -12,6 +12,8 @@ get '/' do
 end
 
 post '/' do
+    $aWordfriend.removeuserdirectoryifempty
+    
     $aWordfriend = Wordfriend.new
     $aWordfriend.initialvalues
     
@@ -19,11 +21,19 @@ post '/' do
 end
 
 post '/usergames' do
-    $aWordfriend.gameuser = params["ausername"] + params["pin1"] + params["pin2"] + params["pin3"] + params["pin4"]
-    $aWordfriend.createuserdirectory #creates the user directory if it does not exist already
-    $aWordfriend.getusergames
-    
-    erb:showgames
+    if (params["ausername"] == '' || params["pin1"] == '' || params["pin2"] == '' || params["pin3"] == '' || params["pin4"] == '')
+    then
+        $aWordfriend.gameuser = ''
+        erb:showwarning
+    elsif params["pin1"] == params["pin2"] && params["pin3"] == params["pin4"] && params["pin2"] == params["pin3"]
+        $aWordfriend.gameuser = ''
+        erb:showwarning
+    else
+        $aWordfriend.gameuser = params["ausername"] + params["pin1"] + params["pin2"] + params["pin3"] + params["pin4"]
+        $aWordfriend.createuserdirectory #creates the user directory if it does not exist already
+        $aWordfriend.getusergames
+        erb:showgames
+    end
 end
 
 post '/board' do

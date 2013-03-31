@@ -21,6 +21,10 @@ class Wordfriend
 		end
 	end
     
+    def removeuserdirectoryifempty
+        Dir::rmdir("./Users/" + self.gameuser) if self.usergames.empty?
+    end
+    
     def createuserdirectory #create user directory if it does not exist
         if not(FileTest::directory?("./Users/" + self.gameuser))
             Dir::mkdir("./Users/" + self.gameuser)
