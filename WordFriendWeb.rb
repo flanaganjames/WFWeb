@@ -7,8 +7,14 @@ require './resource_Wordfriend'
 get '/' do
     $aWordfriend = Wordfriend.new
     $aWordfriend.initialvalues
-    
 
+    erb:showwelcome
+end
+
+post '/' do
+    $aWordfriend = Wordfriend.new
+    $aWordfriend.initialvalues
+    
     erb:showwelcome
 end
 

@@ -8,7 +8,7 @@ class Wordfriend
     
 
 	def initialvalues
-		self.usergames = []
+
         self.myboard = ScrabbleBoard.new
 		self.myboard.initialvalues
 		self.myboard.readscores("SWscoreResource.txt")
@@ -42,6 +42,7 @@ class Wordfriend
     end
     
     def getusergames
+		self.usergames = []
         Dir.foreach("./Users/" + self.gameuser + "/") {|aFile|
             self.usergames.push(aFile.gsub(".txt", "")) if (aFile != "." && aFile != "..")
         }
