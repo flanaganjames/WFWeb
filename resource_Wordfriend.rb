@@ -1,5 +1,9 @@
 class Wordfriend
 	attr_accessor :myboard, :gameuser, :gamefile, :possiblewords, :usergames
+    #these instance variables view the current user (user whose turn it is currently)
+    #the board is the same, though out of phase as each turn occurs, and the tiles are different
+    #see Class Game which supports two users - usually a user versus the computer
+    #as each user takes his turn, the instance variables of this class are switched
     
     require './resource_methodsOO'
 	require './resource_classSW'
@@ -41,6 +45,7 @@ class Wordfriend
                i += 1
             end
             aFile.puts("-------")
+            aFile.puts("-------")
             aFile.close
         end
     end
@@ -55,27 +60,34 @@ class Wordfriend
     
     
     def readboard
-        self.myboard.readboard("./Users/" + self.gameuser + "/" + self.gamefile + ".txt")
+        tilesarray =self.myboard.readboard("./Users/" + self.gameuser + "/" + self.gamefile + ".txt")
+        return tilesarray
     end
  
-    def saveboard
-        self.myboard.writeboard("./Users/" + self.gameuser + "/" + self.gamefile + ".txt")
+    def saveboard(tiles1, tiles2)
+        self.myboard.writeboard("./Users/" + self.gameuser + "/" + self.gamefile + ".txt", tiles1, tiles2)
 	end
     
-    def updatevalues
-        self.readboard
+    def updatevalues(currentplayer) #set to either 0 or 1
+        tilesets =self.readboard  #this grabs board and an array containing two tilesets
+        $aGame.tilesplayer1 = tilesets[0]
+        $aGame.tilesplayer2 = tilesets[1]
+        self.myboard.tileword = tilesets[currentplayer]
         self.myboard.findBoardSWs
 		self.myboard.findBoardLetters
         $tiles = self.myboard.tileword
-		$tilepermutedset = $tiles.permutedset
-		$tilewords = $tilepermutedset.select {|astring| astring.isaword} #words that can be made with the tiles
+		$tilepermutedset = self.myboard.tileword.permutedset
+		$tilewords = self.myboard.findPossibleTileWords #words that can be made with the tiles
 		$possibleWords = self.myboard.findPossibleWords#finds all words that can be made with tiles plus one of the letters on the board
     end
 
 	def RevertBoard
-		self.myboard.readboard("Games/" + self.gamefile  + ".txt")
+		tilesets = self.myboard.readboard("Games/" + self.gamefile  + ".txt")
+        $aGame.tilesplayer1 = tilesets[0]
+        $aGame.tilesplayer2 = tilesets[1]
+        self.myboard.tileword = $aGame.tilesplayer2
         $tiles = self.myboard.tileword
-        $tilepermutedset = $tiles.permutedset
+        $tilepermutedset = self.myboard.tileword.permutedset
         $tilewords = $tilepermutedset.select {|astring| astring.isaword}
 	end
 

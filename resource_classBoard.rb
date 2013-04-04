@@ -45,7 +45,20 @@ class ScrabbleBoard
 		end		
 		
 	end
-		
+    
+    def resetnewindicator
+        i = 0
+        while i < self.dimension
+            j = 0
+            nhash = {}
+            while j < self.dimension
+                nhash[j] = '-'
+                j += 1
+            end
+            self.newgrid[i] = nhash
+            i += 1
+        end
+    end
 
 	def findblankparallelpositions #find all blank positions where a tileword could be placed - in any register -; note a coordinate is a triple: x, y,, direction
 		coordinates = []
@@ -548,12 +561,14 @@ class ScrabbleBoard
             end
                  
 		}
-        self.tileword = rows[self.dimension]
+        tiles1 = rows[self.dimension].sub('tiles1:','')
+        tiles2 = rows[self.dimension+1].sub('tiles2:','')
+        return [tiles1, tiles2]
         afile.close
 	end
 
 	
-	def writeboard (afilename)
+	def writeboard (afilename, tiles1, tiles2)
 		afile = File.open(afilename, "w")
 		i = 0
 		while i < self.dimension
@@ -566,7 +581,8 @@ class ScrabbleBoard
 			afile.puts(anarray.join())
 		i += 1
 		end
-        afile.puts(self.tileword)
+        afile.puts('tiles1:'+tiles1)
+        afile.puts('tiles2:'+tiles2)
 		afile.close
 	end
     
@@ -735,6 +751,56 @@ class ScrabbleBoard
 		end
 		return allpossiblewords
 	end
+
+    def findPossibleTileWords #finds all words that can be made with tiles
+        allpossiblewords = []
+            tilesplus = self.tileword
+            tilewords = tilesplus.permutedset.select {|astring| astring.isaword}
+        tilewords.each {|aword| allpossiblewords.push(aword) if !allpossiblewords.include?(aword)}
+    return allpossiblewords
+    end
+                
+    def firstword #returns a ScrabbleWord or nil
+        $tilewords = self.findPossibleTileWords
+        coordinates = [[7,7,'right'], [7,7,'down']] #the tilewords must overlap this position on either axis
+        allpossibles = self.placetilewords($tilewords,coordinates) #this returns SWs that overlap this position
+        allpossibles = allpossibles.uniqSWs
+        allpossibles.each {|possible| possible.scoreword(self)}
+        allpossibles = allpossibles.sort_by {|possible| [-(possible.score + possible.supplement)]}
+        if not(allpossibles.empty?)
+            then return allpossibles[0]  #return highest scoring SW
+            else return nil
+        end
+    end
+    
+def placewordfromtiles(aSW) #used to place a SW on board and deduct from newtileword, and sets which tiles are new on board; used by Game.firstword and by WFweb'/updated'
+        $aWordfriend.myboard.newtileword = $aWordfriend.myboard.tileword
+        case
+        when aSW.direction == "right"
+            i = 0
+            while i < aSW.astring.length
+                if $aWordfriend.myboard.lettergrid[aSW.xcoordinate][aSW.ycoordinate + i] == '-'
+                    then
+                    $aWordfriend.myboard.lettergrid[aSW.xcoordinate][aSW.ycoordinate + i] = aSW.astring[i]
+                    $aWordfriend.myboard.newtileword = $aWordfriend.myboard.newtileword.sub(aSW.astring[i],'')
+                end
+                $aWordfriend.myboard.newgrid[aSW.xcoordinate][aSW.ycoordinate + i] = 'n'
+            i += 1
+            end
+        when aSW.direction == "down"
+            i = 0
+            while i < aSW.astring.length
+                if $aWordfriend.myboard.lettergrid[aSW.xcoordinate + i][aSW.ycoordinate] == '-'
+                    then
+                    $aWordfriend.myboard.lettergrid[aSW.xcoordinate + i][aSW.ycoordinate] = aSW.astring[i]
+                    $aWordfriend.myboard.newtileword = $aWordfriend.myboard.newtileword.sub(aSW.astring[i],'')
+                end
+                $aWordfriend.myboard.newgrid[aSW.xcoordinate + i][aSW.ycoordinate] = 'n'
+            i += 1
+            end	
+        end
+    end
+    
 
 end
 
