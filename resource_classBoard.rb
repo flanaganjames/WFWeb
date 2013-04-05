@@ -768,7 +768,14 @@ class ScrabbleBoard
         allpossibles.each {|possible| possible.scoreword(self)}
         allpossibles = allpossibles.sort_by {|possible| [-(possible.score + possible.supplement)]}
         if not(allpossibles.empty?)
-            then return allpossibles[0]  #return highest scoring SW
+            then
+            dirx = "down"
+            dirx = "right" if rand(2) == 0 # dirx will be either right of down depending on rand
+            i = 0
+            while i < allpossibles.size
+                return allpossibles[i]  if allpossibles[i].direction == dirx #return highest scoring SW
+                i += 1
+            end
             else return nil
         end
     end
