@@ -92,7 +92,7 @@ class Game
     def firstmove
         self.initializegame #sets currentpayer = gameplayer1 and fills both players' tile sets;
         self.currentplayertileset = self.tilesplayer1
-        $aWordfriend.updatevalues($aGame.currentplayertileset) #readboard, findSWs, tilepermutedset, $possiblewords(words w tiles and board), $tilewords (words w tiles only)
+        $aWordfriend.updatevalues(self.currentplayertileset) #findSWs, tilepermutedset, $possiblewords(words w tiles and board), $tilewords (words w tiles only)
         
         aSW = $aWordfriend.myboard.firstword
         until (aSW)
@@ -104,7 +104,13 @@ class Game
         self.scoreplayer1 = scoreplayer1 + aSW.score + aSW.supplement
     end
     
-    def nextmove
+    def nextmovePlayer2
+        self.currentplayertileset = self.tilesplayer2
+        $aWordfriend.updatevalues(self.currentplayertileset)
+        $aWordfriend.wordfind
+    end
+    
+    def nextmovePlayer1
         self.tilesplayer2 = $aWordfriend.myboard.newtileword  #the move just reviewed in '/updated' is now accepted, the remaining tiles in newtileword transferred to  tilesplater2
         self.tilesplayer2 = $aGame.filltiles($aGame.tilesplayer2) #player2 just moved and used some tiles
         self.resetnewindicator

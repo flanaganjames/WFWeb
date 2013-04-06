@@ -1,0 +1,48 @@
+
+ 
+<%      
+
+aForm = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">"
+aForm = aForm + " <form action=\"/results\" method=\"post\"> "
+aForm = aForm + "<html xmlns=\"http://www.w3.org/1999/xhtml\" lang=\"en\" xml:lang=\"en\"> "
+aForm = aForm + "<head> <title>Updated Board</title> </head> <body> <div> <table> "
+aForm = aForm + "<th>Choice: #{@choice}, </th> <th>Score: #{@score}, </th> <th>Word: <i>#{@word}</i>, </th> <th>Row: #{@xcoordinate}, </th> <th>Col: #{@ycoordinate}, </th> <th>Direction: #{@direction}</th>"
+aForm = aForm + "</table></div>"
+
+aForm = aForm + " <div> Resulting Board <table> "
+	i = 0
+	while i < 15
+		aForm = aForm + "<tr>"
+		j = 0
+		while j < 15
+			aForm = aForm + "<td"
+            aForm = aForm + " bgcolor=#00FF00" if ($aWordfriend.myboard.newgrid[i][j] == 'n')
+            aForm = aForm + ">"
+            aForm = aForm + "<input type = \"text\""
+            aForm = aForm + " value =\"#{$aWordfriend.myboard.lettergrid[i][j]}\""
+            aForm = aForm + " size =\"1\" name =\"#{@posname[i][j]}\""
+            j += 1
+            aForm = aForm + " </td>"
+        end
+	aForm = aForm + "</tr>"
+       	i += 1
+	end
+aForm = aForm + "</table></div>"
+aForm = aForm +  " <div> Remaining Tiles <table> <tr> "
+i = 0
+while i < 7
+    aForm = aForm + "<td> <input type = \"text\" size =\"1\" name =\"tile#{i}\" value =\"#{$aWordfriend.myboard.newtileword[i]}\" </td> "
+    i += 1
+end
+aForm = aForm +  " </tr> </table> </div>"
+
+aForm = aForm  + "<div> <input type = \"submit\" value = \"Save Board & Tiles\" formaction = \"/saveboard\"/> "
+aForm = aForm  + "<input type = \"submit\" value = \"Undo\" formaction = \"/revert\"/> "
+aForm = aForm  + "<input type = \"submit\" value = \"Next Move\" formaction = \"/nextmovePlayer1\"/> </div> "
+
+aForm = aForm + "</body> </form> </html>"
+
+return aForm
+%>
+ 
+ 
