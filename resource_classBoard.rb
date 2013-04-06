@@ -28,6 +28,7 @@ class ScrabbleBoard
             self.newgrid[i] = nhash
 			i += 1
 		end
+        self.readscores("SWscoreResource.txt")
 	end
 	
 	def printboard
@@ -563,12 +564,13 @@ class ScrabbleBoard
 		}
         tiles1 = rows[self.dimension].sub('tiles1:','')
         tiles2 = rows[self.dimension+1].sub('tiles2:','')
-        return [tiles1, tiles2]
+        tilesr = rows[self.dimension+1].sub('tilesr:','')
+        return [tiles1, tiles2, tilesr]
         afile.close
 	end
 
 	
-	def writeboard (afilename, tiles1, tiles2)
+	def writeboard (afilename, tiles1, tiles2, tilesr)
 		afile = File.open(afilename, "w")
 		i = 0
 		while i < self.dimension
@@ -583,6 +585,7 @@ class ScrabbleBoard
 		end
         afile.puts('tiles1:'+tiles1)
         afile.puts('tiles2:'+tiles2)
+        afile.puts('tilesr:'+tilesr)
 		afile.close
 	end
     
@@ -806,6 +809,7 @@ def placewordfromtiles(aSW) #used to place a SW on board and deduct from newtile
             i += 1
             end	
         end
+    return $aWordfriend.myboard.newtileword
     end
     
 

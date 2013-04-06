@@ -15,7 +15,7 @@ class Wordfriend
 
         self.myboard = ScrabbleBoard.new
 		self.myboard.initialvalues
-		self.myboard.readscores("SWscoreResource.txt")
+
 		$words = {}
 		wordarray = File.readlines("wordlist.txt").map { |line| line.chomp }
 		i = 0
@@ -23,6 +23,7 @@ class Wordfriend
 			$words[wordarray[i]] = 'true'
 			i += 1
 		end
+        #self.saveboard($aGame.tilesplayer1, $aGame.tilesplayer2, $aGame.tilesremain.join('')) #
 	end
     
     def removeuserdirectoryifempty
@@ -46,6 +47,7 @@ class Wordfriend
             end
             aFile.puts("-------")
             aFile.puts("-------")
+            aFile.puts("-------")#for tilesremain
             aFile.close
         end
     end
@@ -64,15 +66,22 @@ class Wordfriend
         return tilesarray
     end
  
-    def saveboard(tiles1, tiles2)
-        self.myboard.writeboard("./Users/" + self.gameuser + "/" + self.gamefile + ".txt", tiles1, tiles2)
+    def saveboard(tiles1, tiles2, tilesr)
+        self.myboard.writeboard("./Users/" + self.gameuser + "/" + self.gamefile + ".txt", tiles1, tiles2, tilesr)
 	end
     
-    def updatevalues(currentplayer) #set to either 0 or 1
-        tilesets =self.readboard  #this grabs board and an array containing two tilesets
-        $aGame.tilesplayer1 = tilesets[0]
-        $aGame.tilesplayer2 = tilesets[1]
-        self.myboard.tileword = tilesets[currentplayer]
+    def resetnewindicator
+        self.myboard.resetnewindicator
+    end
+
+    
+    def updatevalues(aplayertileset) #set to either 0 or 1
+        #tilesets =self.readboard  #this grabs board and an array containing two tilesets and tilesremain
+        #$aGame.tilesplayer1 = tilesets[0]
+        #$aGame.tilesplayer2 = tilesets[1]
+        #$aGame.tilesremain = tilesets[2].scan('')
+
+        self.myboard.tileword = aplayertileset
         self.myboard.findBoardSWs
 		self.myboard.findBoardLetters
         $tiles = self.myboard.tileword
@@ -82,9 +91,11 @@ class Wordfriend
     end
 
 	def RevertBoard
-		tilesets = self.myboard.readboard("Games/" + self.gamefile  + ".txt")
+		tilesets = self.readboard("Games/" + self.gamefile  + ".txt")
         $aGame.tilesplayer1 = tilesets[0]
         $aGame.tilesplayer2 = tilesets[1]
+        $aGame.tilesremain = tilesets[2].scan('')
+        aWordfriend.myboard.resetnewindicator
         self.myboard.tileword = $aGame.tilesplayer2
         $tiles = self.myboard.tileword
         $tilepermutedset = self.myboard.tileword.permutedset

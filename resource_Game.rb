@@ -1,5 +1,5 @@
 class Game
-    attr_accessor :currentplayer, :gameplayer1, :gameplayer2, :tilesall, :tilesremain, :tilesplayer1, :tilesplayer2, :scoreplayer1, :scoreplayer2
+    attr_accessor :currentplayer, :currentplayertileset, :gameplayer1, :gameplayer2, :tilesall, :tilesremain, :tilesplayer1, :tilesplayer2, :scoreplayer1, :scoreplayer2
     #tilesplayer1/2 is each a single string of the concatenated tiles
     require './resource_Wordfriend'
     
@@ -38,6 +38,8 @@ class Game
         self.scoreplayer2 = 0
         self.tilesplayer1 = ''
         self.tilesplayer2 = ''
+        $aWordfriend = Wordfriend.new
+        $aWordfriend.initialvalues
     end
     
     def choosereplacementtile
@@ -63,8 +65,10 @@ class Game
     def replacealltiles(aplayerstiles) #aplayerstiles may be self.tilesplayer1 or self.tilesplayer2
         i = aplayerstiles.size
         while i > 0
-            self.tilesremain << aplayerstiles[i] # add the letters back to tile remaining
-            aplayerstiles = aplayertiles.sub(aplayerstiles[i], '') # and remove from aplayerstiles
+            aletter = aplayerstiles[i-1]
+            self.tilesremain << aletter # add the letters back to tile remaining
+            aplayerstiles = aplayerstiles.sub(aletter, '') # and remove from aplayerstiles
+            i -= 1
         end
         while aplayerstiles.size < 7
             atile = self.choosereplacementtile
@@ -75,30 +79,44 @@ class Game
     end
     
     def initializegame
-        currentplayer = 1
+        self.currentplayer = 0
         self.tilesplayer1 = self.filltiles(self.tilesplayer1)
         self.tilesplayer2 = self.filltiles(self.tilesplayer2)
+        $aWordfriend.saveboard(self.tilesplayer1, self.tilesplayer2, $aGame.tilesremain.join(''))
+    end
+    
+    def resetnewindicator
+        $aWordfriend.resetnewindicator
     end
     
     def firstmove
-        $aWordfriend.myboard.tileword = self.tilesplayer1
+        self.initializegame #sets currentpayer = gameplayer1 and fills both players' tile sets;
+        self.currentplayertileset = self.tilesplayer1
+        $aWordfriend.updatevalues($aGame.currentplayertileset) #readboard, findSWs, tilepermutedset, $possiblewords(words w tiles and board), $tilewords (words w tiles only)
+        
         aSW = $aWordfriend.myboard.firstword
         until (aSW)
             self.tilesplayer1 = self.replacealltiles(self.tilesplayer1)  #in case initial tiles generated no possible words, replace and try again.
             aSW = $aWordfriend.myboard.firstword
         end
-        $aWordfriend.myboard.placewordfromtiles(aSW)
+        self.tilesplayer1 = $aWordfriend.myboard.placewordfromtiles(aSW)
+        self.tilesplayer1 = $aGame.filltiles($aGame.tilesplayer1)
         self.scoreplayer1 = scoreplayer1 + aSW.score + aSW.supplement
     end
     
     def nextmove
-        self.tilesplayer1 = self.filltiles(self.tilesplayer1)
-        self.currentplayer = 1
-        $aWordfriend.updatevalues(self.currentplayer)
+        self.tilesplayer2 = $aWordfriend.myboard.newtileword  #the move just reviewed in '/updated' is now accepted, the remaining tiles in newtileword transferred to  tilesplater2
+        self.tilesplayer2 = $aGame.filltiles($aGame.tilesplayer2) #player2 just moved and used some tiles
+        self.resetnewindicator
+        self.currentplayertileset = self.tilesplayer1
+        $aWordfriend.updatevalues(self.currentplayertileset)
         $aWordfriend.wordfind
         aSW = $aWordfriend.possiblewords[0] #get the highest scoring result
         $aWordfriend.myboard.placewordfromtiles(aSW) if aSW # put it on board if not nil
         self.scoreplayer1 = scoreplayer1 + aSW.score + aSW.supplement
+        self.currentplayertileset = self.tilesplayer2
+        $aWordfriend.updatevalues(self.currentplayertileset)
+        $aWordfriend.saveboard($aGame.tilesplayer1,$aGame.tilesplayer2,$aGame.tilesremain.join(''))
     end
 
 end

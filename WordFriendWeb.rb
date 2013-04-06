@@ -6,9 +6,10 @@ require './resource_Game'
 
 
 get '/' do
-    $aWordfriend = Wordfriend.new
-    $aWordfriend.initialvalues
-
+    # $aWordfriend = Wordfriend.new
+    # $aWordfriend.initialvalues
+    $aGame = Game.new
+    $aGame.initialvalues
     erb:showwelcome
 end
 
@@ -75,20 +76,15 @@ post '/startgame' do  #this posts from /usergames showgames and assumes the game
         i += 1
     end
     
-    @choice = params["choice"]
-    $aWordfriend.gamefile = params["game"+@choice.to_s]# created at '/', creates board, reads scoring and dictionary, gameuser, gamefile, possiblewords
+    @choice = params["choice"].sub('PvC ','')
+    $aWordfriend.gamefile = params["game#{@choice}"] # created at '/', creates board, reads scoring and dictionary, gameuser, gamefile, possiblewords;
     
     $aWordfriend.creategamefile #creates game file and fills it with '-' if it does not exist already
-    $aGame = Game.new # players1/2, currentplayer, tiles1/2, score1/2, tilesremain,
-    $aGame.initialvalues #tilesremain initialized, score1/2=0, tiles1/2 = ''
-    $aWordfriend.initialvalues #creates a new board
-    $aWordfriend.updatevalues(0) #readboard, findSWs, tilepermutedset, $possiblewords(words w tiles and board), $tilewords (words w tiles only)
+
     $aGame.gameplayer2 = $aWordfriend.gameuser
     $aGame.gameplayer1 = "ArcaneWord"
-    $aGame.initializegame #sets currentpayer = gameplayer1 and fills both players' tile sets;
-    $aGame.firstmove #tileword = tiles1, the computer player1 makes the first move, putting the first word on the board, saves the file under gameuser and gamefile
-    $aWordfriend.myboard.tileword = $aGame.tilesplayer2
-    $aWordfriend.saveboard($aGame.tilesplayer1,$aGame.tilesplayer2)
+
+    $aGame.firstmove #tileword = tiles1, the computer player1 makes the first move, putting the first word on the board
     erb:showArcaneUsergameboard #shows board after player1 w player2 tiles allowing player 2 to move (may use automated and see '/results', then '/updated' then '/nextmove')
 end
 
@@ -105,15 +101,8 @@ post '/nextmove' do
         @posname[i] = lhash
         i += 1
     end
-    $aGame.tilesplayer2 = $aWordfriend.myboard.newtileword  #the move just reviewed in '/updated' is now accepted, the remaining tiles in newtileword transferred to thetilesplate2
-    $aWordfriend.myboard.resetnewindicator
-    $aGame.tilesplayer2 = $aGame.filltiles($aGame.tilesplayer2) #player2 just moved and used some tiles
-    $aWordfriend.myboard.tileword = $aGame.tilesplayer2
-    $aWordfriend.saveboard($aGame.tilesplayer1,$aGame.tilesplayer2)  #so that gamefile is current w board and new tiles
-
     $aGame.nextmove
-    $aWordfriend.myboard.tileword = $aGame.tilesplayer2
-    $aWordfriend.saveboard($aGame.tilesplayer1,$aGame.tilesplayer2)
+
     erb:showArcaneUsergameboard
 end
 
@@ -122,8 +111,8 @@ get '/board' do
 end
 
 post '/revert' do
-    $aWordfriend.readboard
-    $aWordfriend.myboard.resetnewindicator
+    anarray = $aWordfriend.RevertBoard
+
     erb:showresults
 end
 
@@ -168,9 +157,9 @@ post '/results' do
     #end
     #$aWordfriend.myboard.tileword = anarray.join('')
     
-    $aWordfriend.saveboard($aGame.tilesplayer1,$aGame.tilesplayer2)
-    $aWordfriend.myboard.resetnewindicator
-    $aWordfriend.updatevalues(1)
+    #$aWordfriend.saveboard($aGame.tilesplayer1,$aGame.tilesplayer2,$aGame.tilesremain.join(''))
+    
+    $aWordfriend.updatevalues($aGame.tilesplayer2)
     $aWordfriend.wordfind
     
     erb:showresults
@@ -205,8 +194,9 @@ post '/updated' do
     @score = params["score"+@choice.to_s]
     
     aSW = ScrabbleWord.new(@word, @xcoordinate.to_i, @ycoordinate.to_i, @direction, 0, 0)
+    $aGame.resetnewindicator
     $aWordfriend.myboard.placewordfromtiles(aSW)
-    
+
     erb:showupdated
 end
 
@@ -251,7 +241,7 @@ post '/saveboard' do
     end
     $aWordfriend.myboard.tileword = anarray.join('')
     
-    $aWordfriend.saveboard($aGame.tilesplayer1,$aGame.tilesplayer2)
+    $aWordfriend.saveboard($aGame.tilesplayer1,$aGame.tilesplayer2,$aGame.tilesremain.join(''))
     
     $aWordfriend.updatevalues
     
