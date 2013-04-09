@@ -123,7 +123,7 @@ post '/updatedPvC' do  #posted from showresultsPvC
     @direction = params["direction"+@choice.to_s]
     @score = params["score"+@choice.to_s]
     
-    aSW = ScrabbleWord.new(@word, @xcoordinate.to_i, @ycoordinate.to_i, @direction, 0, 0)
+    aSW = ScrabbleWord.new(@word, @xcoordinate.to_i, @ycoordinate.to_i, @direction, @score.to_i, 0)
     $aGame.resetnewindicator
     $aGame.placewordfromtiles(aSW)
     

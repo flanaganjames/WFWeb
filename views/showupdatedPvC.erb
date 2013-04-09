@@ -6,17 +6,21 @@ aForm = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www
 aForm = aForm + " <form action=\"/results\" method=\"post\"> "
 aForm = aForm + "<html xmlns=\"http://www.w3.org/1999/xhtml\" lang=\"en\" xml:lang=\"en\"> "
 aForm = aForm + "<head> <title>Updated Board</title> </head> <body> <div> <table> "
-aForm = aForm + "<th>Choice: #{@choice}, </th> <th>Score: #{@score}, </th> <th>Word: <i>#{@word}</i>, </th> <th>Row: #{@xcoordinate}, </th> <th>Col: #{@ycoordinate}, </th> <th>Direction: #{@direction}</th>"
+
 aForm = aForm + "</table></div>"
-aForm = aForm + " <div> Scores <table> <tr>"
-aForm = aRorm + "<td> Computer:  </td>"
-aForm = aRorm + "<td> #{$aGame.scoreplayer1} </td>"
-aForm = aRorm + "<td> Player:  </td>"
-aForm = aRorm + "<td> #{$aGame.scoreplayer2 + $aGame.scoreadd} </td>"
+aForm = aForm + " <div> <table> <tr>"
+aForm = aForm + "<td> Scores: </td> "
+aForm = aForm + "<td> Computer  </td>"
+aForm = aForm + "<td> #{$aGame.scoreplayer1} </td>"
+aForm = aForm + "<td> vs.  </td>"
+aForm = aForm + "<td> Player  </td>"
+aForm = aForm + "<td> #{$aGame.scoreplayer2 + $aGame.scoreadd} </td>"
+aForm = aForm + "<td> if Move Accepted </td>"
+
 aForm = aForm + "</tr></table> </div/"
 
 
-aForm = aForm + " <div> Resulting Board <table> "
+aForm = aForm + " <div> Board if Move Accepted<table> "
 	i = 0
 	while i < 15
 		aForm = aForm + "<tr>"
@@ -35,7 +39,7 @@ aForm = aForm + " <div> Resulting Board <table> "
        	i += 1
 	end
 aForm = aForm + "</table></div>"
-aForm = aForm +  " <div> Remaining Tiles <table> <tr> "
+aForm = aForm +  " <div> Player's Tiles if Move Accepted<table> <tr> "
 i = 0
 while i < 7
     aForm = aForm + "<td> <input type = \"text\" size =\"1\" name =\"tile#{i}\" value =\"#{$aGame.currentplayertileset[i]}\" </td> "
@@ -43,9 +47,8 @@ while i < 7
 end
 aForm = aForm +  " </tr> </table> </div>"
 
-aForm = aForm  + "<div> <input type = \"submit\" value = \"Save Board & Tiles\" formaction = \"/saveboard\"/> "
 aForm = aForm  + "<input type = \"submit\" value = \"Undo\" formaction = \"/revertPvC\"/> "
-aForm = aForm  + "<input type = \"submit\" value = \"Next Move\" formaction = \"/nextmovePlayer1\"/> </div> "
+aForm = aForm  + "<input type = \"submit\" value = \"Accept Move\" formaction = \"/nextmovePlayer1\"/> </div> "
 
 aForm = aForm + "</body> </form> </html>"
 

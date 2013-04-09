@@ -6,6 +6,20 @@
        aForm = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">"
 	aForm = aForm + " <form action=\"/board\" method=\"post\"> "
 	aForm = aForm + "<html xmlns=\"http://www.w3.org/1999/xhtml\" lang=\"en\" xml:lang=\"en\"> "
+
+aForm = aForm + " <div> <table> <tr>"
+aForm = aForm + "<td> Scores: </td> "
+aForm = aForm + "<td> Computer  </td>"
+aForm = aForm + "<td> #{$aGame.scoreplayer1} </td>"
+aForm = aForm + "<td> vs.  </td>"
+aForm = aForm + "<td> Player  </td>"
+aForm = aForm + "<td> #{$aGame.scoreplayer2} </td>"
+aForm = aForm + "<td>  </td>"
+aForm = aForm + "<td>  </td>"
+aForm = aForm + "<td> Tiles Remaining:  </td>"
+aForm = aForm + "<td> #{$aGame.tilesremain.size} </td>"
+aForm = aForm + "</tr></table> </div/"
+
 	aForm = aForm + "<head> <title>Current Board</title> </head> <body> <div> Current Board<table> "
        i = 0
 	while i < 15
@@ -35,7 +49,7 @@ aForm = aForm + "<td> <input type = \"text\" size =\"1\" name =\"tile4\" value =
 aForm = aForm + "<td> <input type = \"text\" size =\"1\" name =\"tile5\" value =\"#{$aGame.currentplayertileset[5]}\" </td> "
 aForm = aForm + "<td> <input type = \"text\" size =\"1\" name =\"tile6\" value =\"#{$aGame.currentplayertileset[6]}\" </td> "
 aForm = aForm +  " </tr> </table> </div>"
-aForm = aForm  + "<div> <input type = \"submit\" value = \"Save Board & Tiles and Find Words\" formaction = \"/resultsPvC\"/> </div> "
+aForm = aForm  + "<div> <input type = \"submit\" value = \"Find Moves\" formaction = \"/resultsPvC\"/> </div> "
 aForm = aForm + "</body> </form> </html>"
 
 return aForm
