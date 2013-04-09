@@ -8,8 +8,6 @@ class Wordfriend
     require './resource_methodsOO'
 	require './resource_classSW'
     require './resource_classBoard'
-    
-    
 
 	def initialvalues
 
@@ -89,7 +87,16 @@ class Wordfriend
 		$tilewords = self.myboard.findPossibleTileWords #words that can be made with the tiles
 		$possibleWords = self.myboard.findPossibleWords#finds all words that can be made with tiles plus one of the letters on the board
     end
-
+    
+    def firstword
+        self.myboard.firstword
+    end
+    
+    def placewordfromtiles(aSW)
+        return self.myboard.placewordfromtiles(aSW)
+    end
+    
+    # following to be deprecated
 	def RevertBoard
 		tilesets = self.readboard("Games/" + self.gamefile  + ".txt")
         $aGame.tilesplayer1 = tilesets[0]

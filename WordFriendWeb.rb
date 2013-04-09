@@ -39,6 +39,7 @@ post '/usergames' do
     end
 end
 
+#start of PvC_______________________________________________________
 
 post '/startgamePvC' do  #this posts showgames from /usergames if PvC is chosen and assumes the gameuser is identfied and for now assumes the gamefile is a new file
     i= 0
@@ -55,7 +56,7 @@ post '/startgamePvC' do  #this posts showgames from /usergames if PvC is chosen 
     end
     
     @choice = params["choice"].sub('PvC ','')
-    $aWordfriend.gamefile = params["game#{@choice}"] # created at '/', creates board, reads scoring and dictionary, gameuser, gamefile, possiblewords;
+    $aWordfriend.gamefile = params["game#{@choice}"] 
     
     $aWordfriend.creategamefile #creates game file and fills it with '-' if it does not exist already
 
@@ -92,6 +93,8 @@ post '/resultsPvC' do  #posted from showArcanUsergameboard
     erb:showresultsPvC
 end
 
+
+
 post '/updatedPvC' do  #posted from showresultsPvC
     i=0
     @posname = {}
@@ -122,11 +125,17 @@ post '/updatedPvC' do  #posted from showresultsPvC
     
     aSW = ScrabbleWord.new(@word, @xcoordinate.to_i, @ycoordinate.to_i, @direction, 0, 0)
     $aGame.resetnewindicator
-    $aWordfriend.myboard.placewordfromtiles(aSW)
+    $aGame.placewordfromtiles(aSW)
     
     erb:showupdatedPvC
 end
 
+
+post '/revertPvC' do
+    $aGame.revertPvC
+    
+    erb:showresultsPvC
+end
 
 post '/nextmovePlayer1' do   #posted from showupdatePvC
     i=0
@@ -146,9 +155,38 @@ post '/nextmovePlayer1' do   #posted from showupdatePvC
     erb:showArcaneUsergameboard
 end
 
+
+#start of PvP_____________________________________________________________________
+
 get '/board' do
 "Direct access to the \"/board\" URL has been deprecated. Try going to the root (\"http://dry-brushlands-6613.herokuapp.com/\")"
 end
+
+post '/startgamePvP' do  #this posts showgames from /usergames if PvP is chosen and assumes the gameuser is identfied and allows gamefile to be existing or new file
+    i= 0
+    @posname = {}
+    while i < 15
+        j = 0
+        lhash = {}
+        while j < 15
+            lhash[j] = ":i" + i.to_s + "j" + j.to_s
+            j += 1
+        end
+        @posname[i] = lhash
+        i += 1
+    end
+    
+    @choice = params["choice"].sub('PvP ','')
+    $aWordfriend.gamefile = params["game#{@choice}"] 
+    
+    $aWordfriend.creategamefile #creates game file and fills it with '-' if it does not exist already
+    
+    $aGame.gameplayer2 = $aWordfriend.gameuser
+    $aGame.gameplayer1 = "none"
+    
+    erb:showboard
+end
+
 
 post '/revert' do
     anarray = $aWordfriend.RevertBoard
@@ -196,27 +234,7 @@ post '/results' do
     erb:showresults
 end
 
-post '/board' do  #posts from /usergames showgames
-    i= 0
-    @posname = {}
-    while i < 15
-        j = 0
-        lhash = {}
-        while j < 15
-            lhash[j] = ":i" + i.to_s + "j" + j.to_s
-            j += 1
-        end
-        @posname[i] = lhash
-        i += 1
-    end
-    
-    @choice = params["choice"]
-    $aWordfriend.gamefile = params["game"+@choice.to_s]
-    
-    $aWordfriend.creategamefile #creates game file and fills it with '-' if it does not exist already
-    $aWordfriend.updatevalues
-    erb:showboard
-end
+
 
 post '/updated' do
     i=0

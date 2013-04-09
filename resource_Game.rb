@@ -85,6 +85,10 @@ class Game
         $aWordfriend.saveboard(self.tilesplayer1, self.tilesplayer2, $aGame.tilesremain.join(''))
     end
     
+    def revertPvC
+        self.tilesremain = self.tilesremain + (self.tilesplayer2.scan('') - $aWordfriend.myboard.newtileword.scan(''))  #this adds the tiles used from newtileword back to tilesremain
+    end
+    
     def resetnewindicator
         $aWordfriend.resetnewindicator
     end
@@ -94,14 +98,15 @@ class Game
         self.currentplayertileset = self.tilesplayer1
         $aWordfriend.updatevalues(self.currentplayertileset) #findSWs, tilepermutedset, $possiblewords(words w tiles and board), $tilewords (words w tiles only)
         
-        aSW = $aWordfriend.myboard.firstword
+        aSW = $aWordfriend.firstword
         until (aSW)
             self.tilesplayer1 = self.replacealltiles(self.tilesplayer1)  #in case initial tiles generated no possible words, replace and try again.
-            aSW = $aWordfriend.myboard.firstword
+            aSW = $aWordfriend.firstword
         end
-        self.tilesplayer1 = $aWordfriend.myboard.placewordfromtiles(aSW)
+        self.tilesplayer1 = $aWordfriend.placewordfromtiles(aSW)
         self.tilesplayer1 = $aGame.filltiles($aGame.tilesplayer1)
         self.scoreplayer1 = scoreplayer1 + aSW.score + aSW.supplement
+        self.currentplayertileset = self.tilesplayer2
     end
     
     def nextmovePlayer2
@@ -110,8 +115,12 @@ class Game
         $aWordfriend.wordfind
     end
     
+    def placewordfromtiles(aSW)
+        self.currentplayertileset = $aWordfriend.placewordfromtiles(aSW) #hold the remaining tiles in currentplayertileset
+    end
+    
     def nextmovePlayer1
-        self.tilesplayer2 = $aWordfriend.myboard.newtileword  #the move just reviewed in '/updated' is now accepted, the remaining tiles in newtileword transferred to  tilesplater2
+        self.tilesplayer2 = self.currentplayertileset  #the move just reviewed in '/updated' is now accepted, the remaining tiles in currentplayertileset transferred to  tilesplater2
         self.tilesplayer2 = $aGame.filltiles($aGame.tilesplayer2) #player2 just moved and used some tiles
         self.resetnewindicator
         self.currentplayertileset = self.tilesplayer1

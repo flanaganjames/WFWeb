@@ -784,32 +784,32 @@ class ScrabbleBoard
     end
     
 def placewordfromtiles(aSW) #used to place a SW on board and deduct from newtileword, and sets which tiles are new on board; used by Game.firstword and by WFweb'/updated'
-        $aWordfriend.myboard.newtileword = $aWordfriend.myboard.tileword
+        self.newtileword = self.tileword
         case
         when aSW.direction == "right"
             i = 0
             while i < aSW.astring.length
-                if $aWordfriend.myboard.lettergrid[aSW.xcoordinate][aSW.ycoordinate + i] == '-'
+                if self.lettergrid[aSW.xcoordinate][aSW.ycoordinate + i] == '-'
                     then
-                    $aWordfriend.myboard.lettergrid[aSW.xcoordinate][aSW.ycoordinate + i] = aSW.astring[i]
-                    $aWordfriend.myboard.newtileword = $aWordfriend.myboard.newtileword.sub(aSW.astring[i],'')
+                    self.lettergrid[aSW.xcoordinate][aSW.ycoordinate + i] = aSW.astring[i]
+                    self.newtileword = self.newtileword.sub(aSW.astring[i],'')
                 end
-                $aWordfriend.myboard.newgrid[aSW.xcoordinate][aSW.ycoordinate + i] = 'n'
+                self.newgrid[aSW.xcoordinate][aSW.ycoordinate + i] = 'n'
             i += 1
             end
         when aSW.direction == "down"
             i = 0
             while i < aSW.astring.length
-                if $aWordfriend.myboard.lettergrid[aSW.xcoordinate + i][aSW.ycoordinate] == '-'
+                if self.lettergrid[aSW.xcoordinate + i][aSW.ycoordinate] == '-'
                     then
-                    $aWordfriend.myboard.lettergrid[aSW.xcoordinate + i][aSW.ycoordinate] = aSW.astring[i]
-                    $aWordfriend.myboard.newtileword = $aWordfriend.myboard.newtileword.sub(aSW.astring[i],'')
+                    self.lettergrid[aSW.xcoordinate + i][aSW.ycoordinate] = aSW.astring[i]
+                    self.newtileword = self.newtileword.sub(aSW.astring[i],'')
                 end
                 $aWordfriend.myboard.newgrid[aSW.xcoordinate + i][aSW.ycoordinate] = 'n'
             i += 1
             end	
         end
-    return $aWordfriend.myboard.newtileword
+    return self.newtileword
     end
     
 

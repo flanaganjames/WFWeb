@@ -31,13 +31,13 @@ aForm = aForm + "</table></div>"
 aForm = aForm +  " <div> Remaining Tiles <table> <tr> "
 i = 0
 while i < 7
-    aForm = aForm + "<td> <input type = \"text\" size =\"1\" name =\"tile#{i}\" value =\"#{$aWordfriend.myboard.newtileword[i]}\" </td> "
+    aForm = aForm + "<td> <input type = \"text\" size =\"1\" name =\"tile#{i}\" value =\"#{$aGame.currentplayertileset[i]}\" </td> "
     i += 1
 end
 aForm = aForm +  " </tr> </table> </div>"
 
 aForm = aForm  + "<div> <input type = \"submit\" value = \"Save Board & Tiles\" formaction = \"/saveboard\"/> "
-aForm = aForm  + "<input type = \"submit\" value = \"Undo\" formaction = \"/revert\"/> "
+aForm = aForm  + "<input type = \"submit\" value = \"Undo\" formaction = \"/revertPvC\"/> "
 aForm = aForm  + "<input type = \"submit\" value = \"Next Move\" formaction = \"/nextmovePlayer1\"/> </div> "
 
 aForm = aForm + "</body> </form> </html>"
