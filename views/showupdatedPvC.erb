@@ -8,6 +8,13 @@ aForm = aForm + "<html xmlns=\"http://www.w3.org/1999/xhtml\" lang=\"en\" xml:la
 aForm = aForm + "<head> <title>Updated Board</title> </head> <body> <div> <table> "
 aForm = aForm + "<th>Choice: #{@choice}, </th> <th>Score: #{@score}, </th> <th>Word: <i>#{@word}</i>, </th> <th>Row: #{@xcoordinate}, </th> <th>Col: #{@ycoordinate}, </th> <th>Direction: #{@direction}</th>"
 aForm = aForm + "</table></div>"
+aForm = aForm + " <div> Scores <table> <tr>"
+aForm = aRorm + "<td> Computer:  </td>"
+aForm = aRorm + "<td> #{$aGame.scoreplayer1} </td>"
+aForm = aRorm + "<td> Player:  </td>"
+aForm = aRorm + "<td> #{$aGame.scoreplayer2 + $aGame.scoreadd} </td>"
+aForm = aForm + "</tr></table> </div/"
+
 
 aForm = aForm + " <div> Resulting Board <table> "
 	i = 0

@@ -1,5 +1,5 @@
 class Game
-    attr_accessor :currentplayer, :currentplayertileset, :gameplayer1, :gameplayer2, :tilesall, :tilesremain, :tilesplayer1, :tilesplayer2, :scoreplayer1, :scoreplayer2
+    attr_accessor :currentplayer, :currentplayertileset, :scoreadd, :gameplayer1, :gameplayer2, :tilesall, :tilesremain, :tilesplayer1, :tilesplayer2, :scoreplayer1, :scoreplayer2
     #tilesplayer1/2 is each a single string of the concatenated tiles
     require './resource_Wordfriend'
     
@@ -117,10 +117,12 @@ class Game
     
     def placewordfromtiles(aSW)
         self.currentplayertileset = $aWordfriend.placewordfromtiles(aSW) #hold the remaining tiles in currentplayertileset
+        self.scoreadd = aSW.score + aSW.supplement
     end
     
     def nextmovePlayer1
         self.tilesplayer2 = self.currentplayertileset  #the move just reviewed in '/updated' is now accepted, the remaining tiles in currentplayertileset transferred to  tilesplater2
+        self.scoreplayer2 = self.scoreplayer2 + self.scoreadd
         self.tilesplayer2 = $aGame.filltiles($aGame.tilesplayer2) #player2 just moved and used some tiles
         self.resetnewindicator
         self.currentplayertileset = self.tilesplayer1
