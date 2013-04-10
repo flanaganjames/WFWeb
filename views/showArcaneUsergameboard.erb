@@ -10,20 +10,37 @@
 aForm = aForm + " <div> <table> <tr>"
 aForm = aForm + "<td> Scores: </td> "
 aForm = aForm + "<td> Computer  </td>"
-aForm = aForm + "<td> #{$aGame.scoreplayer1} </td>"
+aForm = aForm + "<td bgcolor=#0000FF > <font color=\"white\"> #{$aGame.scoreplayer1} </font> </td>"
 aForm = aForm + "<td> vs.  </td>"
 aForm = aForm + "<td> Player  </td>"
-aForm = aForm + "<td> #{$aGame.scoreplayer2} </td>"
-aForm = aForm + "<td>  </td>"
-aForm = aForm + "<td>  </td>"
+aForm = aForm + "<td bgcolor=#00FF00>  #{$aGame.scoreplayer2} </td>"
+aForm = aForm +  " <td> || </td>"
 aForm = aForm + "<td> Tiles Remaining:  </td>"
-aForm = aForm + "<td> #{$aGame.tilesremain.size} </td>"
-aForm = aForm + "</tr></table> </div/"
+aForm = aForm + "<td >  #{$aGame.tilesremain.size} </td>"
+aForm = aForm +  " <td> || </td>"
+aForm = aForm +  " <td> Your Tiles </td>"
+aForm = aForm + "<td> <input type = \"text\" size =\"1\" name =\"tile0\" value =\"#{$aGame.currentplayertileset[0]}\" </td> "
+aForm = aForm + "<td> <input type = \"text\" size =\"1\" name =\"tile1\" value =\"#{$aGame.currentplayertileset[1]}\" </td> "
+aForm = aForm + "<td> <input type = \"text\" size =\"1\" name =\"tile2\" value =\"#{$aGame.currentplayertileset[2]}\" </td> "
+aForm = aForm + "<td> <input type = \"text\" size =\"1\" name =\"tile3\" value =\"#{$aGame.currentplayertileset[3]}\" </td> "
+aForm = aForm + "<td> <input type = \"text\" size =\"1\" name =\"tile4\" value =\"#{$aGame.currentplayertileset[4]}\" </td> "
+aForm = aForm + "<td> <input type = \"text\" size =\"1\" name =\"tile5\" value =\"#{$aGame.currentplayertileset[5]}\" </td> "
+aForm = aForm + "<td> <input type = \"text\" size =\"1\" name =\"tile6\" value =\"#{$aGame.currentplayertileset[6]}\" </td> "
+aForm = aForm +  " </tr> </table> </div>"
 
-	aForm = aForm + "<head> <title>Current Board</title> </head> <body> <div> Current Board<table> "
+	aForm = aForm + "<table> "
+    aForm = aForm + "<tr> <td> R,C </td> "
+    i = 0
+    while i < 15
+        aForm = aForm + "<td>#{i}</td>"
+    i += 1
+    end
        i = 0
+    aForm = aForm + "</tr> "
+
 	while i < 15
 			aForm = aForm + "<tr>"
+            aForm = aForm + "<td>#{i}</td>"
             j = 0
 			while j < 15
 				aForm = aForm + "<td"
@@ -40,15 +57,7 @@ aForm = aForm + "</tr></table> </div/"
 	end
 aForm = aForm + "</table></div>"
 
-aForm = aForm +  " <div> Current Tiles<table> <tr> "
-aForm = aForm + "<td> <input type = \"text\" size =\"1\" name =\"tile0\" value =\"#{$aGame.currentplayertileset[0]}\" </td> "
-aForm = aForm + "<td> <input type = \"text\" size =\"1\" name =\"tile1\" value =\"#{$aGame.currentplayertileset[1]}\" </td> "
-aForm = aForm + "<td> <input type = \"text\" size =\"1\" name =\"tile2\" value =\"#{$aGame.currentplayertileset[2]}\" </td> "
-aForm = aForm + "<td> <input type = \"text\" size =\"1\" name =\"tile3\" value =\"#{$aGame.currentplayertileset[3]}\" </td> "
-aForm = aForm + "<td> <input type = \"text\" size =\"1\" name =\"tile4\" value =\"#{$aGame.currentplayertileset[4]}\" </td> "
-aForm = aForm + "<td> <input type = \"text\" size =\"1\" name =\"tile5\" value =\"#{$aGame.currentplayertileset[5]}\" </td> "
-aForm = aForm + "<td> <input type = \"text\" size =\"1\" name =\"tile6\" value =\"#{$aGame.currentplayertileset[6]}\" </td> "
-aForm = aForm +  " </tr> </table> </div>"
+
 aForm = aForm  + "<div> <input type = \"submit\" value = \"Find Moves\" formaction = \"/resultsPvC\"/> </div> "
 aForm = aForm + "</body> </form> </html>"
 
