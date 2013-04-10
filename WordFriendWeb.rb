@@ -67,6 +67,39 @@ post '/startgamePvC' do  #this posts showgames from /usergames if PvC is chosen 
     erb:showArcaneUsergameboard #shows board after player1 w player2 tiles allowing player 2 to choose to showresults
 end
 
+post '/manualmovePvC' do #posted from showArcanUsergameboard
+    i=0
+    @posname = {}
+    while i < 15
+        j = 0
+        lhash = {}
+        while j < 15
+            lhash[j] = ":i" + i.to_s + "j" + j.to_s
+            j += 1
+        end
+        @posname[i] = lhash
+        i += 1
+    end
+    
+    @tilename = {}
+    i = 0
+    while i < 7
+        @tilename[i] = "tile" + i.to_s
+        i += 1
+    end
+    
+    @word = params["word"]
+    @xcoordinate = params["xcoordinate"]
+    @ycoordinate = params["ycoordinate"]
+    @direction = params["direction"]
+
+    aSW = ScrabbleWord.new(@word, @xcoordinate.to_i, @ycoordinate.to_i, @direction, 0, 0)
+    aSW.scoreword($aWordfriend.myboard)
+    $aGame.resetnewindicator
+    $aGame.placewordfromtiles(aSW)
+    erb:showupdatedPvC
+end
+
 post '/resultsPvC' do  #posted from showArcanUsergameboard
     i=0
     @posname = {}
