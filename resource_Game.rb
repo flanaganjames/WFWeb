@@ -1,5 +1,5 @@
 class Game
-    attr_accessor :currentplayer, :currentplayertileset, :scoreadd, :gameplayer1, :gameplayer2, :tilesall, :tilesremain, :tilesplayer1, :tilesplayer2, :scoreplayer1, :scoreplayer2
+    attr_accessor :currentplayer, :currentplayertileset, :scoreadd, :gameplayer1, :gameplayer2, :tilesall, :tilesremain, :tilesplayer1, :tilesplayer2, :scoreplayer1, :scoreplayer2, :gameuser, :gamefile, :newgame, :mode
     #tilesplayer1/2 is each a single string of the concatenated tiles
     require './resource_Wordfriend'
     
@@ -44,6 +44,13 @@ class Game
 
     end
     
+    def getusergame
+        $aWordfriend.getusergames
+        self.gamefile = "gamefile" #in this version, only one gamefile permitted
+        $aWordfriend.gamefile = self.gamefile
+        self.newgame = $aWordfriend.creategamefile #creates game file and fills it with '-' if it does not exist already and if so set newgame to "yes", else "no"
+    end
+    
     def choosereplacementtile
         if self.tilesremain.size > 0
             atile = self.tilesremain[rand(tilesremain.size)]
@@ -84,7 +91,7 @@ class Game
         self.currentplayer = 0
         self.tilesplayer1 = self.filltiles(self.tilesplayer1)
         self.tilesplayer2 = self.filltiles(self.tilesplayer2)
-        $aWordfriend.saveboard(self.tilesplayer1, self.tilesplayer2, $aGame.tilesremain)
+        $aWordfriend.saveboard(self.tilesplayer1, self.tilesplayer2, $aGame.tilesremain, $aGame.mode)
     end
     
     def revertPvC
@@ -111,12 +118,16 @@ class Game
         self.scoreplayer1 = scoreplayer1 + aSW.score + aSW.supplement
         self.currentplayertileset = self.tilesplayer2
     end
- 
-    def resumegame
+
+    def readgame
         anarray = $aWordfriend.readboard
         self.tilesplayer1 = anarray[0]
         self.tilesplayer2 = anarray[1]
         self.tilesremain = anarray[2]
+        self.mode = anarray[3]
+    end
+    
+    def resumegamePvC
         self.currentplayer = 0
         self.currentplayertileset = self.tilesplayer1
         $aWordfriend.updatevalues(self.currentplayertileset) #findSWs, tilepermutedset, $possiblewords(words w tiles and board), $tilewords (words w tiles only)
@@ -145,7 +156,7 @@ class Game
     end
     
     def nextmovePlayer1
-        $aWordfriend.saveboard($aGame.tilesplayer1,$aGame.tilesplayer2,$aGame.tilesremain) #saves board after player2 accepts move
+        $aWordfriend.saveboard($aGame.tilesplayer1,$aGame.tilesplayer2,$aGame.tilesremain, $aGame.mode) #saves board after player2 accepts move
         self.tilesplayer2 = self.currentplayertileset  #the move just reviewed in '/updated' is now accepted, the remaining tiles in currentplayertileset transferred to  tilesplater2
         self.scoreplayer2 = self.scoreplayer2 + self.scoreadd
         self.tilesplayer2 = $aGame.filltiles(self.tilesplayer2) #player2 just moved and used some tiles
@@ -162,7 +173,7 @@ class Game
         end
         self.currentplayertileset = self.tilesplayer2
         $aWordfriend.updatevalues(self.currentplayertileset)
-        $aWordfriend.saveboard($aGame.tilesplayer1,$aGame.tilesplayer2,$aGame.tilesremain) #saves board after player 1 moves
+        $aWordfriend.saveboard($aGame.tilesplayer1,$aGame.tilesplayer2,$aGame.tilesremain, $aGame.mode) #saves board after player 1 moves
     end
 
 end

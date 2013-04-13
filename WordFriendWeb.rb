@@ -3,7 +3,14 @@ require 'sinatra'
 require './resource_Wordfriend'
 require './resource_Game'
 
+# if game exists then ask if resume
+#if choose resume then start game in previously defined mode
+#if choose new then post /newgame which will show askmode.erb
 
+#if no game exists then show askmode.erb
+
+#askmode will either select PvC and start a new game PvC
+#or askmode will select PvP ans start a new game PvP
 
 get '/' do
     #$aWordfriend = Wordfriend.new
@@ -23,6 +30,61 @@ post '/' do
     erb:showwelcome
 end
 
+post '/usergame' do
+    if (params["ausername"] == '' || params["pin1"] == '' || params["pin2"] == '' || params["pin3"] == '' || params["pin4"] == '')
+        then
+        $aWordfriend.gameuser = ''
+        erb:showwarning
+        elsif params["pin1"] == params["pin2"] && params["pin3"] == params["pin4"] && params["pin2"] == params["pin3"]
+        $aWordfriend.gameuser = ''
+        erb:showwarning
+        else
+        $aGame.gameuser = params["ausername"] + params["pin1"] + params["pin2"] + params["pin3"] + params["pin4"]
+        $aWordfriend.gameuser = $aGame.gameuser
+        $aWordfriend.createuserdirectory #creates the user directory if it does not exist already
+        $aGame.getusergame
+        if ($aGame.newgame == "yes")
+            then
+            $aGame.newgame
+            erb:showaskmode
+            else
+            $aGame.newgame
+            erb:showaskresume
+        end
+    end
+end
+
+post '/resumegame' do  #this posts from askresume.erb
+    i= 0
+    @posname = {}
+    while i < 15
+        j = 0
+        lhash = {}
+        while j < 15
+            lhash[j] = ":i" + i.to_s + "j" + j.to_s
+            j += 1
+        end
+        @posname[i] = lhash
+        i += 1
+    end
+    
+    $aGame.readgame
+    if ($aGame.mode == "PlayerVsComputer")
+        $aGame.resumegamePvC
+        erb:showArcaneUsergameboard
+    else
+        $aGame.resumegamePvP
+        erb:showPvPgamebord
+    end
+end
+
+post '/newgame' do #this posts from askresume.erb
+    $aGame.newgame = "yes"
+    erb:showaskmode
+end
+
+
+#the following is used only in the "multigame" git version (user can have multiple games
 post '/usergames' do
     if (params["ausername"] == '' || params["pin1"] == '' || params["pin2"] == '' || params["pin3"] == '' || params["pin4"] == '')
     then
@@ -41,7 +103,7 @@ end
 
 #start of PvC_______________________________________________________
 
-post '/startgamePvC' do  #this posts showgames from /usergames if PvC is chosen and assumes the gameuser is identfied and for now assumes the gamefile is a new file
+post '/startgamePvC' do  #this posts from /askmode if PvC is chosen and assumes the gameuser is identfied and that the gamefile is a new file
     i= 0
     @posname = {}
     while i < 15
@@ -55,19 +117,13 @@ post '/startgamePvC' do  #this posts showgames from /usergames if PvC is chosen 
         i += 1
     end
     
-    @choice = params["choice"].sub('PvC ','')
-    $aWordfriend.gamefile = params["game#{@choice}"] 
-    
-    $aWordfriend.creategamefile #creates game file and fills it with '-' if it does not exist already
+    $aGame.mode = "PlayerVsComputer"
 
-    $aGame.gameplayer2 = $aWordfriend.gameuser
+    $aGame.gameplayer2 = $aGame.gameuser
     $aGame.gameplayer1 = "ArcaneWord"
 
-    if $aWordfriend.newgame== "yes"
-        $aGame.firstmove
-    else
-        $aGame.resumegame
-    end#tileword = tiles1, the computer player1 makes the first move, putting the first word on the board
+    $aGame.firstmove
+    #tileword = tiles1, the computer player1 makes the first move, putting the first word on the board
     erb:showArcaneUsergameboard #shows board after player1 w player2 tiles allowing player 2 to choose to showresults
 end
 

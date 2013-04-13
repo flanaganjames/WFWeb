@@ -562,15 +562,16 @@ class ScrabbleBoard
             end
                  
 		}
-        tiles1 = rows[self.dimension].sub('tiles1:','')
-        tiles2 = rows[self.dimension+1].sub('tiles2:','')
-        tilesr = rows[self.dimension+1].sub('tilesr:','')
-        return [tiles1, tiles2, tilesr]
+        tiles1 = rows[self.dimension].sub('tiles1: ','')
+        tiles2 = rows[self.dimension+1].sub('tiles2: ','')
+        tilesr = rows[self.dimension+2].sub('tilesr: ','')
+        mode = rows[self.dimension+3].sub('mode: ','')
+        return [tiles1, tiles2, tilesr, mode]
         afile.close
 	end
 
 	
-	def writeboard (afilename, tiles1, tiles2, tilesr)
+	def writeboard (afilename, tiles1, tiles2, tilesr, mode)
 		afile = File.open(afilename, "w")
 		i = 0
 		while i < self.dimension
@@ -583,9 +584,10 @@ class ScrabbleBoard
 			afile.puts(anarray.join())
 		i += 1
 		end
-        afile.puts('tiles1:'+tiles1)
-        afile.puts('tiles2:'+tiles2)
-        afile.puts('tilesr:'+tilesr)
+        afile.puts('tiles1: '+tiles1)
+        afile.puts('tiles2: '+tiles2)
+        afile.puts('tilesr: '+tilesr)
+        afile.puts('mode: '+mode)
 		afile.close
 	end
     

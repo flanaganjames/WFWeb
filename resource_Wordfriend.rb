@@ -51,8 +51,10 @@ class Wordfriend
         else
             self.newgame = "no"
         end
+        return self.newgame
     end
     
+
     def getusergames
 		self.usergames = []
         Dir.foreach("./Users/" + self.gameuser + "/") {|aFile|
@@ -67,8 +69,8 @@ class Wordfriend
         return tilesarray
     end
  
-    def saveboard(tiles1, tiles2, tilesr)
-        self.myboard.writeboard("./Users/" + self.gameuser + "/" + self.gamefile, tiles1, tiles2, tilesr)
+    def saveboard(tiles1, tiles2, tilesr, mode)
+        self.myboard.writeboard("./Users/" + self.gameuser + "/" + self.gamefile, tiles1, tiles2, tilesr, mode)
 	end
     
     def resetnewindicator

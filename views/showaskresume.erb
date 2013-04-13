@@ -1,0 +1,23 @@
+<%
+
+aForm = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">"
+
+aForm = aForm + " <form action=\"/board\" method=\"post\"> "
+aForm = aForm + "<html xmlns=\"http://www.w3.org/1999/xhtml\" lang=\"en\" xml:lang=\"en\"> "
+
+aForm = aForm + "<head> <title>Resume Game ?</title> </head> <body>"
+
+aForm = aForm + " <div> <table> "
+aForm = aForm + "<th>There is an existing game: Please choose</th>"
+aForm = aForm + "<tr>"
+aForm = aForm  + "<td> <input type = \"submit\" name=\"Resume Game\" value = \"Resume Game\" formaction = \"/resumegame\"/> </td> "
+aForm = aForm  + "<td> <input type = \"submit\" name=\"New Game\" value = \"Start New Game\" formaction = \"/newgame\"/> </td> "
+aForm = aForm + "</table></div>"
+
+aForm = aForm + "</body> </form> "
+
+aForm = aForm + "</html>"
+
+return aForm
+%>
+
