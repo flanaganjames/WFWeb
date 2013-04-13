@@ -1,5 +1,5 @@
 class Wordfriend
-	attr_accessor :myboard, :gameuser, :gamefile, :possiblewords, :usergames
+	attr_accessor :myboard, :gameuser, :gamefile, :possiblewords, :usergames, :newgame
     #these instance variables view the current user (user whose turn it is currently)
     #the board is the same, though out of phase as each turn occurs, and the tiles are different
     #see Class Game which supports two users - usually a user versus the computer
@@ -37,7 +37,8 @@ class Wordfriend
     def creategamefile #create the game file if it does not exist
         #        if !(File.exist?("./Users/" + self.gameuser + "/" + self.gamefile))
         if not(self.usergames.include? self.gamefile)
-            aFile = File.open("./Users/" + self.gameuser + "/" + self.gamefile + ".txt", "w")
+            self.newgame = "yes"
+            aFile = File.open("./Users/" + self.gameuser + "/" + self.gamefile, "w")
             i = 0
             while i < self.myboard.dimension
                aFile.puts("---------------")
@@ -47,25 +48,27 @@ class Wordfriend
             aFile.puts("-------")
             aFile.puts("-------")#for tilesremain
             aFile.close
+        else
+            self.newgame = "no"
         end
     end
     
     def getusergames
 		self.usergames = []
         Dir.foreach("./Users/" + self.gameuser + "/") {|aFile|
-            self.usergames.push(aFile.gsub(".txt", "")) if (aFile != "." && aFile != "..")
+            self.usergames.push(aFile.sub(".txt", "")) if (aFile != "." && aFile != "..")
         }
     
     end
     
     
     def readboard
-        tilesarray =self.myboard.readboard("./Users/" + self.gameuser + "/" + self.gamefile + ".txt")
+        tilesarray =self.myboard.readboard("./Users/" + self.gameuser + "/" + self.gamefile)
         return tilesarray
     end
  
     def saveboard(tiles1, tiles2, tilesr)
-        self.myboard.writeboard("./Users/" + self.gameuser + "/" + self.gamefile + ".txt", tiles1, tiles2, tilesr)
+        self.myboard.writeboard("./Users/" + self.gameuser + "/" + self.gamefile, tiles1, tiles2, tilesr)
 	end
     
     def resetnewindicator
@@ -92,13 +95,13 @@ class Wordfriend
         self.myboard.firstword
     end
     
-    def placewordfromtiles(aSW)
-        return self.myboard.placewordfromtiles(aSW)
+    def placewordfromtiles(aSW, fromtiles)
+        return self.myboard.placewordfromtiles(aSW, fromtiles)
     end
     
     # following to be deprecated
 	def RevertBoard
-		tilesets = self.readboard("Games/" + self.gamefile  + ".txt")
+		tilesets = self.readboard("Games/" + self.gamefile)
         $aGame.tilesplayer1 = tilesets[0]
         $aGame.tilesplayer2 = tilesets[1]
         $aGame.tilesremain = tilesets[2].scan('')

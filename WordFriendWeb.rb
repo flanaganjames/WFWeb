@@ -6,8 +6,8 @@ require './resource_Game'
 
 
 get '/' do
-    # $aWordfriend = Wordfriend.new
-    # $aWordfriend.initialvalues
+    #$aWordfriend = Wordfriend.new
+    #$aWordfriend.initialvalues
     $aGame = Game.new
     $aGame.initialvalues
     erb:showwelcome  #post /usergames
@@ -63,7 +63,11 @@ post '/startgamePvC' do  #this posts showgames from /usergames if PvC is chosen 
     $aGame.gameplayer2 = $aWordfriend.gameuser
     $aGame.gameplayer1 = "ArcaneWord"
 
-    $aGame.firstmove #tileword = tiles1, the computer player1 makes the first move, putting the first word on the board
+    if $aWordfriend.newgame== "yes"
+        $aGame.firstmove
+    else
+        $aGame.resumegame
+    end#tileword = tiles1, the computer player1 makes the first move, putting the first word on the board
     erb:showArcaneUsergameboard #shows board after player1 w player2 tiles allowing player 2 to choose to showresults
 end
 
@@ -299,7 +303,7 @@ post '/updated' do
     
     aSW = ScrabbleWord.new(@word, @xcoordinate.to_i, @ycoordinate.to_i, @direction, 0, 0)
     $aGame.resetnewindicator
-    $aWordfriend.myboard.placewordfromtiles(aSW)
+    $aGame.placewordfromtiles(aSW)
 
     erb:showupdated
 end

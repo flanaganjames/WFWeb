@@ -12,8 +12,8 @@ newi = $aWordfriend.usergames.size
 $aWordfriend.usergames.each_index {|i| agame = $aWordfriend.usergames[i]
 aForm = aForm + "<tr>"
 aForm = aForm + "<td> <input type = \"text\" name = \"game#{i}\" value =\"#{agame}\" size = \"20\"</td>" 
-aForm = aForm  + "<td> <input type = \"submit\" name=\"choice\" value = \"PvP #{i}\" formaction = \"/board\"/> </td> "
-aForm = aForm  + "<td> <input type = \"submit\" name=\"choice\" value = \"PvC #{i}\" formaction = \"/startgame\"/> </td> "
+aForm = aForm  + "<td> <input type = \"submit\" name=\"choice\" value = \"PvP #{i}\" formaction = \"/startgamePvP\"/> </td> "
+aForm = aForm  + "<td> <input type = \"submit\" name=\"choice\" value = \"PvC #{i}\" formaction = \"/startgamePvC\"/> </td> "
 }
 aForm = aForm + "<tr>"
 aForm = aForm + "<td> <input type = \"text\" name = \"game#{newi}\" value =\"\" size = \"20\"</td>"

@@ -783,8 +783,8 @@ class ScrabbleBoard
         end
     end
     
-def placewordfromtiles(aSW) #used to place a SW on board and deduct from newtileword, and sets which tiles are new on board; used by Game.firstword and by WFweb'/updated'
-        self.newtileword = self.tileword
+def placewordfromtiles(aSW, fromtiles) #used to place a SW on board and deduct from newtileword, and sets which tiles are new on board; used by Game.firstword and by WFweb'/updated'
+        self.newtileword = fromtiles
         case
         when aSW.direction == "right"
             i = 0

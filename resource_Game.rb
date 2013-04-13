@@ -41,6 +41,7 @@ class Game
         self.tilesplayer2 = ''
         $aWordfriend = Wordfriend.new
         $aWordfriend.initialvalues
+
     end
     
     def choosereplacementtile
@@ -104,11 +105,33 @@ class Game
             self.tilesplayer1 = self.replacealltiles(self.tilesplayer1)  #in case initial tiles generated no possible words, replace and try again.
             aSW = $aWordfriend.firstword
         end
-        self.tilesplayer1 = $aWordfriend.placewordfromtiles(aSW)
+        self.placewordfromtiles(aSW)
+        self.tilesplayer1 = self.currentplayertileset
         self.tilesplayer1 = $aGame.filltiles(self.tilesplayer1)
         self.scoreplayer1 = scoreplayer1 + aSW.score + aSW.supplement
         self.currentplayertileset = self.tilesplayer2
     end
+ 
+    def resumegame
+        anarray = $aWordfriend.readboard
+        self.tilesplayer1 = anarray[0]
+        self.tilesplayer2 = anarray[1]
+        self.tilesremain = anarray[2]
+        self.currentplayer = 0
+        self.currentplayertileset = self.tilesplayer1
+        $aWordfriend.updatevalues(self.currentplayertileset) #findSWs, tilepermutedset, $possiblewords(words w tiles and board), $tilewords (words w tiles only)
+        $aWordfriend.wordfind
+        aSW = $aWordfriend.possiblewords[0] #get the highest scoring result
+        if aSW
+            self.placewordfromtiles(aSW)
+            self.tilesplayer1 =  self.currentplayertileset
+            self.scoreplayer1 = scoreplayer1 + aSW.score + aSW.supplement
+            self.tilesplayer1 = self.filltiles(self.tilesplayer1)
+        end
+        self.currentplayertileset = self.tilesplayer2
+    end
+
+    
     
     def nextmovePlayer2
         self.currentplayertileset = self.tilesplayer2
@@ -117,11 +140,12 @@ class Game
     end
     
     def placewordfromtiles(aSW)
-        self.currentplayertileset = $aWordfriend.placewordfromtiles(aSW) #hold the remaining tiles in currentplayertileset
+        self.currentplayertileset = $aWordfriend.placewordfromtiles(aSW, self.currentplayertileset) #hold the remaining tiles in currentplayertileset
         self.scoreadd = aSW.score
     end
     
     def nextmovePlayer1
+        $aWordfriend.saveboard($aGame.tilesplayer1,$aGame.tilesplayer2,$aGame.tilesremain) #saves board after player2 accepts move
         self.tilesplayer2 = self.currentplayertileset  #the move just reviewed in '/updated' is now accepted, the remaining tiles in currentplayertileset transferred to  tilesplater2
         self.scoreplayer2 = self.scoreplayer2 + self.scoreadd
         self.tilesplayer2 = $aGame.filltiles(self.tilesplayer2) #player2 just moved and used some tiles
@@ -130,12 +154,15 @@ class Game
         $aWordfriend.updatevalues(self.currentplayertileset)
         $aWordfriend.wordfind
         aSW = $aWordfriend.possiblewords[0] #get the highest scoring result
-        self.tilesplayer1 =  $aWordfriend.placewordfromtiles(aSW) if aSW # put it on board if not nil
-        self.scoreplayer1 = scoreplayer1 + aSW.score + aSW.supplement
-        self.tilesplayer1 = self.filltiles(self.tilesplayer1)
+        if aSW
+            self.placewordfromtiles(aSW)
+            self.tilesplayer1 =  self.currentplayertileset
+            self.scoreplayer1 = scoreplayer1 + aSW.score + aSW.supplement
+            self.tilesplayer1 = self.filltiles(self.tilesplayer1)
+        end
         self.currentplayertileset = self.tilesplayer2
         $aWordfriend.updatevalues(self.currentplayertileset)
-        $aWordfriend.saveboard($aGame.tilesplayer1,$aGame.tilesplayer2,$aGame.tilesremain)
+        $aWordfriend.saveboard($aGame.tilesplayer1,$aGame.tilesplayer2,$aGame.tilesremain) #saves board after player 1 moves
     end
 
 end
