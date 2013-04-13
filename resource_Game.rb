@@ -91,7 +91,18 @@ class Game
         self.currentplayer = 0
         self.tilesplayer1 = self.filltiles(self.tilesplayer1)
         self.tilesplayer2 = self.filltiles(self.tilesplayer2)
-        $aWordfriend.saveboard(self.tilesplayer1, self.tilesplayer2, $aGame.tilesremain, $aGame.mode)
+        $aWordfriend.saveboard(self.tilesplayer1, self.tilesplayer2, $aGame.tilesremain, self.mode)
+    end
+    
+    def initializegameCheat
+        self.mode = "Cheat"
+        self.currentplayer = 1
+        self.tilesplayer2 = "-------"
+        $aGame.gameplayer2 = $aGame.gameuser
+        $aGame.gameplayer1 = "none"
+        self.currentplayertileset = self.tilesplayer2
+        $aWordfriend.updatevalues(self.currentplayertileset)
+        $aWordfriend.saveboard(self.tilesplayer1, self.tilesplayer2, $aGame.tilesremain, self.mode)
     end
     
     def revertPvC
@@ -142,7 +153,12 @@ class Game
         self.currentplayertileset = self.tilesplayer2
     end
 
-    
+    def resumegameCheat
+        self.currentplayer = 1
+        self.currentplayertileset = self.tilesplayer2
+        $aWordfriend.updatevalues(self.currentplayertileset) #findSWs, tilepermutedset, $possiblewords(words w tiles and board), $tilewords (words w tiles only)
+    end
+
     
     def nextmovePlayer2
         self.currentplayertileset = self.tilesplayer2

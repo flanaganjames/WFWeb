@@ -68,13 +68,20 @@ post '/resumegame' do  #this posts from askresume.erb
         i += 1
     end
     
+    @tilename = {}
+    i = 0
+    while i < 7
+        @tilename[i] = "tile" + i.to_s
+        i += 1
+    end
+    
     $aGame.readgame
     if ($aGame.mode == "PlayerVsComputer")
         $aGame.resumegamePvC
         erb:showArcaneUsergameboard
     else
-        $aGame.resumegamePvP
-        erb:showPvPgamebord
+        $aGame.resumegameCheat
+        erb:showCheatgamebord
     end
 end
 
@@ -249,13 +256,13 @@ post '/nextmovePlayer1' do   #posted from showupdatePvC
 end
 
 
-#start of PvP_____________________________________________________________________
+#start of Cheat________________________________________________________________
 
 get '/board' do
 "Direct access to the \"/board\" URL has been deprecated. Try going to the root (\"http://dry-brushlands-6613.herokuapp.com/\")"
 end
 
-post '/startgamePvP' do  #this posts showgames from /usergames if PvP is chosen and assumes the gameuser is identfied and allows gamefile to be existing or new file
+post '/startgameCheat' do  #this from showaskmode.erb if Cheat is chosen and assumes the gameuser is identfied and aassumes a new game
     i= 0
     @posname = {}
     while i < 15
@@ -269,15 +276,15 @@ post '/startgamePvP' do  #this posts showgames from /usergames if PvP is chosen 
         i += 1
     end
     
-    @choice = params["choice"].sub('PvP ','')
-    $aWordfriend.gamefile = params["game#{@choice}"] 
+    @tilename = {}
+    i = 0
+    while i < 7
+        @tilename[i] = "tile" + i.to_s
+        i += 1
+    end
     
-    $aWordfriend.creategamefile #creates game file and fills it with '-' if it does not exist already
-    
-    $aGame.gameplayer2 = $aWordfriend.gameuser
-    $aGame.gameplayer1 = "none"
-    
-    erb:showboard
+    $aGame.initializegameCheat
+    erb:showCheatgameboard
 end
 
 
