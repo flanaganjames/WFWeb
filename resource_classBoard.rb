@@ -798,8 +798,8 @@ def pushgrids
     while i < self.dimension
         j = 0
         while j < self.dimension
-            self.pushnewgrid[i][j] = self.newgrid[i][j]
-            self.pushlettergrid[i][j] = self.lettergrid[i][j]
+            self.pushnewgrid[i] = self.newgrid[i].dup
+            self.pushlettergrid[i] = self.lettergrid[i].dup
             j += 1
         end
         i += 1
@@ -811,8 +811,8 @@ def popgrids
     while i < self.dimension
         j = 0
         while j < self.dimension
-            self.newgrid[i][j] = self.pushnewgrid[i][j]
-            self.lettergrid[i][j] = self.pushlettergrid[i][j]
+            self.newgrid[i] = self.pushnewgrid[i].dup
+            self.lettergrid[i] = self.pushlettergrid[i].dup
             j += 1
         end
         i += 1
