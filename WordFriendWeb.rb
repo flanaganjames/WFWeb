@@ -162,8 +162,8 @@ post '/manualmovePvC' do #posted from showArcanUsergameboard
 
     aSW = ScrabbleWord.new(@word, @xcoordinate.to_i, @ycoordinate.to_i, @direction, 0, 0)
     aSW.scoreword($aWordfriend.myboard)
-    $aGame.resetnewindicator
-    $aGame.placewordfromtiles(aSW)
+    
+    $aGame.placewordfromtiles2(aSW)
     erb:showupdatedPvC
 end
 
@@ -195,7 +195,7 @@ end
 
 
 
-post '/updatedPvC' do  #posted from showresultsPvC
+post '/updatedPvC' do  #posted from showresultsPvC after manual move
     i=0
     @posname = {}
     while i < 15
@@ -224,14 +224,96 @@ post '/updatedPvC' do  #posted from showresultsPvC
     @score = params["score"+@choice.to_s]
     
     aSW = ScrabbleWord.new(@word, @xcoordinate.to_i, @ycoordinate.to_i, @direction, @score.to_i, 0)
-    $aGame.resetnewindicator
-    $aGame.placewordfromtiles(aSW)
+
+    $aGame.placewordfromtiles2(aSW)
     
     erb:showupdatedPvC
 end
 
+post '/updatedPvCFind' do  #posted from showresultsPvC after Find Moves
+    i=0
+    @posname = {}
+    while i < 15
+        j = 0
+        lhash = {}
+        while j < 15
+            lhash[j] = ":i" + i.to_s + "j" + j.to_s
+            j += 1
+        end
+        @posname[i] = lhash
+        i += 1
+    end
+    
+    @tilename = {}
+    i = 0
+    while i < 7
+        @tilename[i] = "tile" + i.to_s
+        i += 1
+    end
+    
+    @choice = params["choice"]
+    @word = params["word"+@choice.to_s]
+    @xcoordinate = params["xcoordinate"+@choice.to_s]
+    @ycoordinate = params["ycoordinate"+@choice.to_s]
+    @direction = params["direction"+@choice.to_s]
+    @score = params["score"+@choice.to_s]
+    
+    aSW = ScrabbleWord.new(@word, @xcoordinate.to_i, @ycoordinate.to_i, @direction, @score.to_i, 0)
+
+    $aGame.placewordfromtiles2(aSW)
+    
+    erb:showupdatedPvCFind
+end
+
+
 
 post '/revertPvC' do
+    i=0
+    @posname = {}
+    while i < 15
+        j = 0
+        lhash = {}
+        while j < 15
+            lhash[j] = ":i" + i.to_s + "j" + j.to_s
+            j += 1
+        end
+        @posname[i] = lhash
+        i += 1
+    end
+    
+    @tilename = {}
+    i = 0
+    while i < 7
+        @tilename[i] = "tile" + i.to_s
+        i += 1
+    end
+
+    $aGame.revertPvC
+    
+    erb:showArcaneUsergameboard
+end
+
+post '/revertPvCFind' do
+    i=0
+    @posname = {}
+    while i < 15
+        j = 0
+        lhash = {}
+        while j < 15
+            lhash[j] = ":i" + i.to_s + "j" + j.to_s
+            j += 1
+        end
+        @posname[i] = lhash
+        i += 1
+    end
+    
+    @tilename = {}
+    i = 0
+    while i < 7
+        @tilename[i] = "tile" + i.to_s
+        i += 1
+    end
+
     $aGame.revertPvC
     
     erb:showresultsPvC
@@ -288,11 +370,6 @@ post '/startgameCheat' do  #this from showaskmode.erb if Cheat is chosen and ass
 end
 
 
-post '/revert' do
-    anarray = $aWordfriend.RevertBoard
-
-    erb:showresults
-end
 
 post '/results' do
     i=0
@@ -365,8 +442,8 @@ post '/updated' do
     @score = params["score"+@choice.to_s]
     
     aSW = ScrabbleWord.new(@word, @xcoordinate.to_i, @ycoordinate.to_i, @direction, 0, 0)
-    $aGame.resetnewindicator
-    $aGame.placewordfromtiles(aSW)
+
+    $aGame.placewordfromtiles2(aSW)
 
     erb:showupdated
 end

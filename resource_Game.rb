@@ -1,5 +1,5 @@
 class Game
-    attr_accessor :currentplayer, :currentplayertileset, :scoreadd, :gameplayer1, :gameplayer2, :tilesall, :tilesremain, :tilesplayer1, :tilesplayer2, :scoreplayer1, :scoreplayer2, :gameuser, :gamefile, :newgame, :mode
+    attr_accessor :currentplayer, :currentplayertileset, :scoreadd, :gameplayer1, :gameplayer2, :tilesall, :tilesremain, :pushtilesremain, :tilesplayer1, :tilesplayer2, :pushtilesplayer2, :scoreplayer1, :scoreplayer2, :gameuser, :gamefile, :newgame, :mode
     #tilesplayer1/2 is each a single string of the concatenated tiles
     require './resource_Wordfriend'
     
@@ -106,7 +106,9 @@ class Game
     end
     
     def revertPvC
-        self.tilesremain = self.tilesremain + (self.tilesplayer2.scan('') - $aWordfriend.myboard.newtileword.scan(''))  #this adds the tiles used from newtileword back to tilesremain
+        self.tilesremain = self.pushtilesremain.dup
+        self.currentplayertileset = self.pushtilesplayer2.dup
+        $aWordfriend.revertboard
     end
     
     def resetnewindicator
@@ -167,6 +169,13 @@ class Game
     end
     
     def placewordfromtiles(aSW)
+        self.currentplayertileset = $aWordfriend.placewordfromtiles(aSW, self.currentplayertileset) #hold the remaining tiles in currentplayertileset
+        self.scoreadd = aSW.score
+    end
+    
+    def placewordfromtiles2(aSW)
+        self.pushtilesplayer2 = self.tilesplayer2.dup #in case of a revert
+        self.pushtilesremain = self.tilesremain.dup
         self.currentplayertileset = $aWordfriend.placewordfromtiles(aSW, self.currentplayertileset) #hold the remaining tiles in currentplayertileset
         self.scoreadd = aSW.score
     end

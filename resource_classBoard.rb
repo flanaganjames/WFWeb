@@ -1,11 +1,13 @@
 class ScrabbleBoard
-	attr_accessor :lettergrid, :tileword, :newtileword, :scoregrid, :newgrid, :dimension, :lettervalues, :boardSWs, :boardLetters
+	attr_accessor :lettergrid, :pushlettergrid, :tileword, :newtileword, :scoregrid, :newgrid, :pushnewgrid, :dimension, :lettervalues, :boardSWs, :boardLetters
 	
 	
 	def initialvalues #this method fills the letter grid array dimension x dimension with nil, the scoregrid with 1s except as defined
 		self.dimension = 15
 		self.lettergrid = {}
         self.newgrid = {}
+        self.pushlettergrid = {}
+        self.pushnewgrid = {}
 		self.scoregrid = []
 		self.boardLetters = []
 		self.lettervalues = {'a' => 1, 'b' => 4, 'c' => 4, 'd' => 2, 'e' => 1, 'f' => 4, 'g' => 3, 'h' => 3, 
@@ -26,6 +28,8 @@ class ScrabbleBoard
 			self.lettergrid[i] = lhash
 			self.scoregrid[i] = shash
             self.newgrid[i] = nhash
+            self.pushlettergrid[i] = lhash
+            self.pushnewgrid[i] = nhash
 			i += 1
 		end
         self.readscores("SWscoreResource.txt")
@@ -784,8 +788,40 @@ class ScrabbleBoard
             else return nil
         end
     end
-    
+
+def revertboard
+    self.popgrids
+end
+
+def pushgrids
+    i = 0
+    while i < self.dimension
+        j = 0
+        while j < self.dimension
+            self.pushnewgrid[i][j] = self.newgrid[i][j]
+            self.pushlettergrid[i][j] = self.lettergrid[i][j]
+            j += 1
+        end
+        i += 1
+    end
+end
+
+def popgrids
+    i = 0
+    while i < self.dimension
+        j = 0
+        while j < self.dimension
+            self.newgrid[i][j] = self.pushnewgrid[i][j]
+            self.lettergrid[i][j] = self.pushlettergrid[i][j]
+            j += 1
+        end
+        i += 1
+    end
+end
+
 def placewordfromtiles(aSW, fromtiles) #used to place a SW on board and deduct from newtileword, and sets which tiles are new on board; used by Game.firstword and by WFweb'/updated'
+        self.pushgrids #holds the newgrid and lettergrid in case of an undo
+        self.resetnewindicator
         self.newtileword = fromtiles
         case
         when aSW.direction == "right"
@@ -793,7 +829,7 @@ def placewordfromtiles(aSW, fromtiles) #used to place a SW on board and deduct f
             while i < aSW.astring.length
                 if self.lettergrid[aSW.xcoordinate][aSW.ycoordinate + i] == '-'
                     then
-                    self.lettergrid[aSW.xcoordinate][aSW.ycoordinate + i] = aSW.astring[i]
+                    self.lettergrid[aSW.xcoordinate][aSW.ycoordinate + i] = aSW.astring[i].dup
                     self.newtileword = self.newtileword.sub(aSW.astring[i],'')
                 end
                 self.newgrid[aSW.xcoordinate][aSW.ycoordinate + i] = 'n'
@@ -804,7 +840,7 @@ def placewordfromtiles(aSW, fromtiles) #used to place a SW on board and deduct f
             while i < aSW.astring.length
                 if self.lettergrid[aSW.xcoordinate + i][aSW.ycoordinate] == '-'
                     then
-                    self.lettergrid[aSW.xcoordinate + i][aSW.ycoordinate] = aSW.astring[i]
+                    self.lettergrid[aSW.xcoordinate + i][aSW.ycoordinate] = aSW.astring[i].dup
                     self.newtileword = self.newtileword.sub(aSW.astring[i],'')
                 end
                 $aWordfriend.myboard.newgrid[aSW.xcoordinate + i][aSW.ycoordinate] = 'n'

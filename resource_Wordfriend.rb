@@ -101,17 +101,9 @@ class Wordfriend
         return self.myboard.placewordfromtiles(aSW, fromtiles)
     end
     
-    # following to be deprecated
-	def RevertBoard
-		tilesets = self.readboard("Games/" + self.gamefile)
-        $aGame.tilesplayer1 = tilesets[0]
-        $aGame.tilesplayer2 = tilesets[1]
-        $aGame.tilesremain = tilesets[2].scan('')
-        aWordfriend.myboard.resetnewindicator
-        self.myboard.tileword = $aGame.tilesplayer2
-        $tiles = self.myboard.tileword
-        $tilepermutedset = self.myboard.tileword.permutedset
-        $tilewords = $tilepermutedset.select {|astring| astring.isaword}
+
+	def revertboard
+        self.myboard.revertboard
 	end
 
     def wordfind
