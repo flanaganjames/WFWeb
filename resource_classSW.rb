@@ -13,6 +13,23 @@ class ScrabbleWord
 	def print (source)
 		puts "#{source}>  #{self.astring}, x=#{self.xcoordinate}, y=#{self.ycoordinate}, dirx: #{self.direction}, score: #{self.score}, suppl: #{self.supplement}, total: #{self.score + self.supplement}"
 	end
+    
+    def coordinatesused  #returns array of coordinates covered by aSW
+        array = []
+        case
+        when self.direction == 'right'
+            i = 0
+            while i < self.astring.length
+                array.push(self.xcoordinate, self.ycoordinate + i)
+            end
+        when self.direction == 'down'
+            i = 0
+            while i < self.astring.length
+                array.push(self.xcoordinate + i, self.ycoordinate)
+            end
+        end
+        return array
+    end
 	
 	def wordfindcontains
 	possibles = []

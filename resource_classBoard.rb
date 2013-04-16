@@ -1,5 +1,5 @@
 class ScrabbleBoard
-	attr_accessor :lettergrid, :pushlettergrid, :tileword, :newtileword, :scoregrid, :newgrid, :pushnewgrid, :dimension, :lettervalues, :boardSWs, :boardLetters
+	attr_accessor :lettergrid, :pushlettergrid, :tileword, :newtileword, :scoregrid, :newgrid, :pushnewgrid, :dimension, :lettervalues, :boardSWs, :boardLetters, :boardcoordinatesused
 	
 	
 	def initialvalues #this method fills the letter grid array dimension x dimension with nil, the scoregrid with 1s except as defined
@@ -10,6 +10,7 @@ class ScrabbleBoard
         self.pushnewgrid = {}
 		self.scoregrid = []
 		self.boardLetters = []
+        self.boardcooridnatesused = {}
 		self.lettervalues = {'a' => 1, 'b' => 4, 'c' => 4, 'd' => 2, 'e' => 1, 'f' => 4, 'g' => 3, 'h' => 3, 
 		'i' => 1, 'j' => 1, 'k' => 5, 'l' => 2, 'm' => 4, 'n' => 2, 'o' => 1, 'p' => 4, 'q' => 10, 'r' => 1, 
 		's' => 1, 't' => 1, 'u' => 2, 'v' => 5, 'w' => 4, 'x' => 8, 'y' => 3, 'z' => 10,}
@@ -750,6 +751,13 @@ class ScrabbleBoard
 		i += 1
 		end
 	end
+
+    def findcoordinatesused
+        self.boardSWs.each {|aSW|
+            aSW.coordinatesused.each {|acoordinate| self.boardcoordinatesused[acoordinate] = 'true'}
+        }
+
+    end
 	
 	def findPossibleWords #finds all words that can be made with tiles plus one of the letters on the board
 		allpossiblewords = []

@@ -87,6 +87,7 @@ class Wordfriend
         self.myboard.tileword = aplayertileset
         self.myboard.findBoardSWs
 		self.myboard.findBoardLetters
+        self.myboard.findcoordinatesused
         $tiles = self.myboard.tileword
 		$tilepermutedset = self.myboard.tileword.permutedset
 		$tilewords = self.myboard.findPossibleTileWords #words that can be made with the tiles
@@ -106,6 +107,22 @@ class Wordfriend
         self.myboard.revertboard
 	end
 
+    def manualwordtest(aSW) #this tests a proposed move for validity:
+        # must be a valid word (is a valid key in a hash called $words (method in resource_methods) AND
+        # must cross (intersect) of be adjacent to an existing word  AND
+        # must not generate any invalid words in line with itself or orthogonal to itself
+        status = 'true'
+        status = aSW.string.isaword  #returns nil if not a word
+        status = self.usesvalidmovecoordinates(aSW) #returns nil if does not cross (intersect) of be adjacent to an existing word
+        status = self.myboard.testwordsgeninline(aSW) #updates score or supplement or returns nil
+        status = self.myboard.testwordsgenortho(aSW) #updates score or supplement or returns nil
+        return status
+    end
+    
+    def usesvalidmovecoordinates(aSW)
+    
+    end
+    
     def wordfind
         #        require './resource_methodsOO'
         #        require './resource_classSW'
