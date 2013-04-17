@@ -5,9 +5,8 @@ puts "hello from showupdatedPvC"
 aForm = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">"
 aForm = aForm + " <form action=\"/results\" method=\"post\"> "
 aForm = aForm + "<html xmlns=\"http://www.w3.org/1999/xhtml\" lang=\"en\" xml:lang=\"en\"> "
-aForm = aForm + "<head> <title>Updated Board</title> </head> <body> <div> <table> "
+aForm = aForm + "<head> <style> .jander2 {font-weight: bold;} </style> <title>Updated Board</title> </head> <body> "
 
-aForm = aForm + "</table></div>"
 aForm = aForm + " <div> <table> <tr>"
 aForm = aForm + "<td> Scores: </td> "
 aForm = aForm + "<td> Computer  </td>"
@@ -21,7 +20,7 @@ aForm = aForm + "</tr></table> </div/"
 aForm = aForm +  " <div> <table> <tr> <td> Tiles If Move Accepted </td>"
 i = 0
 while i < 7
-    aForm = aForm + "<td> <input type = \"text\" size =\"1\" name =\"tile#{i}\" value =\"#{$aGame.currentplayertileset[i]}\" </td> "
+    aForm = aForm + "<td> <input type = \"text\" disabled=\"disabled\" size =\"1\" name =\"tile#{i}\" value =\"#{$aGame.currentplayertileset[i]}\" </td> "
     i += 1
 end
 aForm = aForm  + "<td> <input type = \"submit\" value = \"Undo\" formaction = \"/revertPvCFind\"/> </td>"
@@ -47,9 +46,21 @@ aForm = aForm + "</tr> "
 		while j < 15
 			aForm = aForm + "<td"
             aForm = aForm + " bgcolor=#00FF00" if ($aWordfriend.myboard.newgrid[i][j] == 'n')
+            aForm = aForm + " bgcolor=#000000" if ($aWordfriend.myboard.lettergrid[i][j] != '-')
             aForm = aForm + ">"
-            aForm = aForm + "<input type = \"text\""
-            aForm = aForm + " value =\"#{$aWordfriend.myboard.lettergrid[i][j]}\""
+            aForm = aForm + "<input type = \"text\" class=\"jander2\" disabled=\"disabled\" "
+
+                if $aWordfriend.myboard.lettergrid[i][j] == '-' && $aWordfriend.myboard.scoregrid[i][j] == 'W'
+                    aForm = aForm + " placeholder =\"tw\""
+                elsif $aWordfriend.myboard.lettergrid[i][j] == '-' && $aWordfriend.myboard.scoregrid[i][j] == 'w'
+                    aForm = aForm + " placeholder =\"dw\""
+                elsif $aWordfriend.myboard.lettergrid[i][j] == '-' && $aWordfriend.myboard.scoregrid[i][j] == 'L'
+                    aForm = aForm + " placeholder =\"tl\""
+                elsif $aWordfriend.myboard.lettergrid[i][j] == '-' && $aWordfriend.myboard.scoregrid[i][j] == 'l'
+                    aForm = aForm + " placeholder =\"dl\""
+                else aForm = aForm + " value =\"#{$aWordfriend.myboard.lettergrid[i][j]}\""
+                end
+
             aForm = aForm + " size =\"1\" name =\"#{@posname[i][j]}\""
             j += 1
             aForm = aForm + " </td>"
