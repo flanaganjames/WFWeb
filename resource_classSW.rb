@@ -193,7 +193,9 @@ class ScrabbleWord
 			end
 			
 			case			
-			when gridvalue == "."
+            when gridvalue == "" #scoregrid is set to "" if a '*' character used on lettergrid
+                #no addition to the score in this case
+            when gridvalue == "."
 				ascore = ascore + myboard.lettervalues[self.astring[i]]
 			when gridvalue == "l"
 				if occupied =="false" 
