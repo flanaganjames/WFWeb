@@ -114,7 +114,7 @@ class Wordfriend
         # must not generate any invalid words in line with itself or orthogonal to itself
         status = nil
         return status if not(aSW.astring.isaword)  #returns nil if not a word
-        #return status if not(self.usesvalidmovecoordinates(aSW)) #returns nil if does not cross (intersect) of be adjacent to an existing word
+        return status if not(self.usesvalidmovecoordinates(aSW)) #returns nil if does not cross (intersect) of be adjacent to an existing word
         return status if not(self.myboard.testwordsgeninline(aSW)) #updates score or supplement or returns nil
         return status if not(self.myboard.testwordsgenortho(aSW)) #updates score or supplement or returns nil
         status = 'true'
