@@ -79,7 +79,7 @@ post '/resumegame' do  #this posts from askresume.erb
     if ($aGame.mode == "PlayerVsComputer")
         $aGame.resumegamePvC
         erb:showArcaneUsergameboard
-    else
+        else
         $aGame.resumegameCheat
         erb:showCheatgamebord
     end
@@ -94,13 +94,13 @@ end
 #the following is used only in the "multigame" git version (user can have multiple games
 post '/usergames' do
     if (params["ausername"] == '' || params["pin1"] == '' || params["pin2"] == '' || params["pin3"] == '' || params["pin4"] == '')
-    then
+        then
         $aWordfriend.gameuser = ''
         erb:showwarning
-    elsif params["pin1"] == params["pin2"] && params["pin3"] == params["pin4"] && params["pin2"] == params["pin3"]
+        elsif params["pin1"] == params["pin2"] && params["pin3"] == params["pin4"] && params["pin2"] == params["pin3"]
         $aWordfriend.gameuser = ''
         erb:showwarning
-    else
+        else
         $aWordfriend.gameuser = params["ausername"] + params["pin1"] + params["pin2"] + params["pin3"] + params["pin4"]
         $aWordfriend.createuserdirectory #creates the user directory if it does not exist already
         $aWordfriend.getusergames
@@ -125,10 +125,10 @@ post '/startgamePvC' do  #this posts from /askmode if PvC is chosen and assumes 
     end
     
     $aGame.mode = "PlayerVsComputer"
-
+    
     $aGame.gameplayer2 = $aGame.gameuser
     $aGame.gameplayer1 = "ArcaneWord"
-
+    
     $aGame.firstmove
     #tileword = tiles1, the computer player1 makes the first move, putting the first word on the board
     erb:showArcaneUsergameboard #shows board after player1 w player2 tiles allowing player 2 to choose to showresults
@@ -161,10 +161,19 @@ post '/manualmovePvC' do #posted from showArcanUsergameboard
     @direction = params["direction"]
 
     aSW = ScrabbleWord.new(@word, @xcoordinate.to_i, @ycoordinate.to_i, @direction, 0, 0)
-    aSW.scoreword($aWordfriend.myboard)
-    
-    $aGame.placewordfromtiles2(aSW)
-    erb:showupdatedPvC
+    status = $aWordfriend.manualwordtest(aSW)
+    #puts "status = #{status}"
+    #puts "hello if true" if status
+    #puts "hello if nil" if not(status)
+    if (status)
+        then
+            aSW.scoreword($aWordfriend.myboard)
+            $aGame.placewordfromtiles2(aSW)
+            erb:showupdatedPvC
+        else
+            aSW.scoreword($aWordfriend.myboard)
+            erb:showinvalidmove
+    end
 end
 
 post '/resultsPvC' do  #posted from showArcanUsergameboard

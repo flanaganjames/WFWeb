@@ -1,5 +1,5 @@
 class ScrabbleBoard
-	attr_accessor :lettergrid, :pushlettergrid, :tileword, :newtileword, :scoregrid, :newgrid, :pushnewgrid, :dimension, :lettervalues, :boardSWs, :boardLetters, :boardcoordinatesused
+	attr_accessor :lettergrid, :pushlettergrid, :tileword, :newtileword, :scoregrid, :newgrid, :pushnewgrid, :dimension, :lettervalues, :boardSWs, :boardLetters, :boardcoordinatesusable, :blankparallelpositions
 	
 	
 	def initialvalues #this method fills the letter grid array dimension x dimension with nil, the scoregrid with 1s except as defined
@@ -10,7 +10,8 @@ class ScrabbleBoard
         self.pushnewgrid = {}
 		self.scoregrid = []
 		self.boardLetters = []
-        self.boardcooridnatesused = {}
+        self.boardcoordinatesusable = {}
+        self.blankparallelpositions = []
 		self.lettervalues = {'a' => 1, 'b' => 4, 'c' => 4, 'd' => 2, 'e' => 1, 'f' => 4, 'g' => 3, 'h' => 3, 
 		'i' => 1, 'j' => 1, 'k' => 5, 'l' => 2, 'm' => 4, 'n' => 2, 'o' => 1, 'p' => 4, 'q' => 10, 'r' => 1, 
 		's' => 1, 't' => 1, 'u' => 2, 'v' => 5, 'w' => 4, 'x' => 8, 'y' => 3, 'z' => 10,}
@@ -67,7 +68,6 @@ class ScrabbleBoard
     end
 
 	def findblankparallelpositions #find all blank positions where a tileword could be placed - in any register -; note a coordinate is a triple: x, y,, direction
-		coordinates = []
 		currentSWs = self.boardSWs
 		currentSWs.each { |aSW|
 			case
@@ -79,7 +79,9 @@ class ScrabbleBoard
 						if (x > -1)  #if a valid coordinate
 						then	
 							if self.lettergrid[x][y] == '-'
-								then coordinates << [x, y, "right"]
+								then
+                                self.blankparallelpositions << [x, y, "right"]
+                                self.boardcoordinatesusable[[x,y]] = 'true'
 							end
 						end		
 						x = aSW.xcoordinate + 1
@@ -87,7 +89,9 @@ class ScrabbleBoard
 						if (x < (self.dimension)) #if a valid coordinate
 						then	
 							if self.lettergrid[x][y] == '-'
-								then coordinates << [x, y, "right"]
+								then
+                                self.blankparallelpositions << [x, y, "right"]
+                                self.boardcoordinatesusable[[x,y]] = 'true'
 							end
 						end
 					i += 1
@@ -101,7 +105,9 @@ class ScrabbleBoard
 						if (y > -1) #if a valid coordinate
 						then
 							if self.lettergrid[x][y] == '-'
-							then coordinates << [x, y, "down"]
+							then
+                                self.blankparallelpositions << [x, y, "down"]
+                                self.boardcoordinatesusable[[x,y]] = 'true'
 							end
 						end		
 						x = aSW.xcoordinate + i
@@ -109,14 +115,16 @@ class ScrabbleBoard
 						if (y < (self.dimension)) #if a valid coordinate
 						then
 							if self.lettergrid[x][y] == '-'
-							then coordinates << [x, y, "down"]
+							then
+                                self.blankparallelpositions << [x, y, "down"]
+                                self.boardcoordinatesusable[[x,y]] = 'true'
 							end
 						end
 					i += 1
 					end
 			end
 			}
-		return coordinates
+		
 	end
 	
 	def placetilewords (tilewords, coordinates) #return possibleSWs formed by placing each tileword in every blankposition in every register as long as the SW does not cover a non-empty grid location with a different letter
@@ -752,9 +760,9 @@ class ScrabbleBoard
 		end
 	end
 
-    def findcoordinatesused
+    def findcoordinatesusable
         self.boardSWs.each {|aSW|
-            aSW.coordinatesused.each {|acoordinate| self.boardcoordinatesused[acoordinate] = 'true'}
+            aSW.coordinatesused.each {|acoordinate| self.boardcoordinatesusable[acoordinate] = 'true'}
         }
 
     end

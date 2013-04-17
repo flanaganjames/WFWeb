@@ -87,7 +87,8 @@ class Wordfriend
         self.myboard.tileword = aplayertileset
         self.myboard.findBoardSWs
 		self.myboard.findBoardLetters
-        self.myboard.findcoordinatesused
+        self.myboard.findcoordinatesusable
+        self.myboard.findblankparallelpositions
         $tiles = self.myboard.tileword
 		$tilepermutedset = self.myboard.tileword.permutedset
 		$tilewords = self.myboard.findPossibleTileWords #words that can be made with the tiles
@@ -111,16 +112,32 @@ class Wordfriend
         # must be a valid word (is a valid key in a hash called $words (method in resource_methods) AND
         # must cross (intersect) of be adjacent to an existing word  AND
         # must not generate any invalid words in line with itself or orthogonal to itself
+        status = nil
+        return status if not(aSW.astring.isaword)  #returns nil if not a word
+        #return status if not(self.usesvalidmovecoordinates(aSW)) #returns nil if does not cross (intersect) of be adjacent to an existing word
+        return status if not(self.myboard.testwordsgeninline(aSW)) #updates score or supplement or returns nil
+        return status if not(self.myboard.testwordsgenortho(aSW)) #updates score or supplement or returns nil
         status = 'true'
-        status = aSW.string.isaword  #returns nil if not a word
-        status = self.usesvalidmovecoordinates(aSW) #returns nil if does not cross (intersect) of be adjacent to an existing word
-        status = self.myboard.testwordsgeninline(aSW) #updates score or supplement or returns nil
-        status = self.myboard.testwordsgenortho(aSW) #updates score or supplement or returns nil
         return status
     end
     
-    def usesvalidmovecoordinates(aSW)
-    
+    def usesvalidmovecoordinates(aSW) #checks myboard.boardcoordinatesusable to see if at least one of them is used by aSW
+        status = nil
+        case
+        when aSW.direction == 'right'
+            i = 0
+            while i < aSW.astring.length
+            status = 'true' if self.myboard.boardcoordinatesusable[[aSW.xcoordinate, aSW.ycoordinate + i]]
+                i += 1
+            end
+        when aSW.direction == 'down'
+            i = 0
+            while i < aSW.astring.length
+                status = 'true' if self.myboard.boardcoordinatesusable[[aSW.xcoordinate + i, aSW.ycoordinate]]
+                i += 1
+            end
+        end
+        return status 
     end
     
     def wordfind
@@ -139,8 +156,8 @@ class Wordfriend
         #ensuring that it does not replace an already filled positions with a different letter.
         #this does not account for trying words that can be created by combining tile letters with already placed letters -this happens below
         
-        coordinates = self.myboard.findblankparallelpositions
-        possibles = self.myboard.placetilewords($tilewords, coordinates)
+        
+        possibles = self.myboard.placetilewords($tilewords, self.myboard.blankparallelpositions)
         possibles = possibles.uniqSWs
         possibles = possibles.select {|possible|self.myboard.testwordsgeninline(possible)}
         possibles = possibles.select {|possible| self.myboard.testwordsgenortho(possible)}

@@ -20,12 +20,14 @@ class ScrabbleWord
         when self.direction == 'right'
             i = 0
             while i < self.astring.length
-                array.push(self.xcoordinate, self.ycoordinate + i)
+                array.push([self.xcoordinate, self.ycoordinate + i])
+                i += 1
             end
         when self.direction == 'down'
             i = 0
             while i < self.astring.length
-                array.push(self.xcoordinate + i, self.ycoordinate)
+                array.push([self.xcoordinate + i, self.ycoordinate])
+                i += 1
             end
         end
         return array

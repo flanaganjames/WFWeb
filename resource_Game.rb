@@ -177,7 +177,8 @@ class Game
         self.pushtilesplayer2 = self.tilesplayer2.dup #in case of a revert
         self.pushtilesremain = self.tilesremain.dup
         self.currentplayertileset = $aWordfriend.placewordfromtiles(aSW, self.currentplayertileset) #hold the remaining tiles in currentplayertileset
-        self.scoreadd = aSW.score
+        self.scoreadd = aSW.score + aSW.supplement
+        puts "aSW.supplement = #{aSW.supplement}"
     end
     
     def nextmovePlayer1
