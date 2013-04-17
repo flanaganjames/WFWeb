@@ -161,6 +161,7 @@ post '/manualmovePvC' do #posted from showArcanUsergameboard
     @direction = params["direction"]
 
     aSW = ScrabbleWord.new(@word, @xcoordinate.to_i, @ycoordinate.to_i, @direction, 0, 0)
+    $aWordfriend.updatevalues($aGame.tilesplayer2)
     status = $aWordfriend.manualwordtest(aSW)
     #puts "status = #{status}"
     #puts "hello if true" if status

@@ -1,5 +1,5 @@
 class ScrabbleBoard
-	attr_accessor :lettergrid, :pushlettergrid, :tileword, :newtileword, :scoregrid, :newgrid, :pushnewgrid, :dimension, :lettervalues, :boardSWs, :boardLetters, :boardcoordinatesusable, :blankparallelpositions
+	attr_accessor :lettergrid, :pushlettergrid, :tileword, :newtileword, :scoregrid, :newgrid, :pushnewgrid, :dimension, :lettervalues, :boardSWs, :boardLetters, :blankcoordinatesusable, :blankparallelpositions, :filledcoordinatesusable
 	
 	
 	def initialvalues #this method fills the letter grid array dimension x dimension with nil, the scoregrid with 1s except as defined
@@ -10,7 +10,8 @@ class ScrabbleBoard
         self.pushnewgrid = {}
 		self.scoregrid = []
 		self.boardLetters = []
-        self.boardcoordinatesusable = {}
+        self.filledcoordinatesusable = []
+        self.blankcoordinatesusable = []
         self.blankparallelpositions = []
 		self.lettervalues = {'a' => 1, 'b' => 4, 'c' => 4, 'd' => 2, 'e' => 1, 'f' => 4, 'g' => 3, 'h' => 3, 
 		'i' => 1, 'j' => 1, 'k' => 5, 'l' => 2, 'm' => 4, 'n' => 2, 'o' => 1, 'p' => 4, 'q' => 10, 'r' => 1, 
@@ -68,7 +69,8 @@ class ScrabbleBoard
     end
 
 	def findblankparallelpositions #find all blank positions where a tileword could be placed - in any register -; note a coordinate is a triple: x, y,, direction
-		currentSWs = self.boardSWs
+		self.blankcoordinatesusable = []
+        currentSWs = self.boardSWs
 		currentSWs.each { |aSW|
 			case
 			when aSW.direction == "right"
@@ -81,7 +83,7 @@ class ScrabbleBoard
 							if self.lettergrid[x][y] == '-'
 								then
                                 self.blankparallelpositions << [x, y, "right"]
-                                self.boardcoordinatesusable[[x,y]] = 'true'
+                                self.blankcoordinatesusable << [x,y]
 							end
 						end		
 						x = aSW.xcoordinate + 1
@@ -91,7 +93,7 @@ class ScrabbleBoard
 							if self.lettergrid[x][y] == '-'
 								then
                                 self.blankparallelpositions << [x, y, "right"]
-                                self.boardcoordinatesusable[[x,y]] = 'true'
+                                self.blankcoordinatesusable << [x,y]
 							end
 						end
 					i += 1
@@ -107,7 +109,7 @@ class ScrabbleBoard
 							if self.lettergrid[x][y] == '-'
 							then
                                 self.blankparallelpositions << [x, y, "down"]
-                                self.boardcoordinatesusable[[x,y]] = 'true'
+                                self.blankcoordinatesusable << [x,y]
 							end
 						end		
 						x = aSW.xcoordinate + i
@@ -117,7 +119,7 @@ class ScrabbleBoard
 							if self.lettergrid[x][y] == '-'
 							then
                                 self.blankparallelpositions << [x, y, "down"]
-                                self.boardcoordinatesusable[[x,y]] = 'true'
+                                self.blankcoordinatesusable << [x,y]
 							end
 						end
 					i += 1
@@ -761,8 +763,9 @@ class ScrabbleBoard
 	end
 
     def findcoordinatesusable
+        self.filledcoordinatesusable = []
         self.boardSWs.each {|aSW|
-            aSW.coordinatesused.each {|acoordinate| self.boardcoordinatesusable[acoordinate] = 'true'}
+            aSW.coordinatesused.each {|acoordinate| self.filledcoordinatesusable << acoordinate}
         }
 
     end
@@ -864,8 +867,35 @@ def placewordfromtiles(aSW, fromtiles) #used to place a SW on board and deduct f
             end	
         end
     return self.newtileword
-    end
+end
     
+def couldplacewordfromtiles(aSW, fromtiles) #used to check whether one could place a SW on board with the fromtiles and without changing any letter on the board. Returns nil if invalid move.
+    remainingtileword = fromtiles
+    status = 'true'
+    case
+        when aSW.direction == "right"
+        i = 0
+        while i < aSW.astring.length
+            if (self.lettergrid[aSW.xcoordinate][aSW.ycoordinate + i] == '-') && (remainingtileword.include?aSW.astring[i])
+                remainingtileword= remainingtileword.sub(aSW.astring[i],'')
+            elsif (self.lettergrid[aSW.xcoordinate][aSW.ycoordinate + i] == aSW.astring[i])
+            else status = nil
+            end
+            i += 1
+        end
+        when aSW.direction == "down"
+        i = 0
+        while i < aSW.astring.length
+            if (self.lettergrid[aSW.xcoordinate + i][aSW.ycoordinate] == '-') && (remainingtileword.include?aSW.astring[i])
+                remainingtileword= remainingtileword.sub(aSW.astring[i],'')
+            elsif (self.lettergrid[aSW.xcoordinate + i][aSW.ycoordinate] == aSW.astring[i])
+            else status = nil
+            end
+            i += 1
+        end
+    end
+    return status
+end
 
 end
 

@@ -87,12 +87,12 @@ class Wordfriend
         self.myboard.tileword = aplayertileset
         self.myboard.findBoardSWs
 		self.myboard.findBoardLetters
-        self.myboard.findcoordinatesusable
-        self.myboard.findblankparallelpositions
+        self.myboard.findcoordinatesusable #finds filled coordinates usable
+        self.myboard.findblankparallelpositions #also finds and blank coordinates usable
         $tiles = self.myboard.tileword
 		$tilepermutedset = self.myboard.tileword.permutedset
 		$tilewords = self.myboard.findPossibleTileWords #words that can be made with the tiles
-		$possibleWords = self.myboard.findPossibleWords#finds all words that can be made with tiles plus one of the letters on the board
+		$possibleWords = self.myboard.findPossibleWords#finds all words that can be made with tiles plus one of the letters on the board, or with tiles and any one or two of the BoardSWs
     end
     
     def firstword
@@ -112,28 +112,38 @@ class Wordfriend
         # must be a valid word (is a valid key in a hash called $words (method in resource_methods) AND
         # must cross (intersect) of be adjacent to an existing word  AND
         # must not generate any invalid words in line with itself or orthogonal to itself
+        #must not replace an existing board letter with a different letter
+        #must be on the board
+        #must be placed using user tiles or letters on board
         status = nil
         return status if not(aSW.astring.isaword)  #returns nil if not a word
         return status if not(self.usesvalidmovecoordinates(aSW)) #returns nil if does not cross (intersect) of be adjacent to an existing word
+        return status if not(self.myboard.testwordonboard(aSW))
+        return status if not(self.myboard.testwordoverlap(aSW))
         return status if not(self.myboard.testwordsgeninline(aSW)) #updates score or supplement or returns nil
         return status if not(self.myboard.testwordsgenortho(aSW)) #updates score or supplement or returns nil
+        return status if not(self.myboard.couldplacewordfromtiles(aSW, $aGame.tilesplayer2)) #checks whether the word can be placed with players tiles or board letters without changing a board letter, else returns nil
         status = 'true'
         return status
     end
     
-    def usesvalidmovecoordinates(aSW) #checks myboard.boardcoordinatesusable to see if at least one of them is used by aSW
+    def usesvalidmovecoordinates(aSW) #checks myboard.filledcoordinatesusable and blankcoordinatesusable to see if at least one of them is used by aSW        
         status = nil
         case
         when aSW.direction == 'right'
             i = 0
             while i < aSW.astring.length
-            status = 'true' if self.myboard.boardcoordinatesusable[[aSW.xcoordinate, aSW.ycoordinate + i]]
+                puts "coordinate #{[aSW.xcoordinate, aSW.ycoordinate + i]}"
+                status = 'true' if (self.myboard.blankcoordinatesusable.include?([aSW.xcoordinate, aSW.ycoordinate + i]) || self.myboard.filledcoordinatesusable.include?([aSW.xcoordinate, aSW.ycoordinate + i]))
+                puts "status #{status}"
                 i += 1
             end
         when aSW.direction == 'down'
             i = 0
             while i < aSW.astring.length
-                status = 'true' if self.myboard.boardcoordinatesusable[[aSW.xcoordinate + i, aSW.ycoordinate]]
+                puts "coordinate #{[aSW.xcoordinate + i, aSW.ycoordinate]}"
+                status = 'true' if (self.myboard.blankcoordinatesusable.include?([aSW.xcoordinate + i, aSW.ycoordinate]) || self.myboard.filledcoordinatesusable.include?([aSW.xcoordinate + i, aSW.ycoordinate]))
+                 puts "status #{status}"
                 i += 1
             end
         end
