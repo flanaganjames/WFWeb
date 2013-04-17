@@ -155,6 +155,7 @@ post '/manualmovePvC' do #posted from showArcanUsergameboard
         i += 1
     end
     
+    
     @word = params["word"]
     @xcoordinate = params["xcoordinate"]
     @ycoordinate = params["ycoordinate"]
