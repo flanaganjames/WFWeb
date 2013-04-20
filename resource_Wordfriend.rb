@@ -147,17 +147,17 @@ class Wordfriend
         when aSW.direction == 'right'
             i = 0
             while i < aSW.astring.length
-                puts "coordinate #{[aSW.xcoordinate, aSW.ycoordinate + i]}"
+                #puts "coordinate #{[aSW.xcoordinate, aSW.ycoordinate + i]}"
                 status = 'true' if (self.myboard.blankcoordinatesusable.include?([aSW.xcoordinate, aSW.ycoordinate + i]) || self.myboard.filledcoordinatesusable.include?([aSW.xcoordinate, aSW.ycoordinate + i]))
-                puts "status #{status}"
+                #puts "status #{status}"
                 i += 1
             end
         when aSW.direction == 'down'
             i = 0
             while i < aSW.astring.length
-                puts "coordinate #{[aSW.xcoordinate + i, aSW.ycoordinate]}"
+                #puts "coordinate #{[aSW.xcoordinate + i, aSW.ycoordinate]}"
                 status = 'true' if (self.myboard.blankcoordinatesusable.include?([aSW.xcoordinate + i, aSW.ycoordinate]) || self.myboard.filledcoordinatesusable.include?([aSW.xcoordinate + i, aSW.ycoordinate]))
-                 puts "status #{status}"
+                #puts "status #{status}"
                 i += 1
             end
         end

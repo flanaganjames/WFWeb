@@ -31,7 +31,7 @@ class Game
         self.tilesall += ['x']*1
         self.tilesall += ['y']*2
         self.tilesall += ['z']*1
-        self.tilesall += ['*']*20
+        self.tilesall += ['*']*2
         
         self.tilesremain = self.tilesall.join('')
         self.scoreplayer1 = 0
