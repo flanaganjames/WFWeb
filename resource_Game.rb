@@ -31,7 +31,7 @@ class Game
         self.tilesall += ['x']*1
         self.tilesall += ['y']*2
         self.tilesall += ['z']*1
-        self.tilesall += ['*']*2
+        self.tilesall += ['*']*20
         
         self.tilesremain = self.tilesall.join('')
         self.scoreplayer1 = 0
@@ -63,10 +63,16 @@ class Game
     
     def filltiles(astr) #aplayerstiles may be self.tilesplayer1 or self.tilesplayer2
         atile = ''
+        onestaronly = 0
         astr = astr.gsub('-','') #replace any '-' characters with '' blanks
-        while atile && astr.size < 7  #stop if ever atile becomes nil
+        while atile && astr.size < 7 #stop if ever atile becomes nil
             atile = self.choosereplacementtile
-            astr += atile if atile  #
+            if (atile == '*') && (onestaronly > 0)
+                self.tilesremain = self.tilesremain + '*'  # put it back, choose another
+            else
+                astr += atile if atile
+                onestaronly += 1 if atile == '*'
+            end
         end
         return astr
     end

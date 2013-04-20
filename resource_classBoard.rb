@@ -1,5 +1,5 @@
 class ScrabbleBoard
-	attr_accessor :lettergrid, :pushlettergrid, :tileword, :newtileword, :scoregrid, :newgrid, :pushnewgrid, :dimension, :lettervalues, :boardSWs, :boardLetters, :blankcoordinatesusable, :blankparallelpositions, :filledcoordinatesusable
+	attr_accessor :lettergrid, :pushlettergrid, :tileword, :newtileword, :scoregrid, :pushscoregrid, :newgrid, :pushnewgrid, :dimension, :lettervalues, :boardSWs, :boardLetters, :blankcoordinatesusable, :blankparallelpositions, :filledcoordinatesusable
 	
 	
 	def initialvalues #this method fills the letter grid array dimension x dimension with nil, the scoregrid with 1s except as defined
@@ -8,8 +8,9 @@ class ScrabbleBoard
         self.newgrid = {}
         self.pushlettergrid = {}
         self.pushnewgrid = {}
-		self.scoregrid = []
-		self.boardLetters = []
+		self.scoregrid = {}
+        self.pushscoregrid = {}
+		self.boardLetters = [] 
         self.filledcoordinatesusable = []
         self.blankcoordinatesusable = []
         self.blankparallelpositions = []
@@ -24,15 +25,16 @@ class ScrabbleBoard
             nhash = {}
 			while j < self.dimension
 				lhash[j] = '-'
-				shash[j] = 1
+				shash[j] = '.'
                 nhash[j] = '-'
 				j += 1
 			end
-			self.lettergrid[i] = lhash
-			self.scoregrid[i] = shash
-            self.newgrid[i] = nhash
-            self.pushlettergrid[i] = lhash
-            self.pushnewgrid[i] = nhash
+			self.lettergrid[i] = lhash.dup
+			self.scoregrid[i] = shash.dup
+            self.newgrid[i] = nhash.dup
+            self.pushlettergrid[i] = lhash.dup
+            self.pushnewgrid[i] = nhash.dup
+            self.pushscoregrid[i] = shash.dup
 			i += 1
 		end
         self.readscores("SWscoreResource.txt")
@@ -231,10 +233,11 @@ class ScrabbleBoard
 						status = "true"
 						count += 1
                         if tilearray.include? word.astring[i]
-                            then
                             achar = [word.astring[i]]
                             tilearray = tilearray.sub(word.astring[i],'') #remove one letter from the array as it "has been used"
-                            else
+                        elsif tilearray.include? '*'
+                            tilearray = tilearray.sub('*','') #use the '*'
+                        else
                             status = nil #if the tilearray does not have a letter remaining to fill this need then the word is not possible;  this screens out the double use of a tileword letter
                         end
                     elsif  (self.lettergrid[word.xcoordinate][word.ycoordinate + i] == word.astring[i])
@@ -259,7 +262,9 @@ class ScrabbleBoard
                         if tilearray.include? word.astring[i]
                             then
                             tilearray = tilearray.sub(word.astring[i],'') #remove one letter from the array as it "has been used"
-                            else
+                        elsif tilearray.include? '*'
+                            tilearray = tilearray.sub('*','') #use the '*'
+                        else
                             status = nil #if the tilearray does not have a letter remaining to fill this need then the word is not possible;  this screens out the double use of a tileword letter
                         end
                     elsif  (self.lettergrid[word.xcoordinate + i][word.ycoordinate] == word.astring[i])
@@ -749,17 +754,16 @@ class ScrabbleBoard
 	end
 
 	def findBoardLetters
-		#find all unique letters on the board
-		i = 0
-		while i < (self.dimension - 1) 
-			j = 0
-			while j < (self.dimension - 1)
-				achar =  self.lettergrid[i][j]
-				self.boardLetters.push(achar) if  (achar != "-"  && !self.boardLetters.include?(achar))
-			j += 1
-			end
-		i += 1
-		end
+		self.boardLetters = []
+        i = 0
+        while i < self.dimension
+            j = 0
+            while j < self.dimension
+                self.boardLetters <<  self.lettergrid[i][j] if self.lettergrid[i][j] != '-'
+            j += 1
+            end
+        i += 1
+        end
 	end
 
     def findcoordinatesusable
@@ -770,26 +774,31 @@ class ScrabbleBoard
 
     end
 	
-	def findPossibleWords #finds all words that can be made with tiles plus one of the letters on the board
+	def findPossibleWords #finds all words that can be made with tiles plus one of the letters on the board;; words inlcude words that can be made with a single * character that will later be resolved to an actual letter.
 		allpossiblewords = []
-		boardLetters.each do |aletter |
-			tilesplus = self.tileword + aletter
-			tilewords = tilesplus.permutedset.select {|astring| astring.isaword}
+		boardLetters.each do |astr|
+			tilesplus = self.tileword + astr
+            tilepermutes = tilesplus.permutedset
+            tilewords_plus = tilepermutes.select {|astring| astring.isaword_plus}
+            tilewords = tilewords_plus.actualwords #replaces '*' with letters that make actual words
 			tilewords.each {|aword| allpossiblewords.push(aword) if !allpossiblewords.include?(aword)}
 		end
 		return allpossiblewords
 	end
 
-    def findPossibleTileWords #finds all words that can be made with tiles
+    def findPossibleTileWords #finds all words that can be made with tiles only
         allpossiblewords = []
             tilesplus = self.tileword
-            tilewords = tilesplus.permutedset.select {|astring| astring.isaword}
+            tilepermutes = tilesplus.permutedset
+            tilewords = tilepermutes.select {|astring| astring.isaword}
+            tilestarset = tilepermutes.select {|astring| astring.include?'*'}
+        #tilepotentialwords = tilestarset.each {|astring| tilewords = tilewords + astring.matchingwords}
         tilewords.each {|aword| allpossiblewords.push(aword) if !allpossiblewords.include?(aword)}
     return allpossiblewords
     end
                 
     def firstword #returns a ScrabbleWord or nil
-        $tilewords = self.findPossibleTileWords
+        #$tilewords = self.findPossibleTileWords  - this is done already in updatevalues
         coordinates = [[7,7,'right'], [7,7,'down']] #the tilewords must overlap this position on either axis
         allpossibles = self.placetilewords($tilewords,coordinates) #this returns SWs that overlap this position
         allpossibles = allpossibles.uniqSWs
@@ -819,6 +828,7 @@ def pushgrids
         while j < self.dimension
             self.pushnewgrid[i] = self.newgrid[i].dup
             self.pushlettergrid[i] = self.lettergrid[i].dup
+            self.pushscoregrid[i] = self.scoregrid[i].dup
             j += 1
         end
         i += 1
@@ -832,6 +842,7 @@ def popgrids
         while j < self.dimension
             self.newgrid[i] = self.pushnewgrid[i].dup
             self.lettergrid[i] = self.pushlettergrid[i].dup
+            self.scoregrid[i] = self.pushscoregrid[i].dup
             j += 1
         end
         i += 1
@@ -839,7 +850,7 @@ def popgrids
 end
 
 def placewordfromtiles(aSW, fromtiles) #used to place a SW on board and deduct from newtileword, and sets which tiles are new on board; used by Game.firstword and by WFweb'/updated'
-        self.pushgrids #holds the newgrid and lettergrid in case of an undo
+    #push grids moved to could place words form tiles
         self.resetnewindicator
         self.newtileword = fromtiles
         case
@@ -849,7 +860,12 @@ def placewordfromtiles(aSW, fromtiles) #used to place a SW on board and deduct f
                 if self.lettergrid[aSW.xcoordinate][aSW.ycoordinate + i] == '-'
                     then
                     self.lettergrid[aSW.xcoordinate][aSW.ycoordinate + i] = aSW.astring[i].dup
-                    self.newtileword = self.newtileword.sub(aSW.astring[i],'')
+                    if self.newtileword.include?(aSW.astring[i])
+                        self.newtileword = self.newtileword.sub(aSW.astring[i],'')
+                    else
+                        self.newtileword = self.newtileword.sub('*','') #if does not have the char then it must have a *
+                        self.scoregrid[aSW.xcoordinate][aSW.ycoordinate] = '' #if a * is used to fill this position, then that position does not count toward score
+                    end
                 end
                 self.newgrid[aSW.xcoordinate][aSW.ycoordinate + i] = 'n'
             i += 1
@@ -860,7 +876,12 @@ def placewordfromtiles(aSW, fromtiles) #used to place a SW on board and deduct f
                 if self.lettergrid[aSW.xcoordinate + i][aSW.ycoordinate] == '-'
                     then
                     self.lettergrid[aSW.xcoordinate + i][aSW.ycoordinate] = aSW.astring[i].dup
-                    self.newtileword = self.newtileword.sub(aSW.astring[i],'')
+                    if self.newtileword.include?(aSW.astring[i])
+                        self.newtileword = self.newtileword.sub(aSW.astring[i],'')
+                    else
+                        self.newtileword = self.newtileword.sub('*','') #if does not have the char then it must have a *
+                        self.scoregrid[aSW.xcoordinate + i][aSW.ycoordinate] = '' #if a * is used to fill this position, then that position does not count toward score
+                    end
                 end
                 $aWordfriend.myboard.newgrid[aSW.xcoordinate + i][aSW.ycoordinate] = 'n'
             i += 1
@@ -870,6 +891,7 @@ def placewordfromtiles(aSW, fromtiles) #used to place a SW on board and deduct f
 end
     
 def couldplacewordfromtiles(aSW, fromtiles) #used to check whether one could place a SW on board with the fromtiles and without changing any letter on the board. Returns nil if invalid move.
+    self.pushgrids #holds the newgrid and lettergrid and scoregrid in case of an undo
     remainingtileword = fromtiles
     status = 'true'
     case
@@ -879,6 +901,9 @@ def couldplacewordfromtiles(aSW, fromtiles) #used to check whether one could pla
             if (self.lettergrid[aSW.xcoordinate][aSW.ycoordinate + i] == '-') && (remainingtileword.include?aSW.astring[i])
                 remainingtileword= remainingtileword.sub(aSW.astring[i],'')
             elsif (self.lettergrid[aSW.xcoordinate][aSW.ycoordinate + i] == aSW.astring[i])
+            elsif (self.lettergrid[aSW.xcoordinate][aSW.ycoordinate + i] == '-') && (remainingtileword.include?'*')
+                remainingtileword= remainingtileword.sub('*','')
+                self.scoregrid[aSW.xcoordinate][aSW.ycoordinate + i] = '' #this prepares to not count the score form this letter when it is placed
             else status = nil
             end
             i += 1
@@ -889,11 +914,15 @@ def couldplacewordfromtiles(aSW, fromtiles) #used to check whether one could pla
             if (self.lettergrid[aSW.xcoordinate + i][aSW.ycoordinate] == '-') && (remainingtileword.include?aSW.astring[i])
                 remainingtileword= remainingtileword.sub(aSW.astring[i],'')
             elsif (self.lettergrid[aSW.xcoordinate + i][aSW.ycoordinate] == aSW.astring[i])
+            elsif (self.lettergrid[aSW.xcoordinate + i][aSW.ycoordinate] == '-') && (remainingtileword.include?'*')
+                remainingtileword= remainingtileword.sub('*','')
+                self.scoregrid[aSW.xcoordinate + i][aSW.ycoordinate] = '' #this prepares to not count the score fomr this letter when it is placed
             else status = nil
             end
             i += 1
         end
     end
+    self.popgrids if not(status) #if the word is invalid then roll back the grids (scoregrid may have changed)
     return status
 end
 

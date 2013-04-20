@@ -60,7 +60,8 @@ class ScrabbleWord
 	def wordfindinline #$tiles is a set of letters as a single string
 	possibles = []
 	strings = $tilepermutedset.collect {|astring| self.astring + astring} #words that can be made with the the target word + tiles placed after the target word
-	words = strings.select {|astring| astring.isaword} 
+    strings = strings.actualwords #replaces strings with '*' with all actual words with a letter in the positon of the '*'
+    words = strings.select {|astring| astring.isaword}
 	words.each { |word|
 		case
 		when self.direction == 'right'
@@ -71,7 +72,9 @@ class ScrabbleWord
 		possibles.push(possible)
 		}
 	
-	strings = strings + $tilepermutedset.collect {|astring| astring + self.astring}.select {|astring| astring.isaword}  #words that can be made with the the target word + tiles placed before the target word
+	strings = strings + $tilepermutedset.collect {|astring| astring + self.astring}
+    strings = strings.actualwords #replaces strings with '*' with all actual words with a letter in the positon of the '*'
+    strings.select {|astring| astring.isaword}  #words that can be made with the the target word + tiles placed before the target word
 	words.each { |word|
 		offset = (word =~ /#{Regexp.quote(self.astring)}/)
 		case
@@ -103,12 +106,11 @@ class ScrabbleWord
 	def wordfindortho
 	#Orthogonal to the begining or the end of self
 		possibles = []
-		tilewords = $tilepermutedset.select {|astring| astring.isaword}
 		tileset = $tiles.to_chars
 		tileset.each do |aletter|
 			case
 				when (self.astring + aletter).isaword
-					tilewords.each {|aword|
+					$tilewords.each {|aword|
 					offset = (aword =~ /#{Regexp.quote(aletter)}/)
 					if offset
 					then
@@ -122,7 +124,7 @@ class ScrabbleWord
 					end
 					}
 				when (aletter + self.astring).isaword
-					tilewords.each {|aword| 
+					$tilewords.each {|aword|
 					offset = (aword =~ /#{Regexp.quote(aletter)}/)
 					if offset
 					then
@@ -143,6 +145,7 @@ class ScrabbleWord
 	def wordfindorthomid
 		possibles = []
 		tilearray = $tiles.to_chars
+        tilearray = tilearray + 'abcdefghijklmnopqrstuvwxyz'.to_chars if $tiles.include?'*'
 		letters = self.astring.to_chars #take the basword and create an array of letters
 		letters.each_index do |index| #for each letter of self find words that can be made orthogonal to self
 			tilesplus = $tiles + letters[index]

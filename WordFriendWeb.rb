@@ -163,7 +163,7 @@ post '/manualmovePvC' do #posted from showArcanUsergameboard
 
     aSW = ScrabbleWord.new(@word, @xcoordinate.to_i, @ycoordinate.to_i, @direction, 0, 0)
     $aWordfriend.updatevalues($aGame.tilesplayer2)
-    status = $aWordfriend.manualwordtest(aSW)
+    status = $aWordfriend.manualwordtest(aSW) #this changes scoregrid if  a '*' to be used. Be sure to roll back if move not accepted
     #puts "status = #{status}"
     #puts "hello if true" if status
     #puts "hello if nil" if not(status)

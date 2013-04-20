@@ -7,7 +7,7 @@ aForm = aForm + " <form action=\"/board\" method=\"post\"> "
 aForm = aForm + "<html xmlns=\"http://www.w3.org/1999/xhtml\" lang=\"en\" xml:lang=\"en\"> "
 aForm = aForm + "<head> <title>Results</title> </head> <body> <div> <table> "
 aForm = aForm + "<th>Score</th> <th>Word</th> <th>Row</th> <th>Col</th> <th>Drx</th> <th>Choose</th>"
-$aWordfriend.possiblewords.each_index {|i| aSW = $aWordfriend.possiblewords[i]
+$aWordfriend.possiblewords.take(100).each_index {|i| aSW = $aWordfriend.possiblewords[i]
 aForm = aForm + "<tr>"
 aForm = aForm + "<td> <input type = \"text\" name = \"score#{i}\" value =\"#{aSW.score + aSW.supplement}\" size = \"4\"</td>"
 aForm = aForm + "<td> <input type = \"text\" name = \"word#{i}\" value =\"#{aSW.astring}\" </td>"

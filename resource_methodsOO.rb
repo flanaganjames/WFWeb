@@ -26,6 +26,46 @@ end
 #end
 
 class String
+    def readwordfile
+        $words = {}
+        wordarray = File.readlines("wordlist.txt").map { |line| line.chomp }
+        i = 0
+        while i < wordarray.size
+            $words[wordarray[i]] = 'true'
+            i += 1
+        end
+        
+        $words_plus = {}
+		wordarray = File.readlines("wordlist_plus.txt").map { |line| line.chomp }
+        #this word list has every possible word with * in place of every possible letter
+		i = 0
+		while i < wordarray.size
+			$words_plus[wordarray[i]] = 'true'
+			i += 1
+		end
+    end
+end
+
+class String
+    def writewordfile
+        afile = File.open("wordlist_plus_new.txt", "w")
+        $words.each_key {|aword|
+            afile.puts(aword)
+            wordarr = aword.scan(/./)
+            i = 0
+            while i < aword.size
+                subword = []
+                wordarr.each {|achar| subword << achar}
+                subword[i] = '*'
+                afile.puts(subword.join(''))
+                i += 1
+            end
+            }
+        afile.close
+    end
+end
+
+class String
 	def permutedset #returns a set of strings representing every permutation of every subset of characters
 	arr = self.to_chars
 	set = []
@@ -36,6 +76,20 @@ class String
 	end
 	set.collect {|aset| aset.join('')}
 	end
+end
+
+class Array
+    def actualwords
+        set = []
+        alpha = 'abcdefghijklmnopqrstuvwxyz'.to_chars #creates array of alphabetic letters
+        self.each {|astarword|
+                        alpha.each {|aletter|
+                                subword = astarword.sub('*',aletter)
+                                set << subword if subword.isaword
+                                }
+                    }
+        return set
+    end
 end
 
 class String
@@ -118,9 +172,19 @@ end
 end
 
 class String
-def isaword
-	$words.has_key?(self)
+    def isaword
+        $words.has_key?(self)
+    end
+    
+    def isaword_plus  #this looks in the file of words with every possible possible postion substituted with a '*'
+        $words_plus.has_key?(self)
+    end
 end
+
+class String
+    def matchingwordsexist  #receives a string with imbedded ., returns true if there is a matching word
+        !!$words.keys.detect{ |k| k  =~ /\A#{self}\Z/ }
+    end
 end
 
 class Array

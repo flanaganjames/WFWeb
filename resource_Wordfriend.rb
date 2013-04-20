@@ -16,9 +16,19 @@ class Wordfriend
 
 		$words = {}
 		wordarray = File.readlines("wordlist.txt").map { |line| line.chomp }
+        #this word list has every possible word with * in place of every possible letter
 		i = 0
 		while i < wordarray.size
 			$words[wordarray[i]] = 'true'
+			i += 1
+		end
+        
+        $words_plus = {}
+		wordarray = File.readlines("wordlist_plus.txt").map { |line| line.chomp }
+        #this word list has every possible word with * in place of every possible letter
+		i = 0
+		while i < wordarray.size
+			$words_plus[wordarray[i]] = 'true'
 			i += 1
 		end
         #self.saveboard($aGame.tilesplayer1, $aGame.tilesplayer2, $aGame.tilesremain.join('')) #
@@ -86,13 +96,17 @@ class Wordfriend
 
         self.myboard.tileword = aplayertileset
         self.myboard.findBoardSWs
-		self.myboard.findBoardLetters
+		self.myboard.findBoardLetters #used only by findPossibleTileWords
         self.myboard.findcoordinatesusable #finds filled coordinates usable
         self.myboard.findblankparallelpositions #also finds and blank coordinates usable
         $tiles = self.myboard.tileword
-		$tilepermutedset = self.myboard.tileword.permutedset
-		$tilewords = self.myboard.findPossibleTileWords #words that can be made with the tiles
-		$possibleWords = self.myboard.findPossibleWords#finds all words that can be made with tiles plus one of the letters on the board, or with tiles and any one or two of the BoardSWs
+		$tilepermutedset = self.myboard.tileword.permutedset #used in wordfindinline where '*' are replaced with letters once tiles combined with other chars
+		$tilewords = self.myboard.findPossibleTileWords #words that can be made with the tiles;  this is used by wordfind and firstword in a call to placetilewords
+        #if there was a '*' char in the tiles, this was replaced by actual letters to make words.
+		
+        #this is used by wordfindorthomid in classS
+        $possibleWords = self.myboard.findPossibleWords
+        #finds all words that can be made with tiles plus one of the letters on the board
     end
     
     def firstword
@@ -116,13 +130,13 @@ class Wordfriend
         #must be on the board
         #must be placed using user tiles or letters on board
         status = nil
-        return status if not(aSW.astring.isaword)  #returns nil if not a word
-        return status if not(self.usesvalidmovecoordinates(aSW)) #returns nil if does not cross (intersect) of be adjacent to an existing word
-        return status if not(self.myboard.testwordonboard(aSW))
-        return status if not(self.myboard.testwordoverlap(aSW))
-        return status if not(self.myboard.testwordsgeninline(aSW)) #updates score or supplement or returns nil
-        return status if not(self.myboard.testwordsgenortho(aSW)) #updates score or supplement or returns nil
-        return status if not(self.myboard.couldplacewordfromtiles(aSW, $aGame.tilesplayer2)) #checks whether the word can be placed with players tiles or board letters without changing a board letter, else returns nil
+        (puts('notaword');return status) if not(aSW.astring.isaword)  #returns nil if not a word
+        (puts('notvalidcoord');return status) if not(self.usesvalidmovecoordinates(aSW)) #returns nil if does not cross (intersect) or be adjacent to an existing word
+        (puts('notonboard');return status) if not(self.myboard.testwordonboard(aSW))
+        (puts('overlap');return status) if not(self.myboard.testwordoverlap(aSW))
+        (puts('geninline');return status) if not(self.myboard.testwordsgeninline(aSW)) #updates score or supplement or returns nil
+        (puts('genortho');return status) if not(self.myboard.testwordsgenortho(aSW)) #updates score or supplement or returns nil
+        (puts('placefromtiles');return status) if not(self.myboard.couldplacewordfromtiles(aSW, $aGame.tilesplayer2)) #checks whether the word can be placed with players tiles or board letters without changing a board letter, else returns nil
         status = 'true'
         return status
     end
