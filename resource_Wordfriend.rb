@@ -184,9 +184,10 @@ class Wordfriend
         
         possibles = self.myboard.placetilewords($tilewords, self.myboard.blankparallelpositions)
         possibles = possibles.uniqSWs
-        possibles = possibles.select {|possible|self.myboard.testwordsgeninline(possible)}
-        possibles = possibles.select {|possible| self.myboard.testwordsgenortho(possible)}
-        possibles.each {|possible| allpossibles << possible}
+        possibles = possibles.select {|aSW|self.myboard.testwordsgeninline(aSW)}
+        possibles = possibles.select {|aSW| self.myboard.testwordsgenortho(aSW)}
+        possibles.each {|aSW| aSW.scoreword}
+        possibles.each {|aSW| allpossibles << aSW if ((aSW.score + aSW.supplement) > $minscore)}
         
         #for every word already on the board
         #find words that can be made with tiles by placing them orthoganal to the start, middle letters, or end letters
