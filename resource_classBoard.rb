@@ -354,7 +354,7 @@ class ScrabbleBoard
 						generatedword = ScrabbleWord.new(testwordarray.join(''),word.xcoordinate,leftposition,"right",0,0)
 						#puts generatedword.print("temp inline right generated")
 						#puts word.print("temp inline right source")
-						difference = generatedword.scoreword(self) - word.scoreword(self)
+						difference = generatedword.scoreword - word.scoreword
 						word.supplement = word.supplement + difference
 						
 					end
@@ -419,7 +419,7 @@ class ScrabbleBoard
 						generatedword = ScrabbleWord.new(testwordarray.join(''),leftposition,word.ycoordinate,"down",0,0)
 						#puts generatedword.print("temp inline down generated")
 						#puts word.print("temp inline down source")
-						difference = generatedword.scoreword(self) - word.scoreword(self)
+						difference = generatedword.scoreword - word.scoreword
 						word.supplement = word.supplement + difference
 					end
 				else
@@ -492,7 +492,7 @@ class ScrabbleBoard
 								generatedword = ScrabbleWord.new(testwordarray.join(''),word.xcoordinate + wordposition,leftposition,"right",0,0)
 								#puts generatedword.print("temp inline down generated")
 								#puts word.print("temp inline down source")
-								word.supplement = word.supplement + generatedword.scoreword(self)
+								word.supplement = word.supplement + generatedword.scoreword
 								#puts "supplement: #{word.supplement}"
 							end
 						end
@@ -559,7 +559,7 @@ class ScrabbleBoard
 								generatedword = ScrabbleWord.new(testwordarray.join(''),leftposition,word.ycoordinate + wordposition,"down",0,0)
 								#puts generatedword.print("temp inline down generated")
 								#puts word.print("temp inline down source")
-								word.supplement = word.supplement +  generatedword.scoreword(self)
+								word.supplement = word.supplement +  generatedword.scoreword
 								#puts "supplement: #{word.supplement}"
 							end						
 						end
@@ -774,15 +774,13 @@ class ScrabbleBoard
 
     end
 	
-	def findPossibleWords #finds all words that can be made with tiles plus one of the letters on the board;; words inlcude words that can be made with a single * character that will later be resolved to an actual letter.
+	def findPossibleWords(aletter) #finds all words that can be made with tiles plus the letter specified as argument;; words inlcude words that can be made with a single * character that will later be resolved to an actual letter.
 		allpossiblewords = []
-		boardLetters.each do |astr|
-			tilesplus = self.tileword + astr
-            tilepermutes = tilesplus.permutedset
-            tilewords_plus = tilepermutes.select {|astring| astring.isaword_plus}
-            tilewords = tilewords_plus.actualwords #replaces '*' with letters that make actual words
-			tilewords.each {|aword| allpossiblewords.push(aword) if !allpossiblewords.include?(aword)}
-		end
+        tilesplus = self.tileword + aletter
+        tilepermutes = tilesplus.permutedset
+        tilewords_plus = tilepermutes.select {|astring| astring.isaword_plus}
+        tilewords = tilewords_plus.actualwords #replaces '*' with letters that make actual words
+        tilewords.each {|aword| allpossiblewords.push(aword) if !allpossiblewords.include?(aword)}
 		return allpossiblewords
 	end
 
@@ -802,7 +800,7 @@ class ScrabbleBoard
         coordinates = [[7,7,'right'], [7,7,'down']] #the tilewords must overlap this position on either axis
         allpossibles = self.placetilewords($tilewords,coordinates) #this returns SWs that overlap this position
         allpossibles = allpossibles.uniqSWs
-        allpossibles.each {|possible| possible.scoreword(self)}
+        allpossibles.each {|possible| possible.scoreword}
         allpossibles = allpossibles.sort_by {|possible| [-(possible.score + possible.supplement)]}
         if not(allpossibles.empty?)
             then

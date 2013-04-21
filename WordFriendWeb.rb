@@ -169,11 +169,11 @@ post '/manualmovePvC' do #posted from showArcanUsergameboard
     #puts "hello if nil" if not(status)
     if (status)
         then
-            aSW.scoreword($aWordfriend.myboard)
+            aSW.scoreword
             $aGame.placewordfromtiles2(aSW)
             erb:showupdatedPvC
         else
-            aSW.scoreword($aWordfriend.myboard)
+            aSW.scoreword
             erb:showinvalidmove
     end
 end

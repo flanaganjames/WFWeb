@@ -33,7 +33,7 @@ class ScrabbleWord
         return array
     end
 	
-	def wordfindcontains
+	def wordfindcontains  #this is not used.  was it too time consuming?
 	possibles = []
 	sometiles = $tiles.to_chars
 	tiles_plus_anchor = sometiles + self.astring.to_chars
@@ -59,17 +59,23 @@ class ScrabbleWord
 		
 	def wordfindinline #$tiles is a set of letters as a single string
 	possibles = []
+    aSW = nil
 	strings = $tilepermutedset.collect {|astring| self.astring + astring} #words that can be made with the the target word + tiles placed after the target word
     strings = strings.actualwords #replaces strings with '*' with all actual words with a letter in the positon of the '*'
     words = strings.select {|astring| astring.isaword}
 	words.each { |word|
 		case
 		when self.direction == 'right'
-			possible = ScrabbleWord.new(word, self.xcoordinate,  self.ycoordinate, self.direction, 0, 0)
+			aSW = ScrabbleWord.new(word, self.xcoordinate,  self.ycoordinate, self.direction, 0, 0)
 		when self.direction == 'down'
-			possible = ScrabbleWord.new(word, self.xcoordinate,  self.ycoordinate , self.direction, 0, 0)
+			aSW = ScrabbleWord.new(word, self.xcoordinate,  self.ycoordinate , self.direction, 0, 0)
 		end
-		possibles.push(possible)
+        if aSW
+            if $aWordfriend.myboard.testwordonboard(aSW) && $aWordfriend.myboard.testwordoverlap(aSW) && $aWordfriend.myboard.testwordsgeninline(aSW) &&  $aWordfriend.myboard.testwordsgenortho(aSW)
+                aSW.scoreword
+                possibles << aSW if ((aSW.score + aSW.supplement) > $minscore)
+            end
+        end
 		}
 	
 	strings = strings + $tilepermutedset.collect {|astring| astring + self.astring}
@@ -79,11 +85,16 @@ class ScrabbleWord
 		offset = (word =~ /#{Regexp.quote(self.astring)}/)
 		case
 		when self.direction == 'right'
-			possible = ScrabbleWord.new(word, self.xcoordinate,  self.ycoordinate - offset, self.direction, 0, 0)
+			aSW = ScrabbleWord.new(word, self.xcoordinate,  self.ycoordinate - offset, self.direction, 0, 0)
 		when self.direction == 'down'
-			possible = ScrabbleWord.new(word, self.xcoordinate - offset,  self.ycoordinate , self.direction, 0, 0)
+			aSW = ScrabbleWord.new(word, self.xcoordinate - offset,  self.ycoordinate , self.direction, 0, 0)
 		end
-		possibles.push(possible)
+        if aSW
+            if $aWordfriend.myboard.testwordonboard(aSW) && $aWordfriend.myboard.testwordoverlap(aSW) && $aWordfriend.myboard.testwordsgeninline(aSW) &&  $aWordfriend.myboard.testwordsgenortho(aSW)
+                aSW.scoreword
+                possibles << aSW if ((aSW.score + aSW.supplement) > $minscore)
+            end
+        end
 		}
 
 	strings = strings + $tiles.permutaround(self.astring).select {|astring| astring.isaword} #words that can be made with the the target word + tiles placed both before and after the target word
@@ -91,21 +102,26 @@ class ScrabbleWord
 		offset = (word =~ /#{Regexp.quote(self.astring)}/)
 		case
 		when self.direction == 'right'
-			possible = ScrabbleWord.new(word, self.xcoordinate,  self.ycoordinate - offset, self.direction, 0, 0)
+			aSW = ScrabbleWord.new(word, self.xcoordinate,  self.ycoordinate - offset, self.direction, 0, 0)
 			
 		when self.direction == 'down'
-			possible = ScrabbleWord.new(word, self.xcoordinate - offset,  self.ycoordinate , self.direction, 0, 0)
+			aSW = ScrabbleWord.new(word, self.xcoordinate - offset,  self.ycoordinate , self.direction, 0, 0)
 			
 		end
-		possibles.push(possible)
-		}
-
+        if aSW
+            if $aWordfriend.myboard.testwordonboard(aSW) && $aWordfriend.myboard.testwordoverlap(aSW) && $aWordfriend.myboard.testwordsgeninline(aSW) &&  $aWordfriend.myboard.testwordsgenortho(aSW)
+                aSW.scoreword
+                possibles << aSW if ((aSW.score + aSW.supplement) > $minscore)
+            end
+        end
+        }
 	return possibles
 	end
 
 	def wordfindortho
 	#Orthogonal to the begining or the end of self
 		possibles = []
+        aSW = nil
 		tileset = $tiles.to_chars
 		tileset.each do |aletter|
 			case
@@ -116,11 +132,11 @@ class ScrabbleWord
 					then
 						case
 							when self.direction == 'right'
-								possible = ScrabbleWord.new(aword, self.xcoordinate - offset ,  self.ycoordinate + self.astring.length, "down", 0, 0)
+								aSW = ScrabbleWord.new(aword, self.xcoordinate - offset ,  self.ycoordinate + self.astring.length, "down", 0, 0)
 							when  self.direction == 'down'
-								possible = ScrabbleWord.new(aword, self.xcoordinate + self.astring.length ,  self.ycoordinate - offset, "right", 0, 0)
+								aSW = ScrabbleWord.new(aword, self.xcoordinate + self.astring.length ,  self.ycoordinate - offset, "right", 0, 0)
 						end
-						possibles.push(possible)
+						#possibles.push(possible)
 					end
 					}
 				when (aletter + self.astring).isaword
@@ -130,31 +146,36 @@ class ScrabbleWord
 					then
 						case
 							when self.direction == 'right'
-								possible = ScrabbleWord.new(aword, self.xcoordinate - offset ,  self.ycoordinate - 1, "down", 0, 0)
+								aSW = ScrabbleWord.new(aword, self.xcoordinate - offset ,  self.ycoordinate - 1, "down", 0, 0)
 							when  self.direction == 'down'
-								possible = ScrabbleWord.new(aword, self.xcoordinate - 1 ,  self.ycoordinate - offset, "right", 0, 0)
+								aSW = ScrabbleWord.new(aword, self.xcoordinate - 1 ,  self.ycoordinate - offset, "right", 0, 0)
 						end
-						possibles.push(possible)
+						#possibles.push(possible)
 					end
 					}
 			end
+            if aSW
+                if $aWordfriend.myboard.testwordonboard(aSW) && $aWordfriend.myboard.testwordoverlap(aSW) && $aWordfriend.myboard.testwordsgeninline(aSW) &&  $aWordfriend.myboard.testwordsgenortho(aSW)
+                    aSW.scoreword
+                    possibles << aSW if ((aSW.score + aSW.supplement) > $minscore)
+                end
+            end
 		end
 		return possibles
 	end
 
 	def wordfindorthomid
 		possibles = []
+        aSW = nil
 		tilearray = $tiles.to_chars
         tilearray = tilearray + 'abcdefghijklmnopqrstuvwxyz'.to_chars if $tiles.include?'*'
-		letters = self.astring.to_chars #take the basword and create an array of letters
+		letters = self.astring.to_chars #take the baseword and create an array of letters
 		letters.each_index do |index| #for each letter of self find words that can be made orthogonal to self
 			tilesplus = $tiles + letters[index]
 			indexletterarray = [letters[index]]
-			#puts tilesplus
-			#tilewords = tilesplus.permutedset.select {|astring| astring.isaword} #words that can be made with the tiles plus one letter of of self
-			#puts tilewords.join("' ")
-			#tilewords.each do |word|
-			$possibleWords.each do |word|
+            possibleWords = $aWordfriend.myboard.findPossibleWords(letters[index])
+            
+			possibleWords.each do |word|
 				offset = (word =~ /#{Regexp.quote(letters[index])}/) # for those tilewords that have the one letter of self find its offset
 				tilelettersneeded = word.to_chars - indexletterarray
 				if offset && tilelettersneeded.subset?(tilearray)
@@ -165,15 +186,21 @@ class ScrabbleWord
 						when self.direction == "down"
 						aSW = ScrabbleWord.new(word, self.xcoordinate + index, self.ycoordinate - offset, "right", 0, 0)
 					end
-				#aSW.print("test")
-				possibles << aSW
+                    #aSW.print("test")
+                    if aSW
+                        if $aWordfriend.myboard.testwordonboard(aSW) && $aWordfriend.myboard.testwordoverlap(aSW) && $aWordfriend.myboard.testwordsgeninline(aSW) &&  $aWordfriend.myboard.testwordsgenortho(aSW)
+                            aSW.scoreword
+                            possibles << aSW if ((aSW.score + aSW.supplement) > $minscore)
+                        end
+                    end
 				end
 			end
-		end
-	return possibles
+            
+        end
+        return possibles
 	end
 
-	def scoreword (myboard)
+	def scoreword  #calculates only the direct score. testwordsgeninline and testwordsgenortho calculate the cupplement score from indirectly created words
 		ascore = 0
 		i = 0
 		anarray = []
@@ -181,15 +208,15 @@ class ScrabbleWord
 		while i < self.astring.length
 			case
 			when self.direction == "right"
-				gridvalue = myboard.scoregrid[self.xcoordinate][self.ycoordinate + i]
-				if myboard.lettergrid[self.xcoordinate][self.ycoordinate + i] == '-' 
+				gridvalue = $aWordfriend.myboard.scoregrid[self.xcoordinate][self.ycoordinate + i]
+				if $aWordfriend.myboard.lettergrid[self.xcoordinate][self.ycoordinate + i] == '-'
 					then occupied = "false"
 					else occupied = "true"
 					end
 				#puts "gridvalue: #{gridvalue}; occupied: #{occupied}"
 			when self.direction == "down"
-				gridvalue = myboard.scoregrid[self.xcoordinate + i][self.ycoordinate]
-				if myboard.lettergrid[self.xcoordinate + i][self.ycoordinate] == '-' 
+				gridvalue = $aWordfriend.myboard.scoregrid[self.xcoordinate + i][self.ycoordinate]
+				if $aWordfriend.myboard.lettergrid[self.xcoordinate + i][self.ycoordinate] == '-'
 					then occupied = "false"
 					else occupied = "true"
 					end
@@ -199,29 +226,29 @@ class ScrabbleWord
             when gridvalue == "" #scoregrid is set to "" if a '*' character used on lettergrid
                 #no addition to the score in this case
             when gridvalue == "."
-				ascore = ascore + myboard.lettervalues[self.astring[i]]
+				ascore = ascore + $aWordfriend.myboard.lettervalues[self.astring[i]]
 			when gridvalue == "l"
 				if occupied =="false" 
 					then
-					ascore = ascore + 2 * myboard.lettervalues[self.astring[i]]
+					ascore = ascore + 2 * $aWordfriend.myboard.lettervalues[self.astring[i]]
 					else
-					ascore = ascore + myboard.lettervalues[self.astring[i]]
+					ascore = ascore + $aWordfriend.myboard.lettervalues[self.astring[i]]
 					end
 			when gridvalue == "L"
 				if occupied == "false" 
 					then
-					ascore = ascore + 3 * myboard.lettervalues[self.astring[i]]
+					ascore = ascore + 3 * $aWordfriend.myboard.lettervalues[self.astring[i]]
 					else
-					ascore = ascore + myboard.lettervalues[self.astring[i]]
+					ascore = ascore + $aWordfriend.myboard.lettervalues[self.astring[i]]
 					end
 			when gridvalue == "w"
-				ascore = ascore + myboard.lettervalues[self.astring[i]]
+				ascore = ascore + $aWordfriend.myboard.lettervalues[self.astring[i]]
 				if occupied == "false" 
 					then
 					anarray << 2
 					end
 			when gridvalue == "W"
-				ascore = ascore + myboard.lettervalues[self.astring[i]]
+				ascore = ascore + $aWordfriend.myboard.lettervalues[self.astring[i]]
 				if occupied == "false" 
 					then
 					anarray <<  3

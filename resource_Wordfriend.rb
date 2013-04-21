@@ -13,6 +13,7 @@ class Wordfriend
 
         self.myboard = ScrabbleBoard.new
 		self.myboard.initialvalues
+        
 
 		$words = {}
 		wordarray = File.readlines("wordlist.txt").map { |line| line.chomp }
@@ -96,7 +97,7 @@ class Wordfriend
 
         self.myboard.tileword = aplayertileset
         self.myboard.findBoardSWs
-		self.myboard.findBoardLetters #used only by findPossibleTileWords
+		#self.myboard.findBoardLetters #was used only by findPossibleWords
         self.myboard.findcoordinatesusable #finds filled coordinates usable
         self.myboard.findblankparallelpositions #also finds and blank coordinates usable
         $tiles = self.myboard.tileword
@@ -105,7 +106,7 @@ class Wordfriend
         #if there was a '*' char in the tiles, this was replaced by actual letters to make words.
 		
         #this is used by wordfindorthomid in classS
-        $possibleWords = self.myboard.findPossibleWords
+        #$possibleWords = self.myboard.findPossibleWords #was used in wordfindorthomid
         #finds all words that can be made with tiles plus one of the letters on the board
     end
     
@@ -196,24 +197,26 @@ class Wordfriend
         #then test to see if placing the word incidentally creates another nonword inline with the word being placed and reject those
         #for these last two steps is it incdentally creates a valid word in either (ortho or inline) then computer the supplemental score due to those
         
+        #does not use wordfindcontains.  why?
         while arraySWs.size > 0
             currentSW = arraySWs.pop
             aSWpossibles = []
+            #the word generaters below do their own testing of obboard
             currentSW.wordfindortho.each {|aSW| aSWpossibles << aSW }
             currentSW.wordfindorthomid.each {|aSW| aSWpossibles << aSW }
             currentSW.wordfindinline.each {|aSW| aSWpossibles << aSW }
             aSWpossibles = aSWpossibles.uniqSWs
-            aSWonboard = aSWpossibles.select {|aSW| self.myboard.testwordonboard(aSW)}
-            aSWquarterfinals = aSWonboard.select {|possible| self.myboard.testwordoverlap(possible)}
-            aSWsemifinals = aSWquarterfinals.select {|possible| self.myboard.testwordsgenortho(possible)}
-            aSWfinals = aSWsemifinals.select {|possible|self.myboard.testwordsgeninline(possible)}
-            aSWfinals.each {|aSW| allpossibles << aSW}
+            #aSWonboard = aSWpossibles.select {|aSW| self.myboard.testwordonboard(aSW)}
+            #aSWquarterfinals = aSWonboard.select {|possible| self.myboard.testwordoverlap(possible)}
+            #aSWsemifinals = aSWquarterfinals.select {|possible| self.myboard.testwordsgenortho(possible)}
+            #aSWfinals = aSWsemifinals.select {|possible|self.myboard.testwordsgeninline(possible)}
+            aSWpossibles.each {|aSW| allpossibles << aSW}
         end
         
         
         #compute the score directly attributable to placing the new word and sort by value of direct score plus the supplemental score
         allpossibles = allpossibles.uniqSWs
-        allpossibles.each {|possible| possible.scoreword(self.myboard)}
+        allpossibles.each {|possible| possible.scoreword}
         allpossibles = allpossibles.sort_by {|possible| [-(possible.score + possible.supplement)]}
         self.possiblewords = allpossibles
         return allpossibles
