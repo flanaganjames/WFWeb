@@ -170,9 +170,9 @@ class Wordfriend
         #        require './resource_classSW'
         #        require './resource_classBoard'
         
-        possibles = []
-        allpossibles = []
-        arraySWs = self.myboard.boardSWs
+        
+        
+        
         #arraySWs.each {|aword| aword.print("initial")}
         #Parallel Words
         #this part finds words that can be placed in parallel to existing words wherever there are blank positions.
@@ -180,14 +180,7 @@ class Wordfriend
         #then it tries to place those words into blank positions, trying each possible register, ensuring that the word falls on the board and
         #ensuring that it does not replace an already filled positions with a different letter.
         #this does not account for trying words that can be created by combining tile letters with already placed letters -this happens below
-        
-        
-        possibles = self.myboard.placetilewords($tilewords, self.myboard.blankparallelpositions)
-        possibles = possibles.uniqSWs
-        possibles = possibles.select {|aSW|self.myboard.testwordsgeninline(aSW)}
-        possibles = possibles.select {|aSW| self.myboard.testwordsgenortho(aSW)}
-        possibles.each {|aSW| aSW.scoreword}
-        possibles.each {|aSW| allpossibles << aSW if ((aSW.score + aSW.supplement) > $minscore)}
+
         
         #for every word already on the board
         #find words that can be made with tiles by placing them orthoganal to the start, middle letters, or end letters
@@ -199,25 +192,15 @@ class Wordfriend
         #for these last two steps is it incdentally creates a valid word in either (ortho or inline) then computer the supplemental score due to those
         
         #does not use wordfindcontains.  why?
-        while arraySWs.size > 0
-            currentSW = arraySWs.pop
-            aSWpossibles = []
-            #the word generaters below do their own testing of obboard
-            currentSW.wordfindortho.each {|aSW| aSWpossibles << aSW }
-            currentSW.wordfindorthomid.each {|aSW| aSWpossibles << aSW }
-            currentSW.wordfindinline.each {|aSW| aSWpossibles << aSW }
-            aSWpossibles = aSWpossibles.uniqSWs
-            #aSWonboard = aSWpossibles.select {|aSW| self.myboard.testwordonboard(aSW)}
-            #aSWquarterfinals = aSWonboard.select {|possible| self.myboard.testwordoverlap(possible)}
-            #aSWsemifinals = aSWquarterfinals.select {|possible| self.myboard.testwordsgenortho(possible)}
-            #aSWfinals = aSWsemifinals.select {|possible|self.myboard.testwordsgeninline(possible)}
-            aSWpossibles.each {|aSW| allpossibles << aSW}
-        end
         
-        
-        #compute the score directly attributable to placing the new word and sort by value of direct score plus the supplemental score
+        #the word generaters below do their own testing of onboard etc.
+        allpossibles = self.myboard.wordfindparallel
+        self.myboard.boardSWs.each {|currentSW|
+            allpossibles = allpossibles + self.myboard.wordfindortho(currentSW)
+            allpossibles = allpossibles +  self.myboard.wordfindorthomid(currentSW)
+            allpossibles = allpossibles +  self.myboard.wordfindinline(currentSW)
+        }
         allpossibles = allpossibles.uniqSWs
-        allpossibles.each {|possible| possible.scoreword}
         allpossibles = allpossibles.sort_by {|possible| [-(possible.score + possible.supplement)]}
         self.possiblewords = allpossibles
         return allpossibles

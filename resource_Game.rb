@@ -41,7 +41,7 @@ class Game
         self.tilesplayer2 = ''
         $aWordfriend = Wordfriend.new
         $aWordfriend.initialvalues
-        $minscore = 20
+        $minscore = 10
     end
     
     def getusergame

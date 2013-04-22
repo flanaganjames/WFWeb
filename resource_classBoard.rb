@@ -195,6 +195,194 @@ class ScrabbleBoard
 		end
 	end 
 	
+    def wordfindparallel
+        possibles = []
+        possibles = self.placetilewords($tilewords, self.blankparallelpositions)
+        possibles = possibles.uniqSWs
+        subpossibles = []
+        possibles.each {|aSW|
+            if (self.testwordonboard(aSW) && self.testwordoverlap(aSW) && self.testwordsgeninline(aSW) &&  self.testwordsgenortho(aSW))
+                aSW.scoreword
+                if ((aSW.score + aSW.supplement) > $minscore)
+                    subpossibles << aSW
+                end
+            end
+        }
+        return subpossibles
+    end
+    
+	def wordfindinline (aSWtarget) #$tiles is a set of letters as a single string
+        possibles = []
+        aSW = nil
+        strings = $tilepermutedset.collect {|astring| aSWtarget.astring + astring} #words that can be made with the the target word + tiles placed after the target word
+        strings = strings.actualwords #replaces strings with '*' with all actual words with a letter in the positon of the '*'
+        words = strings.select {|astring| astring.isaword}
+        words.each { |word|
+            case
+                when aSWtarget.direction == 'right'
+                aSW = ScrabbleWord.new(word, aSWtarget.xcoordinate,  aSWtarget.ycoordinate, aSWtarget.direction, 0, 0)
+                when aSWtarget.direction == 'down'
+                aSW = ScrabbleWord.new(word, aSWtarget.xcoordinate,  aSWtarget.ycoordinate , aSWtarget.direction, 0, 0)
+            end
+            if aSW
+                if self.testwordonboard(aSW) && self.testwordoverlap(aSW) && self.testwordsgeninline(aSW) &&  self.testwordsgenortho(aSW)
+                    aSW.scoreword
+                    possibles << aSW if ((aSW.score + aSW.supplement) > $minscore)
+                end
+            end
+		}
+        
+        strings = strings + $tilepermutedset.collect {|astring| astring + aSWtarget.astring}
+        strings = strings.actualwords #replaces strings with '*' with all actual words with a letter in the positon of the '*'
+        strings.select {|astring| astring.isaword}  #words that can be made with the the target word + tiles placed before the target word
+        words.each { |word|
+            offset = (word =~ /#{Regexp.quote(aSWtarget.astring)}/)
+            case
+                when aSWtarget.direction == 'right'
+                aSW = ScrabbleWord.new(word, aSWtarget.xcoordinate,  aSWtarget.ycoordinate - offset, aSWtarget.direction, 0, 0)
+                when aSWtarget.direction == 'down'
+                aSW = ScrabbleWord.new(word, aSWtarget.xcoordinate - offset,  aSWtarget.ycoordinate , aSWtarget.direction, 0, 0)
+            end
+            if aSW
+                if self.testwordonboard(aSW) && self.testwordoverlap(aSW) && self.testwordsgeninline(aSW) &&  self.testwordsgenortho(aSW)
+                    aSW.scoreword
+                    possibles << aSW if ((aSW.score + aSW.supplement) > $minscore)
+                end
+            end
+		}
+        
+        strings = strings + $tiles.permutaround(aSWtarget.astring).select {|astring| astring.isaword} #words that can be made with the the target word + tiles placed both before and after the target word
+        words.each { |word|
+            offset = (word =~ /#{Regexp.quote(aSWtarget.astring)}/)
+            case
+                when aSWtarget.direction == 'right'
+                aSW = ScrabbleWord.new(word, aSWtarget.xcoordinate,  aSWtarget.ycoordinate - offset, aSWtarget.direction, 0, 0)
+                
+                when aSWtarget.direction == 'down'
+                aSW = ScrabbleWord.new(word, aSWtarget.xcoordinate - offset,  aSWtarget.ycoordinate , aSWtarget.direction, 0, 0)
+                
+            end
+            if aSW
+                if self.testwordonboard(aSW) && self.testwordoverlap(aSW) && self.testwordsgeninline(aSW) &&  self.testwordsgenortho(aSW)
+                    aSW.scoreword
+                    possibles << aSW if ((aSW.score + aSW.supplement) > $minscore)
+                end
+            end
+        }
+        return possibles
+	end
+    
+	def wordfindortho(aSWtarget)
+        #Orthogonal to the begining or the end of self
+		possibles = []
+        aSW = nil
+		tileset = $tiles.to_chars
+		tileset.each do |aletter|
+			case
+				when (aSWtarget.astring + aletter).isaword
+                $tilewords.each {|aword|
+					offset = (aword =~ /#{Regexp.quote(aletter)}/)
+					if offset
+                        then
+						case
+							when aSWtarget.direction == 'right'
+                            aSW = ScrabbleWord.new(aword, aSWtarget.xcoordinate - offset ,  aSWtarget.ycoordinate + aSWtarget.astring.length, "down", 0, 0)
+							when  aSWtarget.direction == 'down'
+                            aSW = ScrabbleWord.new(aword, aSWtarget.xcoordinate + aSWtarget.astring.length ,  aSWtarget.ycoordinate - offset, "right", 0, 0)
+						end
+					end
+                }
+				when (aletter + aSWtarget.astring).isaword
+                $tilewords.each {|aword|
+					offset = (aword =~ /#{Regexp.quote(aletter)}/)
+					if offset
+                        then
+						case
+							when aSWtarget.direction == 'right'
+                            aSW = ScrabbleWord.new(aword, aSWtarget.xcoordinate - offset ,  aSWtarget.ycoordinate - 1, "down", 0, 0)
+							when  aSWtarget.direction == 'down'
+                            aSW = ScrabbleWord.new(aword, aSWtarget.xcoordinate - 1 ,  aSWtarget.ycoordinate - offset, "right", 0, 0)
+						end
+					end
+                }
+			end
+            if aSW
+                if self.testwordonboard(aSW) && self.testwordoverlap(aSW) && self.testwordsgeninline(aSW) &&  self.testwordsgenortho(aSW)
+                    aSW.scoreword
+                    possibles << aSW if ((aSW.score + aSW.supplement) > $minscore)
+                end
+            end
+		end
+		return possibles
+	end
+    
+	def wordfindorthomid (aSWtarget)
+		possibles = []
+        aSW = nil
+		tilearray = $tiles.to_chars
+        tilearray = tilearray + 'abcdefghijklmnopqrstuvwxyz'.to_chars if $tiles.include?'*'
+		letters = aSWtarget.astring.to_chars #take the baseword and create an array of letters
+		letters.each_index do |index| #for each letter of self find words that can be made orthogonal to self
+			tilesplus = $tiles + letters[index]
+			indexletterarray = [letters[index]]
+            possibleWords = self.findPossibleWords(letters[index])
+            
+			possibleWords.each do |word|
+				offset = (word =~ /#{Regexp.quote(letters[index])}/) # for those tilewords that have the one letter of self find its offset
+				tilelettersneeded = word.to_chars - indexletterarray
+				if offset && tilelettersneeded.subset?(tilearray)
+                    then
+					case
+						when aSWtarget.direction == "right"
+						aSW = ScrabbleWord.new(word, aSWtarget.xcoordinate - offset, aSWtarget.ycoordinate + index, "down", 0, 0)
+						when aSWtarget.direction == "down"
+						aSW = ScrabbleWord.new(word, aSWtarget.xcoordinate + index, aSWtarget.ycoordinate - offset, "right", 0, 0)
+					end
+                    #aSW.print("test")
+                    if aSW
+                        if self.testwordonboard(aSW) && self.testwordoverlap(aSW) && self.testwordsgeninline(aSW) &&  self.testwordsgenortho(aSW)
+                            aSW.scoreword
+                            possibles << aSW if ((aSW.score + aSW.supplement) > $minscore)
+                        end
+                    end
+				end
+			end
+            
+        end
+        return possibles
+	end
+    
+    def wordfindcontains(aSWtarget)  #this is not used.  was it too time consuming?
+        possibles = []
+        sometiles = $tiles.to_chars
+        tiles_plus_anchor = sometiles + aSWtarget.astring.to_chars
+        tilepower = tiles_plus_anchor.powerset
+        anchorword_plus = aSWtarget.astring.iscontainedwords
+        tilepower_words = []
+        tilepower.each {|array| tilepower_words << array.sort.join('') }
+        anchor_words = anchorword_plus.select {|word| tilepower_words.include?(word.scan(/./).sort.join(''))}
+        anchor_words.each { |word|
+            
+            case
+                when aSWtarget.direction == 'right'
+                aSW = ScrabbleWord.new(word, aSWtarget.xcoordinate,  aSWtarget.ycoordinate - (word =~ /#{Regexp.quote(aSWtarget.astring)}/), aSWtarget.direction, 0, 0)
+                
+                when aSWtarget.direction == 'down'
+                aSW = ScrabbleWord.new(word, aSWtarget.xcoordinate - (word =~ /#{Regexp.quote(aSWtarget.astring)}/),  aSWtarget.ycoordinate, aSWtarget.direction, 0, 0)
+                
+            end
+            if aSW
+                if self.testwordonboard(aSW) && self.testwordoverlap(aSW) && self.testwordsgeninline(aSW) &&  self.testwordsgenortho(aSW)
+                    aSW.scoreword
+                    possibles << aSW if ((aSW.score + aSW.supplement) > $minscore)
+                end
+            end
+		}
+        #aSW.print("test")
+
+        return possibles
+	end
+    
 	def testwordonboard (word)
 	status = "true"
 		case
