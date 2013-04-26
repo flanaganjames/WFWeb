@@ -1,19 +1,21 @@
------------a---
------------r--y
--------g---s-to
--------r---h-in
------tsuba-i-t-
--------moments-
--------p-ax----
--------y-------
 ---------------
 ---------------
 ---------------
 ---------------
 ---------------
 ---------------
----------------
-tiles1: sndlwra
-tiles2: oucdnli
-tilesr: aaaaabcddeeeeeeeeeeeffgghiiiiiijkllmnnooooopqrrrttuuvvwz*
-mode: PlayerVsComputer
+-----s---------
+---apple-------
+-----i---------
+-----k---------
+-----e--z--q---
+---caddies-u---
+--------k--o---
+--------skid---
+-----------s---
+tiles1: -------
+tiles2: mu*ojds
+tilesr: aaaaaaaaabbccddddeeeeeeeeeeeeffggghhiiiiiiiiijkllllmmnnnnnnooooooooppqrrrrrrssssttttttuuuuvvwwxyyz**
+mode: Cheat
+score1: 0
+score2: 0

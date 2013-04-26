@@ -14,23 +14,46 @@
     while i < 7
         aForm = aForm + "<td>" 
         aForm = aForm + "<input type = \"text\""
-        aForm = aForm + " value = #{$aGame.currentplayertileset[i]} "
+        aForm = aForm + " value = \"#{$aGame.currentplayertileset[i]}\" "
         aForm = aForm + " size =\"1\" name = \"#{@tilename[i]}\" "
         aForm = aForm + " </td>"
         i += 1
     end
+
+    aForm = aForm  + "<td> <input type = \"submit\" value = \"Find Moves\" formaction = \"/results\"/> </td> "
     aForm = aForm +  " </tr> </table> </div>"
     
-    
     aForm = aForm +  " <div> Enter Current Board <table> "
+	aForm = aForm + "<table> "
+    aForm = aForm + "<tr> <td> ... </td> "
     i = 0
+    while i < 15
+        aForm = aForm + "<td>#{i}</td>"
+    i += 1
+    end
+       i = 0
+    aForm = aForm + "</tr> "
+
 	while i < 15
 			aForm = aForm + "<tr>"
+            aForm = aForm + "<td>#{i}</td>"
             j = 0
 			while j < 15
-				aForm = aForm + "<td>"
-                aForm = aForm + "<input type = \"text\""
-                aForm = aForm + " value =\"#{$aWordfriend.myboard.lettergrid[i][j]}\""
+				aForm = aForm + "<td"
+                aForm = aForm + " bgcolor=#0000FF" if ($aWordfriend.myboard.newgrid[i][j] == 'n')
+                aForm = aForm + " bgcolor=#000000" if ($aWordfriend.myboard.lettergrid[i][j] != '-')
+                aForm = aForm + ">"
+                aForm = aForm + "<input type = \"text\" class=\"jander2\"  "
+                if $aWordfriend.myboard.lettergrid[i][j] == '-' && $aWordfriend.myboard.scoregrid[i][j] == 'W'
+                    aForm = aForm + " placeholder =\"tw\""
+                elsif $aWordfriend.myboard.lettergrid[i][j] == '-' && $aWordfriend.myboard.scoregrid[i][j] == 'w'
+                    aForm = aForm + " placeholder =\"dw\""
+                elsif $aWordfriend.myboard.lettergrid[i][j] == '-' && $aWordfriend.myboard.scoregrid[i][j] == 'L'
+                    aForm = aForm + " placeholder =\"tl\""
+                elsif $aWordfriend.myboard.lettergrid[i][j] == '-' && $aWordfriend.myboard.scoregrid[i][j] == 'l'
+                    aForm = aForm + " placeholder =\"dl\""
+                else aForm = aForm + " value =\"#{$aWordfriend.myboard.lettergrid[i][j]}\""
+                end
                 aForm = aForm + " size =\"1\" name =\"#{@posname[i][j]}\""
                 j += 1
                 aForm = aForm + " </td>"
@@ -38,10 +61,8 @@
 	aForm = aForm + "</tr>"
        i += 1
 	end
-    aForm = aForm + "</table></div>"
+aForm = aForm + "</table></div>"
 
-
-aForm = aForm  + "<div> <input type = \"submit\" value = \"Find Moves\" formaction = \"/results\"/> </div> "
 aForm = aForm + "</body> </form> </html>"
 
 return aForm

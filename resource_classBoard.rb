@@ -774,12 +774,14 @@ class ScrabbleBoard
         tiles2 = rows[self.dimension+1].sub('tiles2: ','')
         tilesr = rows[self.dimension+2].sub('tilesr: ','')
         mode = rows[self.dimension+3].sub('mode: ','')
-        return [tiles1, tiles2, tilesr, mode]
+        score1 = rows[self.dimension+4].sub('score1: ','').to_i
+        score2 = rows[self.dimension+5].sub('score2: ','').to_i
+        return [tiles1, tiles2, tilesr, mode, score1, score2]
         afile.close
 	end
 
 	
-	def writeboard (afilename, tiles1, tiles2, tilesr, mode)
+	def writeboard (afilename, tiles1, tiles2, tilesr, mode, score1, score2)
 		afile = File.open(afilename, "w")
 		i = 0
 		while i < self.dimension
@@ -796,6 +798,8 @@ class ScrabbleBoard
         afile.puts('tiles2: '+tiles2)
         afile.puts('tilesr: '+tilesr)
         afile.puts('mode: '+mode)
+        afile.puts('score1: '+score1)
+        afile.puts('score2: '+score2)
 		afile.close
 	end
     
@@ -1036,7 +1040,7 @@ def popgrids
 end
 
 def placewordfromtiles(aSW, fromtiles) #used to place a SW on board and deduct from newtileword, and sets which tiles are new on board; used by Game.firstword and by WFweb'/updated'
-    #push grids moved to could place words form tiles
+    self.pushgrids 
         self.resetnewindicator
         self.newtileword = fromtiles
         case
@@ -1050,7 +1054,7 @@ def placewordfromtiles(aSW, fromtiles) #used to place a SW on board and deduct f
                         self.newtileword = self.newtileword.sub(aSW.astring[i],'')
                     else
                         self.newtileword = self.newtileword.sub('*','') #if does not have the char then it must have a *
-                        self.scoregrid[aSW.xcoordinate][aSW.ycoordinate] = '' #if a * is used to fill this position, then that position does not count toward score
+                        self.scoregrid[aSW.xcoordinate][aSW.ycoordinate + i] = '' #if a * is used to fill this position, then that position does not count toward score
                     end
                 end
                 self.newgrid[aSW.xcoordinate][aSW.ycoordinate + i] = 'n'

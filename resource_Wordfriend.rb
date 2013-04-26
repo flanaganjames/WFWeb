@@ -80,8 +80,8 @@ class Wordfriend
         return tilesarray
     end
  
-    def saveboard(tiles1, tiles2, tilesr, mode)
-        self.myboard.writeboard("./Users/" + self.gameuser + "/" + self.gamefile, tiles1, tiles2, tilesr, mode)
+    def saveboard(tiles1, tiles2, tilesr, mode, score1, score2)
+        self.myboard.writeboard("./Users/" + self.gameuser + "/" + self.gamefile, tiles1, tiles2, tilesr, mode, score1, score2)
 	end
     
     def resetnewindicator

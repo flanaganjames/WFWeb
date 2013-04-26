@@ -32,61 +32,40 @@ end
 
 post '/usergame' do
     if (params["ausername"] == '' || params["pin1"] == '' || params["pin2"] == '' || params["pin3"] == '' || params["pin4"] == '')
-        then
+    then
         $aWordfriend.gameuser = ''
         erb:showwarning
-        elsif params["pin1"] == params["pin2"] && params["pin3"] == params["pin4"] && params["pin2"] == params["pin3"]
-        $aWordfriend.gameuser = ''
-        erb:showwarning
-        else
-        $aGame.gameuser = params["ausername"] + params["pin1"] + params["pin2"] + params["pin3"] + params["pin4"]
-        $aWordfriend.gameuser = $aGame.gameuser
-        $aWordfriend.createuserdirectory #creates the user directory if it does not exist already
-        $aGame.getusergame
-        if ($aGame.newgame == "yes")
-            then
-            $aGame.newgame
-            erb:showaskmode
-            else
-            $aGame.newgame
-            erb:showaskresume
-        end
+    elsif (params["pin1"] == params["pin2"] && params["pin3"] == params["pin4"] && params["pin2"] == params["pin3"])
+            $aWordfriend.gameuser = ''
+            erb:showwarning
+    else
+            $aGame.gameuser = params["ausername"] + params["pin1"] + params["pin2"] + params["pin3"] + params["pin4"]
+            $aWordfriend.gameuser = $aGame.gameuser
+            $aWordfriend.createuserdirectory #creates the user directory if it does not exist already
+            $aGame.getusergame
+            choosenextpage
+    end
+end
+
+def choosenextpage
+    if $aGame.newgame == "yes" #set to yes if usergame file does not exist already
+        $aGame.initializegame
+        erb:showaskmode
+    end
+    if $aGame.newgame != "yes"
+        erb:showaskresume
     end
 end
 
 post '/resumegame' do  #this posts from askresume.erb
-    i= 0
-    @posname = {}
-    while i < 15
-        j = 0
-        lhash = {}
-        while j < 15
-            lhash[j] = ":i" + i.to_s + "j" + j.to_s
-            j += 1
-        end
-        @posname[i] = lhash
-        i += 1
-    end
-    
-    @tilename = {}
-    i = 0
-    while i < 7
-        @tilename[i] = "tile" + i.to_s
-        i += 1
-    end
-    
+    $aGame.newgame = "no"
     $aGame.readgame
-    if ($aGame.mode == "PlayerVsComputer")
-        $aGame.resumegamePvC
-        erb:showArcaneUsergameboard
-        else
-        $aGame.resumegameCheat
-        erb:showCheatgamebord
-    end
+    erb:showaskmode
 end
 
 post '/newgame' do #this posts from askresume.erb
     $aGame.newgame = "yes"
+    $aGame.initializegame
     erb:showaskmode
 end
 
@@ -123,11 +102,8 @@ post '/startgamePvC' do  #this posts from /askmode if PvC is chosen and assumes 
         @posname[i] = lhash
         i += 1
     end
-    
-    $aGame.mode = "PlayerVsComputer"
-    
-    $aGame.gameplayer2 = $aGame.gameuser
-    $aGame.gameplayer1 = "ArcaneWord"
+
+    $aGame.initializegamePvC
     
     $aGame.firstmove
     #tileword = tiles1, the computer player1 makes the first move, putting the first word on the board
@@ -392,7 +368,7 @@ post '/results' do
             lhash[j] = ":i" + i.to_s + "j" + j.to_s
             j += 1
         end
-        @posname[i] = lhash
+        @posname[i] = lhash.dup
         i += 1
     end
     
@@ -409,13 +385,23 @@ post '/results' do
         rowletters = ""
         while j < 15
             rowletters = rowletters + params[@posname[i][j]]
-            $aWordfriend.myboard.lettergrid[i][j] = params[@posname[i][j]]
+            $aWordfriend.myboard.lettergrid[i][j] = params[@posname[i][j]] if 'abcdefghijklmnopqrstuvwxyz'.to_chars().include?(params[@posname[i][j]])
             j += 1
         end
         i += 1
     end
-    
-    
+    #puts "captured lettergrid"
+    #puts $aWordfriend.myboard.lettergrid
+    anarray = []
+    i = 0
+    while i < 7
+        anarray[i] = params[@tilename[i]]
+        i += 1
+    end
+    $aGame.tilesplayer2 = anarray.join('')
+    $aGame.currentplayertileset = $aGame.tilesplayer2
+    #puts "tileset captured: #{$aGame.currentplayertileset }"
+    $aGame.saveboard
     $aWordfriend.updatevalues($aGame.tilesplayer2)
     $aWordfriend.wordfind
     
@@ -459,7 +445,54 @@ post '/updated' do
     erb:showupdated
 end
 
+post '/revert' do
+    i=0
+    @posname = {}
+    while i < 15
+        j = 0
+        lhash = {}
+        while j < 15
+            lhash[j] = ":i" + i.to_s + "j" + j.to_s
+            j += 1
+        end
+        @posname[i] = lhash
+        i += 1
+    end
+    
+    @tilename = {}
+    i = 0
+    while i < 7
+        @tilename[i] = "tile" + i.to_s
+        i += 1
+    end
+    
+    $aGame.revertCheat
+    
+    erb:showresults
+end
 
+post '/nextmove' do   #posted from showupdated
+    i=0
+    @posname = {}
+    while i < 15
+        j = 0
+        lhash = {}
+        while j < 15
+            lhash[j] = ":i" + i.to_s + "j" + j.to_s
+            j += 1
+        end
+        @posname[i] = lhash
+        i += 1
+    end
+    @tilename = {}
+    i = 0
+    while i < 7
+        @tilename[i] = "tile" + i.to_s
+        i += 1
+    end
+    
+    erb:showCheatgameboard
+end
 
 post '/saveboard' do
     i=0
@@ -502,7 +535,7 @@ post '/saveboard' do
     end
     $aWordfriend.myboard.tileword = anarray.join('')
     
-    $aWordfriend.saveboard($aGame.tilesplayer1,$aGame.tilesplayer2,$aGame.tilesremain.join(''))
+    $aWordfriend.saveboard($aGame.tilesplayer1,$aGame.tilesplayer2,$aGame.tilesremain.join(''))  #need to fix this
     
     $aWordfriend.updatevalues  #need to fix this
     

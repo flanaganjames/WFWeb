@@ -9,17 +9,50 @@ aForm = aForm + "<head> <title>Updated Board</title> </head> <body> <div> <table
 aForm = aForm + "<th>Choice: #{@choice}, </th> <th>Score: #{@score}, </th> <th>Word: <i>#{@word}</i>, </th> <th>Row: #{@xcoordinate}, </th> <th>Col: #{@ycoordinate}, </th> <th>Direction: #{@direction}</th>"
 aForm = aForm + "</table></div>"
 
-aForm = aForm + " <div> Resulting Board <table> "
+aForm = aForm +  " <div> <table> <tr> <td> Tiles If Move Accepted </td>"
+i = 0
+while i < 7
+    aForm = aForm + "<td> <input type = \"text\" disabled=\"disabled\" size =\"1\" name =\"tile#{i}\" value =\"#{$aGame.currentplayertileset[i]}\" </td> "
+    i += 1
+end
+aForm = aForm  + "<td> <input type = \"submit\" value = \"Undo\" formaction = \"/revert\"/> </td>"
+aForm = aForm  + "<td> <input type = \"submit\" value = \"Accept Move\" formaction = \"/nextmove\"/> </td> "
+
+aForm = aForm +  " </tr> </table> </div>"
+
+aForm = aForm + " <div>Board if Move Accepted<table> "
+
+aForm = aForm + "<tr> <td> ... </td> "
+i = 0
+while i < 15
+    aForm = aForm + "<td>#{i}</td>"
+    i += 1
+end
+aForm = aForm + "</tr> "
+
 	i = 0
 	while i < 15
 		aForm = aForm + "<tr>"
+        aForm = aForm + "<td>#{i}</td>"
 		j = 0
 		while j < 15
 			aForm = aForm + "<td"
             aForm = aForm + " bgcolor=#00FF00" if ($aWordfriend.myboard.newgrid[i][j] == 'n')
+            aForm = aForm + " bgcolor=#000000" if ($aWordfriend.myboard.lettergrid[i][j] != '-')
             aForm = aForm + ">"
-            aForm = aForm + "<input type = \"text\""
-            aForm = aForm + " value =\"#{$aWordfriend.myboard.lettergrid[i][j]}\""
+            aForm = aForm + "<input type = \"text\" class=\"jander2\" disabled=\"disabled\" "
+
+                if $aWordfriend.myboard.lettergrid[i][j] == '-' && $aWordfriend.myboard.scoregrid[i][j] == 'W'
+                    aForm = aForm + " placeholder =\"tw\""
+                elsif $aWordfriend.myboard.lettergrid[i][j] == '-' && $aWordfriend.myboard.scoregrid[i][j] == 'w'
+                    aForm = aForm + " placeholder =\"dw\""
+                elsif $aWordfriend.myboard.lettergrid[i][j] == '-' && $aWordfriend.myboard.scoregrid[i][j] == 'L'
+                    aForm = aForm + " placeholder =\"tl\""
+                elsif $aWordfriend.myboard.lettergrid[i][j] == '-' && $aWordfriend.myboard.scoregrid[i][j] == 'l'
+                    aForm = aForm + " placeholder =\"dl\""
+                else aForm = aForm + " value =\"#{$aWordfriend.myboard.lettergrid[i][j]}\""
+                end
+
             aForm = aForm + " size =\"1\" name =\"#{@posname[i][j]}\""
             j += 1
             aForm = aForm + " </td>"
@@ -28,17 +61,6 @@ aForm = aForm + " <div> Resulting Board <table> "
        	i += 1
 	end
 aForm = aForm + "</table></div>"
-aForm = aForm +  " <div> Remaining Tiles <table> <tr> "
-i = 0
-while i < 7
-    aForm = aForm + "<td> <input type = \"text\" size =\"1\" name =\"tile#{i}\" value =\"#{$aWordfriend.myboard.newtileword[i]}\" </td> "
-    i += 1
-end
-aForm = aForm +  " </tr> </table> </div>"
-
-aForm = aForm  + "<div> <input type = \"submit\" value = \"Save Board & Tiles\" formaction = \"/saveboard\"/> "
-aForm = aForm  + "<input type = \"submit\" value = \"Undo\" formaction = \"/revert\"/> "
-aForm = aForm  + "<input type = \"submit\" value = \"Next Move\" formaction = \"/nextmove\"/> </div> "
 
 aForm = aForm + "</body> </form> </html>"
 

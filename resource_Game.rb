@@ -41,7 +41,7 @@ class Game
         self.tilesplayer2 = ''
         $aWordfriend = Wordfriend.new
         $aWordfriend.initialvalues
-        $minscore = 10
+        $minscore = 25
     end
     
     def getusergame
@@ -93,25 +93,43 @@ class Game
         return aplayerstiles
     end
     
-    def initializegame
-        self.currentplayer = 0
-        self.tilesplayer1 = self.filltiles(self.tilesplayer1)
-        self.tilesplayer2 = self.filltiles(self.tilesplayer2)
-        $aWordfriend.saveboard(self.tilesplayer1, self.tilesplayer2, $aGame.tilesremain, self.mode)
+    def initializegame  #new game was chosen
+        $aWordfriend.initialvalues #creates new blank game board
+        self.tilesplayer1 = '-------'
+        self.tilesplayer2 = '-------'
+        self.scoreplayer2 = 0
+        self.scoreplayer1 = 0
+        #cannot do the following until mode is set
+        #$aWordfriend.saveboard(self.tilesplayer1, self.tilesplayer2, $aGame.tilesremain, self.mode, self.scoreplayer1.to_s, self.scoreplayer2.to_s)
     end
     
     def initializegameCheat
-        self.mode = "Cheat"
         self.currentplayer = 1
-        self.tilesplayer2 = "-------"
+        $aGame.mode = "Cheat"
         $aGame.gameplayer2 = $aGame.gameuser
         $aGame.gameplayer1 = "none"
         self.currentplayertileset = self.tilesplayer2
         $aWordfriend.updatevalues(self.currentplayertileset)
-        $aWordfriend.saveboard(self.tilesplayer1, self.tilesplayer2, $aGame.tilesremain, self.mode)
+        $aWordfriend.saveboard(self.tilesplayer1, self.tilesplayer2, self.tilesremain, self.mode, self.scoreplayer1.to_s, self.scoreplayer2.to_s )
+    end
+    
+    def initializegamePvC
+        $aGame.gameplayer2 = $aGame.gameuser
+        $aGame.gameplayer1 = "ArcaneWord"
+        $aGame.mode = "PlayerVsComputer"
+        self.currentplayer = 0
+        self.currentplayertileset = self.tilesplayer1
+        $aWordfriend.updatevalues(self.currentplayertileset)
+        $aWordfriend.saveboard(self.tilesplayer1, self.tilesplayer2, self.tilesremain, self.mode, self.scoreplayer1.to_s, self.scoreplayer2.to_s)
     end
     
     def revertPvC
+        self.tilesremain = self.pushtilesremain.dup
+        self.currentplayertileset = self.pushtilesplayer2.dup
+        $aWordfriend.revertboard
+    end
+    
+    def revertCheat
         self.tilesremain = self.pushtilesremain.dup
         self.currentplayertileset = self.pushtilesplayer2.dup
         $aWordfriend.revertboard
@@ -144,6 +162,8 @@ class Game
         self.tilesplayer2 = anarray[1]
         self.tilesremain = anarray[2]
         self.mode = anarray[3]
+        self.scoreplayer1 = anarray[4]
+        self.scoreplayer2 = anarray[5]
     end
     
     def resumegamePvC
@@ -184,11 +204,15 @@ class Game
         self.pushtilesremain = self.tilesremain.dup
         self.currentplayertileset = $aWordfriend.placewordfromtiles(aSW, self.currentplayertileset) #hold the remaining tiles in currentplayertileset
         self.scoreadd = aSW.score + aSW.supplement
-        puts "aSW.supplement = #{aSW.supplement}"
+        #puts "aSW.supplement = #{aSW.supplement}"
+    end
+    
+    def saveboard
+        $aWordfriend.saveboard(self.tilesplayer1,self.tilesplayer2,self.tilesremain, self.mode, self.scoreplayer1.to_s, self.scoreplayer2.to_s)
     end
     
     def nextmovePlayer1
-        $aWordfriend.saveboard($aGame.tilesplayer1,$aGame.tilesplayer2,$aGame.tilesremain, $aGame.mode) #saves board after player2 accepts move
+        $aWordfriend.saveboard(self.tilesplayer1,self.tilesplayer2,self.tilesremain, self.mode, self.scoreplayer1.to_s, self.scoreplayer2.to_s) #saves board after player2 accepts move
         self.tilesplayer2 = self.currentplayertileset  #the move just reviewed in '/updated' is now accepted, the remaining tiles in currentplayertileset transferred to  tilesplater2
         self.scoreplayer2 = self.scoreplayer2 + self.scoreadd
         self.tilesplayer2 = $aGame.filltiles(self.tilesplayer2) #player2 just moved and used some tiles
@@ -205,7 +229,7 @@ class Game
         end
         self.currentplayertileset = self.tilesplayer2
         $aWordfriend.updatevalues(self.currentplayertileset)
-        $aWordfriend.saveboard($aGame.tilesplayer1,$aGame.tilesplayer2,$aGame.tilesremain, $aGame.mode) #saves board after player 1 moves
+        $aWordfriend.saveboard(self.tilesplayer1, self.tilesplayer2, $aGame.tilesremain, self.mode, self.scoreplayer1.to_s, self.scoreplayer2.to_s) #saves board after player 1 moves
     end
 
 end

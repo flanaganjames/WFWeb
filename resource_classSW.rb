@@ -35,7 +35,7 @@ class ScrabbleWord
 	
 	
 
-	def scoreword  #calculates only the direct score. testwordsgeninline and testwordsgenortho calculate the cupplement score from indirectly created words
+	def scoreword  #calculates only the direct score. testwordsgeninline and testwordsgenortho calculate the cupplement score from indirectly created words; this assumes the word has not been placed on the board yet.
 		ascore = 0
 		i = 0
 		anarray = []
