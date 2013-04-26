@@ -114,6 +114,8 @@ class Game
     end
     
     def initializegamePvC
+        self.tilesplayer1 = $aGame.filltiles(self.tilesplayer1)
+        self.tilesplayer2 = $aGame.filltiles(self.tilesplayer2)
         $aGame.gameplayer2 = $aGame.gameuser
         $aGame.gameplayer1 = "ArcaneWord"
         $aGame.mode = "PlayerVsComputer"
@@ -140,7 +142,7 @@ class Game
     end
     
     def firstmove
-        self.initializegame #sets currentpayer = gameplayer1 and fills both players' tile sets;
+        #self.initializegame #sets currentpayer = gameplayer1 and fills both players' tile sets;
         self.currentplayertileset = self.tilesplayer1
         $aWordfriend.updatevalues(self.currentplayertileset) #findSWs, tilepermutedset, $possiblewords(words w tiles and board), $tilewords (words w tiles only)
         
