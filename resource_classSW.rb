@@ -35,7 +35,7 @@ class ScrabbleWord
 	
 	
 
-	def scoreword  #calculates only the direct score. testwordsgeninline and testwordsgenortho calculate the cupplement score from indirectly created words; this assumes the word has not been placed on the board yet.
+	def scoreword  #testwordsgeninline and testwordsgenortho calculate the cupplement score from indirectly created words; this assumes the word has not been placed on the board yet.
 		ascore = 0
 		i = 0
 		anarray = []
@@ -58,7 +58,7 @@ class ScrabbleWord
 			end
 			
 			case			
-            when gridvalue == "" #scoregrid is set to "" if a '*' character used on lettergrid
+            when gridvalue == '' #scoregrid is set to "" if a '*' character used on lettergrid
                 #no addition to the score in this case
             when gridvalue == "."
 				ascore = ascore + $aWordfriend.myboard.lettervalues[self.astring[i]]
@@ -81,12 +81,18 @@ class ScrabbleWord
 				if occupied == "false" 
 					then
 					anarray << 2
+                    ascore = ascore + $aWordfriend.myboard.lettervalues[self.astring[i]]
+                    else
+					ascore = ascore + $aWordfriend.myboard.lettervalues[self.astring[i]]
 					end
 			when gridvalue == "W"
 				ascore = ascore + $aWordfriend.myboard.lettervalues[self.astring[i]]
 				if occupied == "false" 
 					then
 					anarray <<  3
+                    ascore = ascore + $aWordfriend.myboard.lettervalues[self.astring[i]]
+                    else
+					ascore = ascore + $aWordfriend.myboard.lettervalues[self.astring[i]]
 					end
 			end
 			i += 1

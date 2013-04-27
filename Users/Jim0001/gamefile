@@ -1,21 +1,21 @@
 ---------------
 ---------------
----o-----------
----v---v-------
----e---i-------
--teraohm-------
----b---e-------
----i---n-------
----d-----------
 ---------------
 ---------------
 ---------------
 ---------------
 ---------------
 ---------------
-tiles1: mgliltr
-tiles2: laxkuai
-tilesr: aaaaaabccdddeeeeeeeeeffgghiiiiijlnnnnnooooooppqrrrrssssttttuuuwwyyz**
+---------------
+---------------
+---------------
+---------------
+---------------
+---------------
+---------------
+tiles1: dbboter
+tiles2: cviurx*
+tilesr: aaaaaaaaacdddeeeeeeeeeeeffggghhiiiiiiiijkllllmmnnnnnnoooooooppqrrrrsssstttttuuuvwwyyz*
 mode: PlayerVsComputer
-score1: 76
-score2: 28
+score1: 0
+score2: 0

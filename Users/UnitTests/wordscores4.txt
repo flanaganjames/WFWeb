@@ -1,0 +1,27 @@
+---------------
+---r-i-------f-
+----------m--i-
+ti-g-----fazed-
+e-------zap--g-
+ever----o----e-
+n---j--pong----
+s--hello---k---
+ya--s--x--pilot
+-botts---rat-fa
+b---e-hi-ice--m
+u--adhesives--e
+tour-----e----d
+e--triad-reel--
+---y--wow--ma--
+tiles1: dbboter
+tiles2: equorum
+tilesr: aaaaaaaaacdddeeeeeeeeeeeffggghhiiiiiiiijkllllmmnnnnnnoooooooppqrrrrsssstttttuuuvwwyyz*
+mode: PlayerVsComputer
+score1: 0
+score2: 0
+quorum
+0
+1
+right
+84
+

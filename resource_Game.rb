@@ -166,6 +166,7 @@ class Game
         self.mode = anarray[3]
         self.scoreplayer1 = anarray[4]
         self.scoreplayer2 = anarray[5]
+        return anarray
     end
     
     def resumegamePvC

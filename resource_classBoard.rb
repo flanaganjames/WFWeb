@@ -514,19 +514,19 @@ class ScrabbleBoard
 					end
 		
 					#fill the word into the array; at this point currentposition = word.ycoordinate
-					wordfactorarray = []
-					wordfactorarray << 1
+					#wordfactorarray = []
+					#wordfactorarray << 1
 					while  currentposition < word.ycoordinate + word.astring.length 
 						testwordarray << word.astring[currentposition - word.ycoordinate]
-						case
-							when (self.scoregrid[word.xcoordinate][currentposition] == 'w' && self.lettergrid[word.xcoordinate][currentposition] == '-')
-								wordfactorarray << 2
-							when (self.scoregrid[word.xcoordinate][currentposition]  == 'W' && self.lettergrid[word.xcoordinate][currentposition] == '-')
-								wordfactorarray << 3
-						end
+						#case
+                        #when (self.scoregrid[word.xcoordinate][currentposition] == 'w' && self.lettergrid[word.xcoordinate][currentposition] == '-')
+                        #	wordfactorarray << 2
+						#	when (self.scoregrid[word.xcoordinate][currentposition]  == 'W' && self.lettergrid[word.xcoordinate][currentposition] == '-')
+						#		wordfactorarray << 3
+						#end
 						currentposition += 1
 					end
-					wordfactor = wordfactorarray.max
+					#wordfactor = wordfactorarray.max
 					
 					#fill in right part of array
 					while currentposition < rightposition + 1
