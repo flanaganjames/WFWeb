@@ -1,7 +1,7 @@
 ---------------
----r-i-------f-
+-------------f-
 ----------m--i-
-ti-g-----fazed-
+tight----fazed-
 e-------zap--g-
 ever----o----e-
 n---j--pong----
@@ -23,5 +23,5 @@ quorum
 0
 1
 right
-54
+direct 54, supplement 0, invalid coordinates, uses *
 

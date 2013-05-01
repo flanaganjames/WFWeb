@@ -1,6 +1,6 @@
 ---------------
----r-i-------f-
-----------m--i-
+---r---------f-
+---i------m--i-
 ti-g-----fazed-
 e-------zap--g-
 ever----o----e-
@@ -20,8 +20,8 @@ mode: PlayerVsComputer
 score1: 0
 score2: 0
 quorum
-0
 1
+0
 right
-84
+direct 42, supplement 0 
 

@@ -43,11 +43,11 @@ post '/usergame' do
             $aWordfriend.gameuser = $aGame.gameuser
             $aWordfriend.createuserdirectory #creates the user directory if it does not exist already
             $aGame.getusergame
-            choosenextpage
+            choosenextpagenewgame
     end
 end
 
-def choosenextpage
+def choosenextpagenewgame
     if $aGame.newgame == "yes" #set to yes if usergame file does not exist already
         $aGame.initializegame
         erb:showaskmode
@@ -143,16 +143,11 @@ post '/manualmovePvC' do #posted from showArcanUsergameboard
     #puts "status = #{status}"
     #puts "hello if true" if status
     #puts "hello if nil" if not(status)
-    if (status)
-        then
-            aSW.scoreword
-            $aGame.placewordfromtiles2(aSW)
-            erb:showupdatedPvC
-        else
-            aSW.scoreword
-            erb:showinvalidmove
-    end
+    erb:showinvalidmove if not(status)
+    $aGame.placewordfromtiles2(aSW) if status
+    erb:showupdatedPvC if status
 end
+
 
 post '/resultsPvC' do  #posted from showArcanUsergameboard
     i=0

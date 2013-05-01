@@ -41,7 +41,7 @@ class Game
         self.tilesplayer2 = ''
         $aWordfriend = Wordfriend.new
         $aWordfriend.initialvalues
-        $minscore = 25
+        $minscore = 20
     end
     
     def getusergame
@@ -151,7 +151,7 @@ class Game
             self.tilesplayer1 = self.replacealltiles(self.tilesplayer1)  #in case initial tiles generated no possible words, replace and try again.
             aSW = $aWordfriend.firstword
         end
-        self.placewordfromtiles(aSW)
+        self.placewordfromtiles(aSW)  #scoreandplacewordfromtiles(aSW, fromtiles)
         self.tilesplayer1 = self.currentplayertileset
         self.tilesplayer1 = $aGame.filltiles(self.tilesplayer1)
         self.scoreplayer1 = scoreplayer1 + aSW.score + aSW.supplement
@@ -199,7 +199,7 @@ class Game
     
     def placewordfromtiles(aSW)
         self.currentplayertileset = $aWordfriend.placewordfromtiles(aSW, self.currentplayertileset) #hold the remaining tiles in currentplayertileset
-        self.scoreadd = aSW.score
+        self.scoreadd = aSW.score + aSW.supplement
     end
     
     def placewordfromtiles2(aSW)

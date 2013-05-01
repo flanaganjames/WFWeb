@@ -1,7 +1,7 @@
 ---------------
----r-i-------f-
+-------------f-
 ----------m--i-
-ti-g-----fazed-
+ti-------fazed-
 e-------zap--g-
 ever----o----e-
 n---j--pong----
@@ -23,5 +23,6 @@ quags
 2
 1
 right
-7
+direct 10, supplement 1, no score for *
+
 

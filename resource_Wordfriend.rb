@@ -94,7 +94,6 @@ class Wordfriend
         #$aGame.tilesplayer1 = tilesets[0]
         #$aGame.tilesplayer2 = tilesets[1]
         #$aGame.tilesremain = tilesets[2].scan('')
-
         self.myboard.tileword = aplayertileset
         self.myboard.findBoardSWs
 		#self.myboard.findBoardLetters #was used only by findPossibleWords
@@ -115,7 +114,7 @@ class Wordfriend
     end
     
     def placewordfromtiles(aSW, fromtiles)
-        return self.myboard.placewordfromtiles(aSW, fromtiles)
+        return self.myboard.scoreandplacewordfromtiles(aSW, fromtiles, "true")
     end
     
 

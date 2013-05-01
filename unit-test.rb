@@ -1,37 +1,10 @@
-class Wordfriend
-	attr_accessor :myboard, :gameuser, :gamefile, :possiblewords, :usergames, :newgame, :testname
-    
-    require './resource_Game'
-    require './resource_Wordfriend'
-    require './resource_methodsOO'
-	require './resource_classSW'
-    require './resource_classBoard'
+require './resource-unittester'
+aTest = Unittester.new
+aTest.intialvalues
 
-	
-    $aGame = Game.new
-    $aGame.initialvalues #init Game, Wordfriend and Board
-    $aGame.gameuser="unit-test"
-    $aWordfriend.gameuser = $aGame.gameuser
-
-    $aGame.gamefile="wordscores1"
-    $aWordfriend.gamefile = $aGame.gamefile
-    anarray = $aGame.readgame
-    targetword = annarray[6]
-    xcoord = anarray[7]
-    ycoord = anarray[8]
-    dirx = anarray[9]
-    targetscore = anarray[10]
-    aSW = ScrabbleWord.new(targetword,xcoord, ycoord, dirx, 0,0)
-    status = $aWordfriend.manualwordtest(aSW)
-    if (status)
-    then
-    aSW.scoreword
-    $aGame.placewordfromtiles2(aSW)
-    
-    else
-    aSW.scoreword
-
-    end
+aTest.scoretest(1, "wordscores1.txt", "wordscores1result.txt")
+aTest.scoretest(2, "wordscores2.txt", "wordscores2result.txt")
+aTest.scoretest(3, "wordscores3.txt", "wordscores3result.txt")
+aTest.scoretest(4, "wordscores4.txt", "wordscores4result.txt")
 
 
-    
