@@ -77,8 +77,26 @@ class ScrabbleBoard
 		currentSWs.each { |aSW|
 			case
 			when aSW.direction == "right"
-					i = 0
-					while i < aSW.astring.size
+                x = aSW.xcoordinate 
+                y = aSW.ycoordinate - 1
+                if (y > -1)  #if a valid coordinate
+                    then
+                    if self.lettergrid[x][y] == '-'
+                        then
+                        self.blankcoordinatesusable << [x,y]
+                    end
+                end
+                x = aSW.xcoordinate
+                y = aSW.ycoordinate + aSW.astring.size
+                if (y < self.dimension)  #if a valid coordinate
+                    then
+                    if self.lettergrid[x][y] == '-'
+                        then
+                        self.blankcoordinatesusable << [x,y]
+                    end
+                end
+                i = 0
+                while i < aSW.astring.size
 						x = aSW.xcoordinate - 1
 						y = aSW.ycoordinate + i
 						if (x > -1)  #if a valid coordinate
@@ -99,9 +117,27 @@ class ScrabbleBoard
                                 self.blankcoordinatesusable << [x,y]
 							end
 						end
-					i += 1
-					end
+                i += 1
+                end
 			when aSW.direction == "down"
+                x = aSW.xcoordinate - 1
+                y = aSW.ycoordinate
+                if (x > -1)  #if a valid coordinate
+                    then
+                    if self.lettergrid[x][y] == '-'
+                        then
+                        self.blankcoordinatesusable << [x,y]
+                    end
+                end
+                x = aSW.xcoordinate + aSW.astring.size
+                y = aSW.ycoordinate 
+                if (x < self.dimension)  #if a valid coordinate
+                    then
+                    if self.lettergrid[x][y] == '-'
+                        then
+                        self.blankcoordinatesusable << [x,y]
+                    end
+                end
 					i = 0
 					while i < aSW.astring.size
 						x = aSW.xcoordinate + i
@@ -541,12 +577,20 @@ class ScrabbleBoard
 						then
 						#score for full word generated inline - score for the proposed word is the supplement
 						generatedword = ScrabbleWord.new(testwordarray.join(''),word.xcoordinate,leftposition,"right",0,0)
+                        akey = generatedword.createkey
+                        if word.suppwords[akey]
+                            then
+                            puts "duplicate #{generatedword.astring}, xc #{generatedword.xcoordinate}, yc #{generatedword.ycoordinate}, dirx #{generatedword.direction}"
+                            else
+                            word.suppwords[akey] = generatedword
+                            self.scoreandplacewordfromtiles(generatedword, $aGame.currentplayertileset, nil)
+                            self.scoreandplacewordfromtiles(word, $aGame.currentplayertileset, nil)
+                            difference =  generatedword.score - word.score
+                            word.supplement = word.supplement + difference
+						end
 						#puts generatedword.print("temp inline right generated")
 						#puts word.print("temp inline right source")
-                        self.scoreandplacewordfromtiles(generatedword, $aGame.currentplayertileset, nil)
-                        self.scoreandplacewordfromtiles(word, $aGame.currentplayertileset, nil)
-						difference =  generatedword.score - word.score
-						word.supplement = word.supplement + difference
+                        
 						
 					end
 				else
@@ -608,12 +652,21 @@ class ScrabbleBoard
 						then
 						#score for full word generated inline - score for the proposed word is the supplement
 						generatedword = ScrabbleWord.new(testwordarray.join(''),leftposition,word.ycoordinate,"down",0,0)
-						#puts generatedword.print("temp inline down generated")
+                        akey = generatedword.createkey
+                        if word.suppwords[akey]
+                        then
+                            puts "duplicate #{generatedword.astring}, xc #{generatedword.xcoordinate}, yc #{generatedword.ycoordinate}, dirx #{generatedword.direction}"
+                        else
+                            word.suppwords[akey] = generatedword
+                            self.scoreandplacewordfromtiles(generatedword, $aGame.currentplayertileset, nil)
+                            self.scoreandplacewordfromtiles(word, $aGame.currentplayertileset, nil)
+                            difference =  generatedword.score - word.score
+                            word.supplement = word.supplement + difference
+						end
+                        
+                        #puts generatedword.print("temp inline down generated")
 						#puts word.print("temp inline down source")
-						self.scoreandplacewordfromtiles(generatedword, $aGame.currentplayertileset, nil)
-                        self.scoreandplacewordfromtiles(word, $aGame.currentplayertileset, nil)
-						difference =  generatedword.score - word.score
-						word.supplement = word.supplement + difference
+						
 					end
 				else
 					status = word.astring
@@ -683,11 +736,19 @@ class ScrabbleBoard
 							if status
 							then
 								generatedword = ScrabbleWord.new(testwordarray.join(''),word.xcoordinate + wordposition,leftposition,"right",0,0)
+                                akey = generatedword.createkey
+                                if word.suppwords[akey]
+                                    then
+                                    puts "duplicate #{generatedword.astring}, xc #{generatedword.xcoordinate}, yc #{generatedword.ycoordinate}, dirx #{generatedword.direction}"
+                                    else
+                                    word.suppwords[akey] = generatedword
+                                    self.scoreandplacewordfromtiles(generatedword, $aGame.currentplayertileset, nil)
+                                    word.supplement = word.supplement + generatedword.score
+                                end
 								#puts generatedword.print("ortho down generated")
 								#puts word.print("ortho down source")
                                 
-                                self.scoreandplacewordfromtiles(generatedword, $aGame.currentplayertileset, nil)
-								word.supplement = word.supplement + generatedword.score
+                                
 								#puts "supplement: #{word.supplement}"
                             else
                                 puts "failed word: #{testwordarray.join('')}"
@@ -755,10 +816,18 @@ class ScrabbleBoard
                             if status
 								then
 								generatedword = ScrabbleWord.new(testwordarray.join(''),leftposition,word.ycoordinate + wordposition,"down",0,0)
+                                akey = generatedword.createkey
+                                if word.suppwords[akey]
+                                    then
+                                    puts "duplicate #{generatedword.astring}, xc #{generatedword.xcoordinate}, yc #{generatedword.ycoordinate}, dirx #{generatedword.direction}"
+                                    else
+                                    word.suppwords[akey] = generatedword
+                                    self.scoreandplacewordfromtiles(generatedword, $aGame.currentplayertileset, nil)
+                                    word.supplement = word.supplement + generatedword.score
+                                end
 								#puts generatedword.print("temp inline down generated")
 								#puts word.print("temp inline down source")
-                                self.scoreandplacewordfromtiles(generatedword, $aGame.currentplayertileset, nil)
-								word.supplement = word.supplement + generatedword.score
+                                
 								#puts "supplement: #{word.supplement}"
                             else
                                 puts "failed word: #{testwordarray.join('')}"
@@ -781,7 +850,12 @@ class ScrabbleBoard
                 self.lettergrid[i][j] = rowletters[j]
                 }
             end
-                 
+            if i > self.dimension + 5
+                rowletters = rows[i].to_chars # this is an array of characters for one of the rows
+                rowletters.each_index {|j|
+                    self.newgrid[i - self.dimension - 6][j] = rowletters[j]
+                }
+            end
 		}
         tiles1 = rows[self.dimension].sub('tiles1: ','')
         tiles2 = rows[self.dimension+1].sub('tiles2: ','')
@@ -789,8 +863,10 @@ class ScrabbleBoard
         mode = rows[self.dimension+3].sub('mode: ','')
         score1 = rows[self.dimension+4].sub('score1: ','').to_i
         score2 = rows[self.dimension+5].sub('score2: ','').to_i
-        return [tiles1, tiles2, tilesr, mode, score1, score2]
+        
+        
         afile.close
+        return [tiles1, tiles2, tilesr, mode, score1, score2]
 	end
 
 	
@@ -813,6 +889,17 @@ class ScrabbleBoard
         afile.puts('mode: '+mode)
         afile.puts('score1: '+score1)
         afile.puts('score2: '+score2)
+ 		i = 0
+		while i < self.dimension
+			j = 0
+			anarray = []
+			while j < self.dimension
+				anarray << self.newgrid[i][j]
+                j += 1
+			end
+			afile.puts(anarray.join())
+            i += 1
+		end
 		afile.close
 	end
     

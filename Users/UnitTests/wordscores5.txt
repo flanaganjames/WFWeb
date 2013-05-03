@@ -1,0 +1,26 @@
+---------------
+---------------
+-d-------------
+-o-------------
+-u-----j-------
+-r-----o-------
+-i-----e-------
+-nuggets-------
+-e-------------
+---------------
+---------------
+---------------
+---------------
+---------------
+---------------
+tiles1: eaiaeie
+tiles2: nntnosr
+tilesr: aaaaaaabbccdddeeeeeeffghhiiiiiikllllmmnnoooooppqrrrrssttttuuuvvwwxyyz*
+mode: PlayerVsComputer
+score1: 28
+score2: 22
+snort
+9
+1
+right
+direct 16, supplement 22

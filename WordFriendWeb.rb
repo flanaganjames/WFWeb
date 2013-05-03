@@ -103,10 +103,12 @@ post '/startgamePvC' do  #this posts from /askmode if PvC is chosen and assumes 
         i += 1
     end
 
+    if $aGame.newgame = "yes"
     $aGame.initializegamePvC
-    
     $aGame.firstmove
     #tileword = tiles1, the computer player1 makes the first move, putting the first word on the board
+    end
+    #this assumes that the resume game always occurs after computer has made its move and was saved then.
     erb:showArcaneUsergameboard #shows board after player1 w player2 tiles allowing player 2 to choose to showresults
 end
 
@@ -204,9 +206,10 @@ post '/updatedPvC' do  #posted from showresultsPvC after manual move
     @ycoordinate = params["ycoordinate"+@choice.to_s]
     @direction = params["direction"+@choice.to_s]
     @score = params["score"+@choice.to_s]
+    @supplement = params["supplement"+@choice.to_s]
     
-    aSW = ScrabbleWord.new(@word, @xcoordinate.to_i, @ycoordinate.to_i, @direction, @score.to_i, 0)
-
+    aSW = ScrabbleWord.new(@word, @xcoordinate.to_i, @ycoordinate.to_i, @direction, @score.to_i, @supplement.to_i)
+    
     $aGame.placewordfromtiles2(aSW)
     
     erb:showupdatedPvC
@@ -239,8 +242,9 @@ post '/updatedPvCFind' do  #posted from showresultsPvC after Find Moves
     @ycoordinate = params["ycoordinate"+@choice.to_s]
     @direction = params["direction"+@choice.to_s]
     @score = params["score"+@choice.to_s]
+    @supplement = params["supplement"+@choice.to_s]
     
-    aSW = ScrabbleWord.new(@word, @xcoordinate.to_i, @ycoordinate.to_i, @direction, @score.to_i, 0)
+    aSW = ScrabbleWord.new(@word, @xcoordinate.to_i, @ycoordinate.to_i, @direction, @score.to_i, @supplement.to_i)
 
     $aGame.placewordfromtiles2(aSW)
     
@@ -346,8 +350,9 @@ post '/startgameCheat' do  #this from showaskmode.erb if Cheat is chosen and ass
         @tilename[i] = "tile" + i.to_s
         i += 1
     end
-    
+    if $aGame.newgame = "yes"
     $aGame.initializegameCheat
+    end
     erb:showCheatgameboard
 end
 
@@ -432,8 +437,9 @@ post '/updated' do
     @ycoordinate = params["ycoordinate"+@choice.to_s]
     @direction = params["direction"+@choice.to_s]
     @score = params["score"+@choice.to_s]
+    @supplement = params["supplement"+@choice.to_s]
     
-    aSW = ScrabbleWord.new(@word, @xcoordinate.to_i, @ycoordinate.to_i, @direction, 0, 0)
+    aSW = ScrabbleWord.new(@word, @xcoordinate.to_i, @ycoordinate.to_i, @direction, @score.to_i, @supplement.to_i)
 
     $aGame.placewordfromtiles2(aSW)
 

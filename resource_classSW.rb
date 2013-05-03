@@ -1,5 +1,5 @@
 class ScrabbleWord
-	attr_accessor :astring, :xcoordinate, :ycoordinate, :direction, :score, :supplement
+	attr_accessor :astring, :xcoordinate, :ycoordinate, :direction, :score, :supplement, :suppwords
 	
 	def initialize (astring, xcoordinate, ycoordinate, direction, score, supplement)
 		@astring = astring
@@ -8,6 +8,7 @@ class ScrabbleWord
 		@direction = direction
 		@score = score
 		@supplement = supplement
+        @suppwords = {self.createkey => 'true'} #this hash will hold words created by placing a word o the board; key will be astring-xc-yc-dirx
 	end
 	
 	def print (source)
@@ -33,7 +34,9 @@ class ScrabbleWord
         return array
     end
 
-
+    def createkey
+        return self.astring + self.xcoordinate.to_s + self.ycoordinate.to_s + self.direction
+    end
 
 end
 

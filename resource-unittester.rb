@@ -13,7 +13,7 @@ def intialvalues
     $aWordfriend.gameuser = $aGame.gameuser
 end
 
-def scoretest (test, file1, file2)
+def scoretest (test, file1)
     $aGame.gamefile=file1
     $aWordfriend.gamefile = $aGame.gamefile
     $aGame.readgame
@@ -26,7 +26,7 @@ def scoretest (test, file1, file2)
     targetscore = arr[25]
     status = $aWordfriend.manualwordtest(aSW)
     $aGame.placewordfromtiles2(aSW)
-    puts "test#{test} scores: direct #{aSW.score}, supplement #{aSW.supplement}, total #{aSW.score + aSW.supplement} | targetscores: #{targetscore} "
+    puts "test#{test} scores: direct #{aSW.score}, supplement #{aSW.supplement} | targetscores: #{targetscore} "
     puts "test#{test} word or placement invalid" if not(status)
 end
 

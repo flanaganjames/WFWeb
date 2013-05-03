@@ -19,18 +19,8 @@ tilesr: aaaaaaabcddeeeeeeeeeeffgghhiiiiiiiijkllmnnnnnooooppqrrrrrsssttuuuvvwxyz*
 mode: PlayerVsComputer
 score1: 68
 score2: 58
----------------
----------------
----------------
----------------
----------------
----------------
----------------
----------------
----------------
----------------
----------------
------------n---
------------n---
------------n---
------------n---
+call
+11
+11
+right
+direct 24, supplement 3, uses *

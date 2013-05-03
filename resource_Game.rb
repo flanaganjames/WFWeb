@@ -159,7 +159,7 @@ class Game
     end
 
     def readgame
-        anarray = $aWordfriend.readboard
+        anarray = $aWordfriend.readboard  #this reads in the lettergrid and newgrid and the following:
         self.tilesplayer1 = anarray[0]
         self.tilesplayer2 = anarray[1]
         self.tilesremain = anarray[2]
