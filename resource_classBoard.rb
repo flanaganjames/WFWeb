@@ -25,7 +25,7 @@ class ScrabbleBoard
             nhash = {}
 			while j < self.dimension
 				lhash[j] = '-'
-				shash[j] = '.'
+				shash[j] = '-'
                 nhash[j] = '-'
 				j += 1
 			end
@@ -66,7 +66,7 @@ class ScrabbleBoard
                 j += 1
             end
             self.newgrid[i] = nhash
-            self.scoregrid[i][j] = '.' if self.scoregrid[i][j] = 'n'
+            #self.scoregrid[i][j] = '.' if self.scoregrid[i][j] = 'n'
             i += 1
         end
     end
@@ -238,12 +238,18 @@ class ScrabbleBoard
         possibles = possibles.uniqSWs
         subpossibles = []
         possibles.each {|aSW|
-            if (self.testwordonboard(aSW) && self.testwordoverlap(aSW) && self.testwordsgeninline(aSW) &&  self.testwordsgenortho(aSW))
-                scoreandplacewordfromtiles(aSW, $aGame.currentplayertileset, nil)
-                if ((aSW.score + aSW.supplement) > $minscore)
-                    subpossibles << aSW
+                if self.testwordonboard(aSW) && self.testwordoverlap(aSW) && self.testwordsgeninline(aSW) &&  self.testwordsgenortho(aSW)
+                    scoreandplacewordfromtiles(aSW, $aGame.currentplayertileset, nil)
+                    if possibles.size > $maxallowed
+                        if (possibles[0].score + possibles[0].supplement) < (aSW.score + aSW.supplement)
+                            possibles = possibles - [possibles[0]]
+                            possibles << aSW
+                        end
+                        else
+                        possibles << aSW
+                    end
+                    possibles.sort_by {|possible| [(possible.score + possible.supplement)]}
                 end
-            end
         }
         return subpossibles
     end
@@ -264,7 +270,15 @@ class ScrabbleBoard
             if aSW
                 if self.testwordonboard(aSW) && self.testwordoverlap(aSW) && self.testwordsgeninline(aSW) &&  self.testwordsgenortho(aSW)
                     scoreandplacewordfromtiles(aSW, $aGame.currentplayertileset, nil)
-                    possibles << aSW if ((aSW.score + aSW.supplement) > $minscore)
+                    if possibles.size > $maxallowed
+                        if (possibles[0].score + possibles[0].supplement) < (aSW.score + aSW.supplement)
+                            possibles = possibles - [possibles[0]]
+                            possibles << aSW
+                        end
+                    else
+                        possibles << aSW
+                    end
+                    possibles.sort_by {|possible| [(possible.score + possible.supplement)]}
                 end
             end
 		}
@@ -283,7 +297,15 @@ class ScrabbleBoard
             if aSW
                 if self.testwordonboard(aSW) && self.testwordoverlap(aSW) && self.testwordsgeninline(aSW) &&  self.testwordsgenortho(aSW)
                     scoreandplacewordfromtiles(aSW, $aGame.currentplayertileset, nil)
-                    possibles << aSW if ((aSW.score + aSW.supplement) > $minscore)
+                    if possibles.size > $maxallowed
+                        if (possibles[0].score + possibles[0].supplement) < (aSW.score + aSW.supplement)
+                            possibles = possibles - [possibles[0]]
+                            possibles << aSW
+                        end
+                        else
+                        possibles << aSW
+                    end
+                    possibles.sort_by {|possible| [(possible.score + possible.supplement)]}
                 end
             end
 		}
@@ -302,7 +324,15 @@ class ScrabbleBoard
             if aSW
                 if self.testwordonboard(aSW) && self.testwordoverlap(aSW) && self.testwordsgeninline(aSW) &&  self.testwordsgenortho(aSW)
                     scoreandplacewordfromtiles(aSW, $aGame.currentplayertileset, nil)
-                    possibles << aSW if ((aSW.score + aSW.supplement) > $minscore)
+                    if possibles.size > $maxallowed
+                        if (possibles[0].score + possibles[0].supplement) < (aSW.score + aSW.supplement)
+                            possibles = possibles - [possibles[0]]
+                            possibles << aSW
+                        end
+                        else
+                        possibles << aSW
+                    end
+                    possibles.sort_by {|possible| [(possible.score + possible.supplement)]}
                 end
             end
         }
@@ -346,7 +376,15 @@ class ScrabbleBoard
             if aSW
                 if self.testwordonboard(aSW) && self.testwordoverlap(aSW) && self.testwordsgeninline(aSW) &&  self.testwordsgenortho(aSW)
                     scoreandplacewordfromtiles(aSW, $aGame.currentplayertileset, nil)
-                    possibles << aSW if ((aSW.score + aSW.supplement) > $minscore)
+                    if possibles.size > $maxallowed
+                        if (possibles[0].score + possibles[0].supplement) < (aSW.score + aSW.supplement)
+                            possibles = possibles - [possibles[0]]
+                            possibles << aSW
+                        end
+                        else
+                        possibles << aSW
+                    end
+                    possibles.sort_by {|possible| [(possible.score + possible.supplement)]}
                 end
             end
 		end
@@ -379,7 +417,15 @@ class ScrabbleBoard
                     if aSW
                         if self.testwordonboard(aSW) && self.testwordoverlap(aSW) && self.testwordsgeninline(aSW) &&  self.testwordsgenortho(aSW)
                             scoreandplacewordfromtiles(aSW, $aGame.currentplayertileset, nil)
-                            possibles << aSW if ((aSW.score + aSW.supplement) > $minscore)
+                            if possibles.size > $maxallowed
+                                if (possibles[0].score + possibles[0].supplement) < (aSW.score + aSW.supplement)
+                                    possibles = possibles - [possibles[0]]
+                                    possibles << aSW
+                                end
+                                else
+                                possibles << aSW
+                            end
+                            possibles.sort_by {|possible| [(possible.score + possible.supplement)]}
                         end
                     end
 				end
@@ -411,7 +457,15 @@ class ScrabbleBoard
             if aSW
                 if self.testwordonboard(aSW) && self.testwordoverlap(aSW) && self.testwordsgeninline(aSW) &&  self.testwordsgenortho(aSW)
                     scoreandplacewordfromtiles(aSW, $aGame.currentplayertileset, nil)
-                    possibles << aSW if ((aSW.score + aSW.supplement) > $minscore)
+                    if possibles.size > $maxallowed
+                        if (possibles[0].score + possibles[0].supplement) < (aSW.score + aSW.supplement)
+                            possibles = possibles - [possibles[0]]
+                            possibles << aSW
+                        end
+                        else
+                        possibles << aSW
+                    end
+                    possibles.sort_by {|possible| [(possible.score + possible.supplement)]}
                 end
             end
 		}
@@ -732,7 +786,7 @@ class ScrabbleBoard
 								currentposition += 1
 							end
 							status = testwordarray.join('').isaword
-							puts "status #{status} for word #{testwordarray.join('')} from ortho down"
+							#puts "status #{status} for word #{testwordarray.join('')} from ortho down"
 							if status
 							then
 								generatedword = ScrabbleWord.new(testwordarray.join(''),word.xcoordinate + wordposition,leftposition,"right",0,0)
@@ -751,7 +805,7 @@ class ScrabbleBoard
                                 
 								#puts "supplement: #{word.supplement}"
                             else
-                                puts "failed word: #{testwordarray.join('')}"
+                                #puts "failed word: #{testwordarray.join('')}"
 							end
 						end
 					end
@@ -830,7 +884,7 @@ class ScrabbleBoard
                                 
 								#puts "supplement: #{word.supplement}"
                             else
-                                puts "failed word: #{testwordarray.join('')}"
+                                #puts "failed word: #{testwordarray.join('')}"
 							end						
 						end
 					end
@@ -843,28 +897,28 @@ class ScrabbleBoard
 	def readboard (afilename)
         afile = File.open(afilename, "r")
 		rows = File.readlines(afilename).map { |line| line.chomp } #this is an array of the board rows each as a string, the last row being the tiles
-        rows.each_index {|i| 
-			if i < self.dimension
+        i = 0
+        while i < self.dimension
                 rowletters = rows[i].to_chars # this is an array of characters for one of the rows
                 rowletters.each_index {|j|
                 self.lettergrid[i][j] = rowletters[j]
                 }
-            end
-            if i > self.dimension + 5
+        i += 1
+        end
+        i = self.dimension + 6
+        while i < (self.dimension + 6 + self.dimension)
                 rowletters = rows[i].to_chars # this is an array of characters for one of the rows
                 rowletters.each_index {|j|
-                    self.newgrid[i - self.dimension - 6][j] = rowletters[j]
+                    self.scoregrid[i - self.dimension - 6][j] = rowletters[j]
                 }
-            end
-		}
+        i += 1
+		end
         tiles1 = rows[self.dimension].sub('tiles1: ','')
         tiles2 = rows[self.dimension+1].sub('tiles2: ','')
         tilesr = rows[self.dimension+2].sub('tilesr: ','')
         mode = rows[self.dimension+3].sub('mode: ','')
         score1 = rows[self.dimension+4].sub('score1: ','').to_i
         score2 = rows[self.dimension+5].sub('score2: ','').to_i
-        
-        
         afile.close
         return [tiles1, tiles2, tilesr, mode, score1, score2]
 	end
@@ -894,7 +948,7 @@ class ScrabbleBoard
 			j = 0
 			anarray = []
 			while j < self.dimension
-				anarray << self.newgrid[i][j]
+				anarray << self.scoregrid[i][j]
                 j += 1
 			end
 			afile.puts(anarray.join())
@@ -1144,6 +1198,7 @@ def popgrids
 end
 
 def scoreandplacewordfromtiles(aSW, fromtiles, permanent) #used to place a SW on board and deduct from newtileword, calculates direct score for placing the aSW and sets which word is new on board; used by self.firstword and by WFweb'/updated' and by manualtestword; permanent set to nil if intent is to remove the word after scoring and set to "true" if the intent is leave the word placed.
+    #puts "scoring word = aSW #{aSW.astring}, for permstatus = #{permanent}"
     anarray = []
     anarray << 1
     ascore = 0
@@ -1163,9 +1218,9 @@ def scoreandplacewordfromtiles(aSW, fromtiles, permanent) #used to place a SW on
         end
         scoremultiplier = self.scorehelper(xc, yc) #must be done before letter placed
         case
-            when self.lettergrid[xc][yc] != '-'
+        when self.lettergrid[xc][yc] != '-'
             scorevalue = self.lettervalues[aSW.astring[i]]
-            when self.lettergrid[xc][yc] == '-'
+        when self.lettergrid[xc][yc] == '-'
             if self.newtileword.include?(aSW.astring[i])
                 self.lettergrid[xc][yc] = aSW.astring[i].dup
                 scorevalue = self.lettervalues[aSW.astring[i]]
@@ -1174,7 +1229,7 @@ def scoreandplacewordfromtiles(aSW, fromtiles, permanent) #used to place a SW on
                 self.lettergrid[xc][yc] = aSW.astring[i].dup
                 scorevalue = 0
                 self.newtileword = self.newtileword.sub('*','')
-                self.scoregrid[xc][yc] = ''
+                self.scoregrid[xc][yc] = '*'
             else
                 status = nil
             end
@@ -1191,21 +1246,24 @@ def scoreandplacewordfromtiles(aSW, fromtiles, permanent) #used to place a SW on
             ascore = ascore + 3 * scorevalue
             when scoremultiplier == 'l'
             ascore = ascore + 2 * scorevalue
-            when scoremultiplier == '.'
+            when scoremultiplier == '-'
             ascore = ascore + scorevalue
-            when scoremultiplier == ''
+            when scoremultiplier == '*'
             ascore = ascore
             end
         end
         self.newgrid[xc][yc] = 'n'
+        #puts "i = #{i}, letter #{aSW.astring[i]}, ascore = #{ascore}"
     i += 1
     end
     case
     when  status && permanent
         aSW.score = ascore * anarray.max
+        #puts "aSW.score #{aSW.score}"
         return self.newtileword
     when status && not(permanent)
         aSW.score = ascore * anarray.max
+        #puts "aSW.score #{aSW.score}"
         self.popgrids
         return self.newtileword
     when not(status)
@@ -1228,7 +1286,7 @@ def couldplacewordfromtiles(aSW, fromtiles) #used to check whether one could pla
             elsif (self.lettergrid[aSW.xcoordinate][aSW.ycoordinate + i] == aSW.astring[i])
             elsif (self.lettergrid[aSW.xcoordinate][aSW.ycoordinate + i] == '-') && (remainingtileword.include?'*')
                 remainingtileword= remainingtileword.sub('*','')
-                self.scoregrid[aSW.xcoordinate][aSW.ycoordinate + i] = '' #this prepares to not count the score form this letter when it is placed
+                #self.scoregrid[aSW.xcoordinate][aSW.ycoordinate + i] = '*' #this prepares to not count the score form this letter when it is placed
             else status = nil
             end
             i += 1
@@ -1241,7 +1299,7 @@ def couldplacewordfromtiles(aSW, fromtiles) #used to check whether one could pla
             elsif (self.lettergrid[aSW.xcoordinate + i][aSW.ycoordinate] == aSW.astring[i])
             elsif (self.lettergrid[aSW.xcoordinate + i][aSW.ycoordinate] == '-') && (remainingtileword.include?'*')
                 remainingtileword= remainingtileword.sub('*','')
-                self.scoregrid[aSW.xcoordinate + i][aSW.ycoordinate] = '' #this prepares to not count the score from this letter when it is placed
+                #self.scoregrid[aSW.xcoordinate + i][aSW.ycoordinate] = '*' #this prepares to not count the score from this letter when it is placed
             else status = nil
             end
             i += 1
@@ -1256,21 +1314,21 @@ def scorehelper(xcoord, ycoord)  #used by placewordfromtiles to score a letter p
     occupied = "true"
     occupied = "false" if self.lettergrid[xcoord][ycoord] == '-'
     case
-        when gridvalue == '' #scoregrid is set to "" if a '*' character was previously used to put a letter on the lettergrid
-        ascore = ''
-        when gridvalue == "."
-        ascore = '.'
+        when gridvalue == "*" #scoregrid is set to "*" if a '*' character was previously used to put a letter on the lettergrid
+        ascore = '*'
+        when gridvalue == "-"
+        ascore = '-'
         when gridvalue == "l"
         ascore = 'l' if occupied =="false"
-        ascore = '.' if occupied == "true"
+        ascore = '-' if occupied == "true"
         when gridvalue == "L"
         ascore = 'L' if occupied == "false"
-        ascore = '.' if occupied == "true"
+        ascore = '-' if occupied == "true"
         when gridvalue == "w"
-        ascore = '.' if occupied == "true"
+        ascore = '-' if occupied == "true"
         ascore = 'w' if occupied == "false"
         when gridvalue == "W"
-        ascore = '.' if occupied == "true"
+        ascore = '-' if occupied == "true"
         ascore = 'W' if occupied == "false"
     end
 return ascore

@@ -22,8 +22,8 @@ def scoretest (test, file1)
     afile = File.open(afilename, "r")
     arr = File.readlines(afilename).map { |line| line.chomp } 
     afile.close
-    aSW = ScrabbleWord.new(arr[21],arr[22].to_i,arr[23].to_i,arr[24], 0,0)
-    targetscore = arr[25]
+    aSW = ScrabbleWord.new(arr[36],arr[37].to_i,arr[38].to_i,arr[39], 0,0)
+    targetscore = arr[40]
     status = $aWordfriend.manualwordtest(aSW)
     $aGame.placewordfromtiles2(aSW)
     puts "test#{test} scores: direct #{aSW.score}, supplement #{aSW.supplement} | targetscores: #{targetscore} "

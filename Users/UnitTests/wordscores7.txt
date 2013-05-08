@@ -19,6 +19,21 @@ tilesr: aaaaaaabcddeeeeeeeeeeffgghhiiiiiiiijkllmnnnnnooooppqrrrrrsssttuuuvvwxyz*
 mode: PlayerVsComputer
 score1: 68
 score2: 58
+---W--L-L--W---
+--l--w---w--l--
+-l--l-----l--l-
+W--L---w---L--W
+--l---l-l---l--
+-w---L---L---w-
+L---l-----l---L
+---w-------w---
+L---l-----l---L
+-w---L---L---w-
+--l---l-l---l--
+W--L---w---L--W
+-l--l-----l--l-
+--l--w---w--l--
+---W--L-L--W---
 call
 11
 11

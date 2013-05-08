@@ -41,7 +41,7 @@ class Game
         self.tilesplayer2 = ''
         $aWordfriend = Wordfriend.new
         $aWordfriend.initialvalues
-        $minscore = 20
+        $maxallowed = 10
     end
     
     def getusergame
@@ -159,7 +159,7 @@ class Game
     end
 
     def readgame
-        anarray = $aWordfriend.readboard  #this reads in the lettergrid and newgrid and the following:
+        anarray = $aWordfriend.readboard  #this reads in the lettergrid and scoregrid and the following:
         self.tilesplayer1 = anarray[0]
         self.tilesplayer2 = anarray[1]
         self.tilesremain = anarray[2]

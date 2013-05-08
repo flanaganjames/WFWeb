@@ -19,6 +19,21 @@ tilesr: aaaaaaabbccdddeeeeeeffghhiiiiiikllllmmnnoooooppqrrrrssttttuuuvvwwxyyz*
 mode: PlayerVsComputer
 score1: 28
 score2: 22
+---W--L-L--W---
+--l--w---w--l--
+-l--l-----l--l-
+W--L---w---L--W
+--l---l-l---l--
+-w---L---L---w-
+L---l-----l---L
+---w-------w---
+L---l-----l---L
+-w---L---L---w-
+--l---l-l---l--
+W--L---w---L--W
+-l--l-----l--l-
+--l--w---w--l--
+---W--L-L--W---
 snort
 9
 1
