@@ -1,29 +1,29 @@
 ---------------
 ---------------
--------------k-
------------brew
--------------l-
------xenon---s-
--------t-----o-
--------hagborn-
--------------s-
+---------g-----
+---------rehung
+---------o-----
+-------yaw-----
+-------ex------
+--vomicae------
 ---------------
 ---------------
 ---------------
 ---------------
 ---------------
 ---------------
-tiles1: ihvvsie
-tiles2: ieepido
-tilesr: aaaaaaaaccdddeeeeeeeffggiiiiijllllmmnnnoooopqrrrrstttttuuuuwyyz*
+---------------
+tiles1: iorcdr*
+tiles2: aoodsuz
+tilesr: aaaaaabbddeeeeeeeeeffghiiiiiiijkllllmnnnnnoooppqrrrsssttttttuuvwy*
 mode: PlayerVsComputer
-score1: 72
-score2: 84
+score1: 82
+score2: 67
 ---W--L-L--W---
 --l--w---w--l--
 -l--l-----l--l-
 W--L---w---L--W
---l---l-l---l*-
+--l---l-l---l--
 -w---L---L---w-
 L---l-----l---L
 ---w-------w---
