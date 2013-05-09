@@ -392,7 +392,8 @@ class ScrabbleBoard
 	end
     
 	def wordfindorthomid (aSWtarget)
-		possibles = []
+		puts "This is orthomid"
+        possibles = []
         aSW = nil
 		tilearray = $tiles.to_chars
         tilearray = tilearray + 'abcdefghijklmnopqrstuvwxyz'.to_chars if $tiles.include?'*'

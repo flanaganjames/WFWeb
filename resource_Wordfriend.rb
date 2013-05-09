@@ -193,6 +193,7 @@ class Wordfriend
         #does not use wordfindcontains.  why?
         
         #the word generaters below do their own testing of onboard etc.
+        puts "This is wordfind"
         wfparalleltime = 0
         wforthotime = 0
         wforthomidtime = 0
@@ -200,22 +201,22 @@ class Wordfriend
         
         t1 = Time.now
         allpossibles = self.myboard.wordfindparallel
-        #wfparalleltime = (Time.now - t1)
+        wfparalleltime = (Time.now - t1)
         self.myboard.boardSWs.each {|currentSW|
-            #t1 = Time.now
+            t1 = Time.now
             allpossibles = allpossibles + self.myboard.wordfindortho(currentSW)
-            #wforthotime = wforthotime + (Time.now - t1)
-            #t1 = Time.now
+            wforthotime = wforthotime + (Time.now - t1)
+            t1 = Time.now
             allpossibles = allpossibles +  self.myboard.wordfindorthomid(currentSW)
-            #wforthomidtime = wforthomidtime + (Time.now - t1)
-            #t1 = Time.now
+            wforthomidtime = wforthomidtime + (Time.now - t1)
+            t1 = Time.now
             allpossibles = allpossibles +  self.myboard.wordfindinline(currentSW)
-            #wfinlinetime = wfinlinetime + (Time.now - t1)
+            wfinlinetime = wfinlinetime + (Time.now - t1)
         }
         allpossibles = allpossibles.uniqSWs
         allpossibles = allpossibles.sort_by {|possible| [-(possible.score + possible.supplement)]}
         self.possiblewords = allpossibles
-        #puts "parallel: #{wfparalleltime}, ortho: #{wforthotime}, orthomid: #{wforthomidtime}, inkine: #{wfinlinetime}"
+        puts "parallel: #{wfparalleltime}, ortho: #{wforthotime}, orthomid: #{wforthomidtime}, inline: #{wfinlinetime}"
         return allpossibles
 	end
     
