@@ -41,7 +41,7 @@ class Game
         self.tilesplayer2 = ''
         $aWordfriend = Wordfriend.new
         $aWordfriend.initialvalues
-        $maxallowed = 5
+        $maxallowed = 2
     end
     
     def getusergame

@@ -17,7 +17,7 @@ def scoretest (test, file1)
     $aGame.gamefile=file1
     $aWordfriend.gamefile = $aGame.gamefile
     $aGame.readgame
-    $aGame.resumegameCheat
+    $aGame.resumegameCheat #sets currentplayertileset and sends updatevalues
     afilename = "./Users/" + $aGame.gameuser + "/" + file1
     afile = File.open(afilename, "r")
     arr = File.readlines(afilename).map { |line| line.chomp } 
@@ -28,6 +28,15 @@ def scoretest (test, file1)
     $aGame.placewordfromtiles2(aSW)
     puts "test#{test} scores: direct #{aSW.score}, supplement #{aSW.supplement} | targetscores: #{targetscore} "
     puts "test#{test} word or placement invalid" if not(status)
+end
+
+def wordfindtest (test, file1)
+    $aGame.gamefile=file1
+    $aWordfriend.gamefile = $aGame.gamefile
+    $aGame.readgame
+    $aGame.resumegameCheat  #sets currentplayertiles and sends updatevalues
+    puts "wordfind test: #{test}"
+    $aWordfriend.wordfind
 end
 
 end
