@@ -1131,6 +1131,19 @@ class ScrabbleBoard
 		return allpossiblewords
 	end
 
+def newfindPossibleWords(aletter) #finds all words that can be made with tiles plus the letter specified as argument;; words inlcude words that can be made with a single * character that will later be resolved to an actual letter.
+    allpossiblewords = []
+    tilesplus = self.tileword + aletter
+    tilepermutes = tilesplus.permutedset #returns an array of permutes, if there is a '*' character, the '*' is replaced with 26 versions, substituted with actual letters
+    tilewords = tilepermutes.select {|astring| astring.isaword}
+    #tilewords_plus = tilepermutes.select {|astring| astring.isaword_plus}
+    #tilewords_plus = tilepermutes.select {|astring| astring.isaword_plus}
+    #tilewords = tilewords_plus.actualwords #replaces '*' with letters that make actual words
+    tilewords.each {|aword| allpossiblewords.push(aword) if !allpossiblewords.include?(aword)}
+    return allpossiblewords
+end
+
+
     def findPossibleTileWords #finds all words that can be made with tiles only
         allpossiblewords = []
             tilesplus = self.tileword

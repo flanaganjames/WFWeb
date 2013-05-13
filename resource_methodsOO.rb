@@ -93,6 +93,37 @@ class Array
 end
 
 class String
+    def permutedset_expandstar #returns a set of strings representing every permutation of every subset of characters; if a * is present, it is replaced with allowed characters
+        arr = self.to_chars
+        set = []
+        expandedset = []
+        i = 1
+        while i < arr.size + 1
+            set = set + arr.permutation(i).to_a
+            i += 1
+        end
+        set.each {|apermutationset|
+            expandedset = expandedset + apermutationset.join('').startoallowedcharacters #expands * to every possible allowed character
+        }
+        return expandedset
+    end
+end
+
+class String
+    def starttoallowedcharacters
+        set = [ self ] #at minimum retun self
+        if self.include?('*')
+            alpha = $allowedcharacters.to_chars #creates array of alphabetic letters
+            alpha.each {|aletter|
+                subword = self.sub('*',aletter)
+                set << subword
+            }
+        end
+        return set
+    end
+end
+
+class String
 	def permutaround(imbeddedstring) #returns a set of strings representing additions of self to beginning and end of astring
 		possibles = []
 		fullset = self.to_chars
