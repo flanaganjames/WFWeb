@@ -1,9 +1,11 @@
 class ScrabbleBoard
-	attr_accessor :lettergrid, :pushlettergrid, :tileword, :newtileword, :scoregrid, :pushscoregrid, :newgrid, :pushnewgrid, :dimension, :lettervalues, :boardSWs, :boardLetters, :blankcoordinatesusable, :blankparallelpositions, :filledcoordinatesusable
+	attr_accessor :lettergrid, :pushlettergrid, :tileword, :newtileword, :scoregrid, :pushscoregrid, :newgrid, :pushnewgrid, :dimension, :lettervalues, :boardSWs, :boardLetters, :hotspots, :filledcoordinates, :boardchanged
 	
 	
 	def initialvalues #this method fills the letter grid array dimension x dimension with nil, the scoregrid with 1s except as defined
-		self.dimension = 15
+		self.boardchanged = nil
+        self.hotspots = []
+        self.dimension = 15
 		self.lettergrid = {}
         self.newgrid = {}
         self.pushlettergrid = {}
@@ -11,9 +13,7 @@ class ScrabbleBoard
 		self.scoregrid = {}
         self.pushscoregrid = {}
 		self.boardLetters = [] 
-        self.filledcoordinatesusable = []
-        self.blankcoordinatesusable = []
-        self.blankparallelpositions = []
+        self.filledcoordinates = []
 		self.lettervalues = {'a' => 1, 'b' => 4, 'c' => 4, 'd' => 2, 'e' => 1, 'f' => 4, 'g' => 3, 'h' => 3, 
 		'i' => 1, 'j' => 1, 'k' => 5, 'l' => 2, 'm' => 4, 'n' => 2, 'o' => 1, 'p' => 4, 'q' => 10, 'r' => 1, 
 		's' => 1, 't' => 1, 'u' => 2, 'v' => 5, 'w' => 4, 'x' => 8, 'y' => 3, 'z' => 10,}
@@ -71,8 +71,9 @@ class ScrabbleBoard
         end
     end
 
-	def findblankparallelpositions #find all blank positions where a tileword could be placed - in any register -; note a coordinate is a triple: x, y,, direction
-		self.blankcoordinatesusable = []
+    #first approach
+	def findhotspots #find all blank positions where a tileword could be placed - in any register -; note a coordinate is a vector: x, y, direction, distoRchars, Rchars, distoLchars, Lchars
+		self.hotspots = [] #array of hotspot vectors
         currentSWs = self.boardSWs
 		currentSWs.each { |aSW|
 			case
@@ -83,7 +84,7 @@ class ScrabbleBoard
                     then
                     if self.lettergrid[x][y] == '-'
                         then
-                        self.blankcoordinatesusable << [x,y]
+                        self.hotspots << [x,y, "right", 1, aSW.astring, self.distoleft(x,y)] #distoleft returns distoLchars and the chars separated by a comma
                     end
                 end
                 x = aSW.xcoordinate
@@ -92,7 +93,7 @@ class ScrabbleBoard
                     then
                     if self.lettergrid[x][y] == '-'
                         then
-                        self.blankcoordinatesusable << [x,y]
+                                self.hotspots << [x,y]
                     end
                 end
                 i = 0
@@ -102,9 +103,8 @@ class ScrabbleBoard
 						if (x > -1)  #if a valid coordinate
 						then	
 							if self.lettergrid[x][y] == '-'
-								then
-                                self.blankparallelpositions << [x, y, "right"]
-                                self.blankcoordinatesusable << [x,y]
+                            then
+                                self.hotspots << [x,y]
 							end
 						end		
 						x = aSW.xcoordinate + 1
@@ -112,9 +112,8 @@ class ScrabbleBoard
 						if (x < (self.dimension)) #if a valid coordinate
 						then	
 							if self.lettergrid[x][y] == '-'
-								then
-                                self.blankparallelpositions << [x, y, "right"]
-                                self.blankcoordinatesusable << [x,y]
+                            then
+                                self.hotspots << [x,y]
 							end
 						end
                 i += 1
@@ -126,7 +125,7 @@ class ScrabbleBoard
                     then
                     if self.lettergrid[x][y] == '-'
                         then
-                        self.blankcoordinatesusable << [x,y]
+                                self.hotspots << [x,y]
                     end
                 end
                 x = aSW.xcoordinate + aSW.astring.size
@@ -135,7 +134,7 @@ class ScrabbleBoard
                     then
                     if self.lettergrid[x][y] == '-'
                         then
-                        self.blankcoordinatesusable << [x,y]
+                                self.hotspots << [x,y]
                     end
                 end
 					i = 0
@@ -147,8 +146,7 @@ class ScrabbleBoard
 						then
 							if self.lettergrid[x][y] == '-'
 							then
-                                self.blankparallelpositions << [x, y, "down"]
-                                self.blankcoordinatesusable << [x,y]
+                                self.hotspots << [x,y]
 							end
 						end		
 						x = aSW.xcoordinate + i
@@ -157,8 +155,7 @@ class ScrabbleBoard
 						then
 							if self.lettergrid[x][y] == '-'
 							then
-                                self.blankparallelpositions << [x, y, "down"]
-                                self.blankcoordinatesusable << [x,y]
+                                self.hotspots << [x,y]
 							end
 						end
 					i += 1
@@ -167,8 +164,93 @@ class ScrabbleBoard
 			}
 		
 	end
-	
-	def placetilewords (tilewords, coordinates) #return possibleSWs formed by placing each tileword in every blankposition in every register as long as the SW does not cover a non-empty grid location with a different letter
+    
+	def describehotspots
+		arr = []
+		col = 0
+		while col < self.dimension # for the jth column
+			row = 0
+			while row < (self.dimension - 1) #and the ith row
+                if isblankwithonesideoccupied(row,col)
+                    rstrdistance = findcharstoright(row,col) #returns vector [chars, diastance to chars]
+                    lstrdistance = findcharstoleft(row,col)
+                    astrdistance = findcharsabove(row,col)
+                    bstrdistance = findcharsbelow(row,col)
+                end
+            row += 1
+            end
+        col += 1
+        end
+    end
+
+    def isblankwithonesideoccupied(row,col)
+        if (self.lettergrid[row][col] == '-'
+            &&
+            (self.lettergrid[row-1][col] != '-' if row > 0
+            || self.lettergrid[row+1][col] != '-' if row < self.dimension - 1
+            || self.lettergrid[row][col-1] != '-' if col > 0
+            || self.lettergrid[row][col+1] != '-' if col < self.dimension - 1
+            )
+            )
+    end
+
+    def findcharstoright (row, col)
+        startchars = nil
+        endchars = nil
+        arr = []
+        i = 1
+        while col + i < self.dimension
+            case
+                when !startchars && self.lettergrid[row][col+i] != '-'
+                    startchars = col + i
+                    distance = startchars - col
+                    arr << self.lettergrid[row][col+i]
+                when startchars &&  self.lettergrid[row][col+i] != '-'
+                    arr << self.lettergrid[row][col+i]
+                when startchars && self.lettergrid[row][col+i] == '-'
+                    endchars = true
+                    chars = arr.join('')
+                    vector = [distance, chars]
+                    return vector
+            end
+        i += 1
+        end
+        distance = nil if !startchars #if no startchars found
+        chars = '' if !startchars #if no startchars found
+        chars = arr.join('') if startchars && !endchars  #if startchars found but not end chars found
+        vector = [distance, chars]
+        return vector
+    end
+        
+    def findcharstoleft (row, col)
+        startchars = nil
+        endchars = nil
+        arr = []
+        i = 1
+        while col - i > 0
+            case
+                when !startchars && self.lettergrid[row][col+i] != '-'
+                    startchars = col - i
+                    distance = col - startchars
+                    arr << self.lettergrid[row][col+i]
+                when startchars &&  self.lettergrid[row][col+i] != '-'
+                    arr << self.lettergrid[row][col+i]
+                when startchars && self.lettergrid[row][col+i] == '-'
+                    endchars = true
+                    chars = arr. reverse.join('')
+                    vector = [distance, chars]
+                    return vector
+            end
+        i-= 1
+        end
+        distance = nil if !startchars #if no startchars found
+        chars = '' if !startchars #if no startchars found
+        chars = arr.reverse.join('') if startchars && !endchars  #if startchars found but not end chars found
+        vector = [distance, chars]
+        return vector
+    end
+        
+	def placetilewords (tilewords, coordinates) #return possibleSWs formed by placing each tileword in every blankposition in every register as long as the SW does not cover a non-empty grid location with a different letter; the coordinates have a direction
 		possibles = []
 		tilewords.each {|word|
 			coordinates.each {|coord|
@@ -211,8 +293,49 @@ class ScrabbleBoard
 				i+= 1
 				end
 			}
-		}	
+		}
 	return possibles
+	end
+    
+    def placetilewordsat (tilewords, coord) #return possibleSWs formed by placing each tileword at coord as long as the SW does not cover a non-empty grid location with a different letter; the coordinates have a direction
+		possibles = []
+		tilewords.each {|word|
+					wordposition = 0
+					status = "true"
+					while (wordposition < word.size) && status == "true" # then for each word position check if each of its letters is an an available gird position
+						case
+							when coord[2] == "right"
+                            x = coord[0]
+                            y = coord[1] + wordposition
+							when coord[2] == "down"
+                            x = coord[0] + wordposition
+                            y = coord[1]
+						end
+						if (0 < x) && (x < self.dimension) && (0 < y) && (y < self.dimension) #if x or y calls invalid dimension then cannot place word
+                            then
+							if lettergrid[x][y] == '-'
+								then status = "true"
+                                elsif lettergrid[x][y] == word[wordposition]
+								then status = "true"
+                                else
+								status = "false"
+							end
+                            else
+							status = "false"
+						end
+                        wordposition += 1
+					end #status true after checking weach wordposition or false because one of the positions could not be placed
+					if status == "true" #
+						then
+                        case
+                            when coord[2] == "right"
+                            possibles << ScrabbleWord.new(word, coord[0], coord[1], "right", 0, 0)
+                            when coord[2] == "down"
+                            possibles << ScrabbleWord.new(word, coord[0], coord[1],  "down", 0, 0)
+                        end
+					end
+		}	
+        return possibles
 	end
 	
 	def loadword (word) #this method takes any scrabble word and places its letter content onto the letter grid
@@ -230,251 +353,100 @@ class ScrabbleBoard
 				i += 1
 			end	
 		end
-	end 
-	
-    def wordfindparallel
-        possibles = []
-        possibles = self.placetilewords($tilewords, self.blankparallelpositions)
-        possibles = possibles.uniqSWs
-        subpossibles = []
-        possibles.each {|aSW|
-                if self.testwordonboard(aSW) && self.testwordoverlap(aSW) && self.testwordsgeninline(aSW) &&  self.testwordsgenortho(aSW)
-                    scoreandplacewordfromtiles(aSW, $aGame.currentplayertileset, nil)
-                    if possibles.size > $maxallowed
-                        if (possibles[0].score + possibles[0].supplement) < (aSW.score + aSW.supplement)
-                            possibles = possibles - [possibles[0]]
-                            possibles << aSW
-                        end
-                        else
-                        possibles << aSW
+	end
+    
+    def findhotspotSWs #for each hotspot review all possible SWs in both directions, saving the top $maxallowed scoring
+        setSWs = []
+        #puts "hotspots: #{self.hotspots.size}"
+        self.hotspots.each {|c|
+            cr = c.dup << "right"
+            cd = c.dup << "down"
+            possSWs =
+            placetilewordsat(findPossibleWords(''), cr) + placetilewordsat(findPossibleWords(''), cd)  #self.letterssamerow(c) #self.letterssamecol(c)
+            
+            possSWs = possSWs.uniqSWs
+            #puts "possSWs initial: #{possSWs.size}"
+            selectSWs = possSWs.select {|aSW|
+                self.autowordtest(aSW)
+            }
+            #puts "possSWs after select : #{selectSWs.size}"
+            selectSWs.each {|aSW|
+                if setSWs.size > $maxallowed
+                    if (setSWs[0].score + setSWs[0].supplement) < (aSW.score + aSW.supplement)
+                        setSWs = setSWs - [setSWs[0]]
+                        setSWs << aSW
                     end
-                    possibles.sort_by {|possible| [(possible.score + possible.supplement)]}
+                else
+                    setSWs << aSW
                 end
+                setSWs.sort_by {|possible| [(possible.score + possible.supplement)]}
+            }
         }
-        return subpossibles
+        return setSWs.uniqSWs
     end
     
-	def wordfindinline (aSWtarget) #$tiles is a set of letters as a single string
-        possibles = []
-        aSW = nil
-        strings = $tilepermutedset.collect {|astring| aSWtarget.astring + astring} #words that can be made with the the target word + tiles placed after the target word
-        strings = strings.actualwords #replaces strings with '*' with all actual words with a letter in the positon of the '*'
-        words = strings.select {|astring| astring.isaword}
-        words.each { |word|
-            case
-                when aSWtarget.direction == 'right'
-                aSW = ScrabbleWord.new(word, aSWtarget.xcoordinate,  aSWtarget.ycoordinate, aSWtarget.direction, 0, 0)
-                when aSWtarget.direction == 'down'
-                aSW = ScrabbleWord.new(word, aSWtarget.xcoordinate,  aSWtarget.ycoordinate , aSWtarget.direction, 0, 0)
-            end
-            if aSW
-                if self.testwordonboard(aSW) && self.testwordoverlap(aSW) && self.testwordsgeninline(aSW) &&  self.testwordsgenortho(aSW)
-                    scoreandplacewordfromtiles(aSW, $aGame.currentplayertileset, nil)
-                    if possibles.size > $maxallowed
-                        if (possibles[0].score + possibles[0].supplement) < (aSW.score + aSW.supplement)
-                            possibles = possibles - [possibles[0]]
-                            possibles << aSW
-                        end
-                    else
-                        possibles << aSW
-                    end
-                    possibles.sort_by {|possible| [(possible.score + possible.supplement)]}
-                end
-            end
-		}
-        
-        strings = strings + $tilepermutedset.collect {|astring| astring + aSWtarget.astring}
-        strings = strings.actualwords #replaces strings with '*' with all actual words with a letter in the positon of the '*'
-        strings.select {|astring| astring.isaword}  #words that can be made with the the target word + tiles placed before the target word
-        words.each { |word|
-            offset = (word =~ /#{Regexp.quote(aSWtarget.astring)}/)
-            case
-                when aSWtarget.direction == 'right'
-                aSW = ScrabbleWord.new(word, aSWtarget.xcoordinate,  aSWtarget.ycoordinate - offset, aSWtarget.direction, 0, 0)
-                when aSWtarget.direction == 'down'
-                aSW = ScrabbleWord.new(word, aSWtarget.xcoordinate - offset,  aSWtarget.ycoordinate , aSWtarget.direction, 0, 0)
-            end
-            if aSW
-                if self.testwordonboard(aSW) && self.testwordoverlap(aSW) && self.testwordsgeninline(aSW) &&  self.testwordsgenortho(aSW)
-                    scoreandplacewordfromtiles(aSW, $aGame.currentplayertileset, nil)
-                    if possibles.size > $maxallowed
-                        if (possibles[0].score + possibles[0].supplement) < (aSW.score + aSW.supplement)
-                            possibles = possibles - [possibles[0]]
-                            possibles << aSW
-                        end
-                        else
-                        possibles << aSW
-                    end
-                    possibles.sort_by {|possible| [(possible.score + possible.supplement)]}
-                end
-            end
-		}
-        
-        strings = strings + $tiles.permutaround(aSWtarget.astring).select {|astring| astring.isaword} #words that can be made with the the target word + tiles placed both before and after the target word
-        words.each { |word|
-            offset = (word =~ /#{Regexp.quote(aSWtarget.astring)}/)
-            case
-                when aSWtarget.direction == 'right'
-                aSW = ScrabbleWord.new(word, aSWtarget.xcoordinate,  aSWtarget.ycoordinate - offset, aSWtarget.direction, 0, 0)
-                
-                when aSWtarget.direction == 'down'
-                aSW = ScrabbleWord.new(word, aSWtarget.xcoordinate - offset,  aSWtarget.ycoordinate , aSWtarget.direction, 0, 0)
-                
-            end
-            if aSW
-                if self.testwordonboard(aSW) && self.testwordoverlap(aSW) && self.testwordsgeninline(aSW) &&  self.testwordsgenortho(aSW)
-                    scoreandplacewordfromtiles(aSW, $aGame.currentplayertileset, nil)
-                    if possibles.size > $maxallowed
-                        if (possibles[0].score + possibles[0].supplement) < (aSW.score + aSW.supplement)
-                            possibles = possibles - [possibles[0]]
-                            possibles << aSW
-                        end
-                        else
-                        possibles << aSW
-                    end
-                    possibles.sort_by {|possible| [(possible.score + possible.supplement)]}
-                end
-            end
-        }
-        return possibles
-	end
+    def autowordtest(aSW) #this tests a proposed move for validity:
+        # must be a valid word (is a valid key in a hash called $words (method in resource_methods) AND
+        # must cross (intersect) of be adjacent to an existing word  AND
+        # must not generate any invalid words in line with itself or orthogonal to itself
+        #must not replace an existing board letter with a different letter
+        #must be on the board
+        #must be placed using user tiles or letters on board
+        status = nil
+        (return status) if not(aSW.astring.isaword)  #returns nil if not a word
+        (return status) if not(self.usesvalidmovecoordinates(aSW)) #returns nil if does not cross (intersect) or be adjacent to an existing word
+        (return status) if not(self.testwordonboard(aSW))
+        (return status) if not(self.testwordoverlap(aSW))
+        (return status) if not(self.testwordsgeninline(aSW)) #updates score or supplement or returns nil
+        (return status) if not(self.testwordsgenortho(aSW)) #updates score or supplement or returns nil
+        (return status) if not(self.scoreandplacewordfromtiles(aSW, self.tileword, nil)) #checks whether the word can be placed with players tiles or board letters without changing a board letter, else returns nil
+        status = 'true'
+        return status
+    end
     
-	def wordfindortho(aSWtarget)
-        #Orthogonal to the begining or the end of self
-		possibles = []
-        aSW = nil
-		tileset = $tiles.to_chars
-		tileset.each do |aletter|
-			case
-				when (aSWtarget.astring + aletter).isaword
-                $tilewords.each {|aword|
-					offset = (aword =~ /#{Regexp.quote(aletter)}/)
-					if offset
-                        then
-						case
-							when aSWtarget.direction == 'right'
-                            aSW = ScrabbleWord.new(aword, aSWtarget.xcoordinate - offset ,  aSWtarget.ycoordinate + aSWtarget.astring.length, "down", 0, 0)
-							when  aSWtarget.direction == 'down'
-                            aSW = ScrabbleWord.new(aword, aSWtarget.xcoordinate + aSWtarget.astring.length ,  aSWtarget.ycoordinate - offset, "right", 0, 0)
-						end
-					end
-                }
-				when (aletter + aSWtarget.astring).isaword
-                $tilewords.each {|aword|
-					offset = (aword =~ /#{Regexp.quote(aletter)}/)
-					if offset
-                        then
-						case
-							when aSWtarget.direction == 'right'
-                            aSW = ScrabbleWord.new(aword, aSWtarget.xcoordinate - offset ,  aSWtarget.ycoordinate - 1, "down", 0, 0)
-							when  aSWtarget.direction == 'down'
-                            aSW = ScrabbleWord.new(aword, aSWtarget.xcoordinate - 1 ,  aSWtarget.ycoordinate - offset, "right", 0, 0)
-						end
-					end
-                }
-			end
-            if aSW
-                if self.testwordonboard(aSW) && self.testwordoverlap(aSW) && self.testwordsgeninline(aSW) &&  self.testwordsgenortho(aSW)
-                    scoreandplacewordfromtiles(aSW, $aGame.currentplayertileset, nil)
-                    if possibles.size > $maxallowed
-                        if (possibles[0].score + possibles[0].supplement) < (aSW.score + aSW.supplement)
-                            possibles = possibles - [possibles[0]]
-                            possibles << aSW
-                        end
-                        else
-                        possibles << aSW
-                    end
-                    possibles.sort_by {|possible| [(possible.score + possible.supplement)]}
-                end
+    def usesvalidmovecoordinates(aSW) #checks myboard.hotspots to see if at least one of them is used by aSW
+        status = nil
+        case
+            when aSW.direction == 'right'
+            i = 0
+            while i < aSW.astring.length
+                #puts "coordinate #{[aSW.xcoordinate, aSW.ycoordinate + i]}"
+                status = 'true' if self.hotspots.include?([aSW.xcoordinate, aSW.ycoordinate + i])
+                #puts "status #{status}"
+                i += 1
             end
-		end
-		return possibles
-	end
-    
-	def wordfindorthomid (aSWtarget)
-		puts "This is orthomid"
-        possibles = []
-        aSW = nil
-		tilearray = $tiles.to_chars
-        tilearray = tilearray + 'abcdefghijklmnopqrstuvwxyz'.to_chars if $tiles.include?'*'
-		letters = aSWtarget.astring.to_chars #take the baseword and create an array of letters
-		letters.each_index do |index| #for each letter of self find words that can be made orthogonal to self
-			tilesplus = $tiles + letters[index]
-			indexletterarray = [letters[index]]
-            possibleWords = self.findPossibleWords(letters[index])
-            
-			possibleWords.each do |word|
-				offset = (word =~ /#{Regexp.quote(letters[index])}/) # for those tilewords that have the one letter of self find its offset
-				tilelettersneeded = word.to_chars - indexletterarray
-				if offset && tilelettersneeded.subset?(tilearray)
-                    then
-					case
-						when aSWtarget.direction == "right"
-						aSW = ScrabbleWord.new(word, aSWtarget.xcoordinate - offset, aSWtarget.ycoordinate + index, "down", 0, 0)
-						when aSWtarget.direction == "down"
-						aSW = ScrabbleWord.new(word, aSWtarget.xcoordinate + index, aSWtarget.ycoordinate - offset, "right", 0, 0)
-					end
-                    #aSW.print("test")
-                    if aSW
-                        if self.testwordonboard(aSW) && self.testwordoverlap(aSW) && self.testwordsgeninline(aSW) &&  self.testwordsgenortho(aSW)
-                            scoreandplacewordfromtiles(aSW, $aGame.currentplayertileset, nil)
-                            if possibles.size > $maxallowed
-                                if (possibles[0].score + possibles[0].supplement) < (aSW.score + aSW.supplement)
-                                    possibles = possibles - [possibles[0]]
-                                    possibles << aSW
-                                end
-                                else
-                                possibles << aSW
-                            end
-                            possibles.sort_by {|possible| [(possible.score + possible.supplement)]}
-                        end
-                    end
-				end
-			end
-            
+            when aSW.direction == 'down'
+            i = 0
+            while i < aSW.astring.length
+                #puts "coordinate #{[aSW.xcoordinate + i, aSW.ycoordinate]}"
+                status = 'true' if self.hotspots.include?([aSW.xcoordinate + i, aSW.ycoordinate])
+                #puts "status #{status}"
+                i += 1
+            end
         end
-        return possibles
-	end
+        return status
+    end
     
-    def wordfindcontains(aSWtarget)  #this is not used.  was it too time consuming?
-        possibles = []
-        sometiles = $tiles.to_chars
-        tiles_plus_anchor = sometiles + aSWtarget.astring.to_chars
-        tilepower = tiles_plus_anchor.powerset
-        anchorword_plus = aSWtarget.astring.iscontainedwords
-        tilepower_words = []
-        tilepower.each {|array| tilepower_words << array.sort.join('') }
-        anchor_words = anchorword_plus.select {|word| tilepower_words.include?(word.scan(/./).sort.join(''))}
-        anchor_words.each { |word|
+    def letterssamerow(c)
+        arr = []
+        i = 0
+        while i <self.dimension
+            arr << self.lettergrid[c[0]][i]
+            i += 1
+        end
+        astr = arr.uniq!.join('')
+    end
             
-            case
-                when aSWtarget.direction == 'right'
-                aSW = ScrabbleWord.new(word, aSWtarget.xcoordinate,  aSWtarget.ycoordinate - (word =~ /#{Regexp.quote(aSWtarget.astring)}/), aSWtarget.direction, 0, 0)
-                
-                when aSWtarget.direction == 'down'
-                aSW = ScrabbleWord.new(word, aSWtarget.xcoordinate - (word =~ /#{Regexp.quote(aSWtarget.astring)}/),  aSWtarget.ycoordinate, aSWtarget.direction, 0, 0)
-                
+    def letterssamecol(c)
+            arr = []
+            i = 0
+            while i <self.dimension
+                arr << self.lettergrid[i][c1]
+                i += 1
             end
-            if aSW
-                if self.testwordonboard(aSW) && self.testwordoverlap(aSW) && self.testwordsgeninline(aSW) &&  self.testwordsgenortho(aSW)
-                    scoreandplacewordfromtiles(aSW, $aGame.currentplayertileset, nil)
-                    if possibles.size > $maxallowed
-                        if (possibles[0].score + possibles[0].supplement) < (aSW.score + aSW.supplement)
-                            possibles = possibles - [possibles[0]]
-                            possibles << aSW
-                        end
-                        else
-                        possibles << aSW
-                    end
-                    possibles.sort_by {|possible| [(possible.score + possible.supplement)]}
-                end
-            end
-		}
-        #aSW.print("test")
-
-        return possibles
-	end
-    
+            astr = arr.uniq!.join('')
+    end
+            
 	def testwordonboard (word)
 	status = "true"
 		case
@@ -1113,57 +1085,27 @@ class ScrabbleBoard
         end
 	end
 
-    def findcoordinatesusable
-        self.filledcoordinatesusable = []
+    def findfilledcoordinates
+        self.filledcoordinates = []
         self.boardSWs.each {|aSW|
-            aSW.coordinatesused.each {|acoordinate| self.filledcoordinatesusable << acoordinate}
+            aSW.coordinatesused.each {|acoordinate| self.filledcoordinates << acoordinate}
         }
 
     end
 	
-	def findPossibleWords(aletter) #finds all words that can be made with tiles plus the letter specified as argument;; words inlcude words that can be made with a single * character that will later be resolved to an actual letter.
+	def findPossibleWords(astring) #finds all words that can be made with tiles plus the letter specified as argument;; words inlcude words that can be made with a single * character that will later be resolved to an actual letter.
 		allpossiblewords = []
-        tilesplus = self.tileword + aletter
-        tilepermutes = tilesplus.permutedset
-        tilewords_plus = tilepermutes.select {|astring| astring.isaword_plus}
-        tilewords = tilewords_plus.actualwords #replaces '*' with letters that make actual words
-        tilewords.each {|aword| allpossiblewords.push(aword) if !allpossiblewords.include?(aword)}
+        tilesplus = self.tileword + astring
+        tilepermutes = tilesplus.permutedset_expandstar #expandstart version returns strings after '*' expanded by allowedchars
+        tilewords_plus = tilepermutes.select {|astring| astring.isaword}
+        tilewords_plus.each {|aword| allpossiblewords.push(aword) if !allpossiblewords.include?(aword)}
 		return allpossiblewords
 	end
-
-def newfindPossibleWords(aletter) #finds all words that can be made with tiles plus the letter specified as argument;; words inlcude words that can be made with a single * character that will later be resolved to an actual letter.
-    allpossiblewords = []
-    tilesplus = self.tileword + aletter
-    tilepermutes = tilesplus.permutedset #returns an array of permutes, if there is a '*' character, the '*' is replaced with 26 versions, substituted with actual letters
-    tilewords = tilepermutes.select {|astring| astring.isaword}
-    #tilewords_plus = tilepermutes.select {|astring| astring.isaword_plus}
-    #tilewords_plus = tilepermutes.select {|astring| astring.isaword_plus}
-    #tilewords = tilewords_plus.actualwords #replaces '*' with letters that make actual words
-    tilewords.each {|aword| allpossiblewords.push(aword) if !allpossiblewords.include?(aword)}
-    return allpossiblewords
-end
-
-
-    def findPossibleTileWords #finds all words that can be made with tiles only
-        allpossiblewords = []
-            tilesplus = self.tileword
-            tilepermutes = tilesplus.permutedset
-            tilewords = tilepermutes.select {|astring| astring.isaword}
-            tilestarset = tilepermutes.select {|astring| astring.include?'*'}
-        #tilepotentialwords = tilestarset.each {|astring| tilewords = tilewords + astring.matchingwords}
-        tilewords.each {|aword| allpossiblewords.push(aword) if !allpossiblewords.include?(aword)}
-    return allpossiblewords
-    end
                 
     def firstword #returns a ScrabbleWord or nil
-        #$tilewords = self.findPossibleTileWords  - this is done already in updatevalues
         coordinates = [[7,7,'right'], [7,7,'down']] #the tilewords must overlap this position on either axis
-        allpossibles = self.placetilewords($tilewords,coordinates) #this returns SWs that overlap this position
+        allpossibles = self.placetilewords(findPossibleWords(''),coordinates) #this returns SWs that overlap this position
         allpossibles = allpossibles.uniqSWs
-        
-        
-        
-        
         allpossibles.each {|possible| self.scoreandplacewordfromtiles(possible, $aGame.currentplayertileset, nil)}
         allpossibles = allpossibles.sort_by {|possible| [-(possible.score + possible.supplement)]}
         if not(allpossibles.empty?)
@@ -1275,6 +1217,7 @@ def scoreandplacewordfromtiles(aSW, fromtiles, permanent) #used to place a SW on
         aSW.score = ascore * anarray.max
         #puts "aSW.score #{aSW.score}"
         return self.newtileword
+        self.boardchanged = true
     when status && not(permanent)
         aSW.score = ascore * anarray.max
         #puts "aSW.score #{aSW.score}"

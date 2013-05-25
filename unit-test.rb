@@ -15,5 +15,5 @@ aTest.intialvalues
 #aTest.wordfindtest(3, "wordscores3.txt")
 #aTest.wordfindtest(4, "wordscores4.txt")
 #aTest.wordfindtest(5, "wordscores5.txt")
-aTest.wordfindtest(6, "wordscores6.txt")
+#aTest.wordfindtest(6, "wordscores6.txt")
 aTest.wordfindtest(7, "wordscores7.txt")

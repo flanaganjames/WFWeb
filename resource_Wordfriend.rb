@@ -1,5 +1,5 @@
 class Wordfriend
-	attr_accessor :myboard, :gameuser, :gamefile, :possiblewords, :usergames, :newgame
+	attr_accessor :myboard, :gameuser, :gamefile, :usergames, :newgame
     #these instance variables view the current user (user whose turn it is currently)
     #the board is the same, though out of phase as each turn occurs, and the tiles are different
     #see Class Game which supports two users - usually a user versus the computer
@@ -89,24 +89,9 @@ class Wordfriend
     end
 
     
-    def updatevalues(aplayertileset) #set to either 0 or 1
-        #tilesets =self.readboard  #this grabs board and an array containing two tilesets and tilesremain
-        #$aGame.tilesplayer1 = tilesets[0]
-        #$aGame.tilesplayer2 = tilesets[1]
-        #$aGame.tilesremain = tilesets[2].scan('')
+    def updatevalues(aplayertileset)
         self.myboard.tileword = aplayertileset
         self.myboard.findBoardSWs
-		#self.myboard.findBoardLetters #was used only by findPossibleWords
-        self.myboard.findcoordinatesusable #finds filled coordinates usable
-        self.myboard.findblankparallelpositions #also finds and blank coordinates usable
-        $tiles = self.myboard.tileword
-		$tilepermutedset = self.myboard.tileword.permutedset #used in wordfindinline where '*' are replaced with letters once tiles combined with other chars
-		$tilewords = self.myboard.findPossibleTileWords #words that can be made with the tiles;  this is used by wordfind and firstword in a call to placetilewords
-        #if there was a '*' char in the tiles, this was replaced by actual letters to make words.
-		
-        #this is used by wordfindorthomid in classS
-        #$possibleWords = self.myboard.findPossibleWords #was used in wordfindorthomid
-        #finds all words that can be made with tiles plus one of the letters on the board
     end
     
     def firstword
@@ -141,82 +126,9 @@ class Wordfriend
         return status
     end
     
-    def usesvalidmovecoordinates(aSW) #checks myboard.filledcoordinatesusable and blankcoordinatesusable to see if at least one of them is used by aSW        
-        status = nil
-        case
-        when aSW.direction == 'right'
-            i = 0
-            while i < aSW.astring.length
-                #puts "coordinate #{[aSW.xcoordinate, aSW.ycoordinate + i]}"
-                status = 'true' if (self.myboard.blankcoordinatesusable.include?([aSW.xcoordinate, aSW.ycoordinate + i]) || self.myboard.filledcoordinatesusable.include?([aSW.xcoordinate, aSW.ycoordinate + i]))
-                #puts "status #{status}"
-                i += 1
-            end
-        when aSW.direction == 'down'
-            i = 0
-            while i < aSW.astring.length
-                #puts "coordinate #{[aSW.xcoordinate + i, aSW.ycoordinate]}"
-                status = 'true' if (self.myboard.blankcoordinatesusable.include?([aSW.xcoordinate + i, aSW.ycoordinate]) || self.myboard.filledcoordinatesusable.include?([aSW.xcoordinate + i, aSW.ycoordinate]))
-                #puts "status #{status}"
-                i += 1
-            end
-        end
-        return status 
-    end
-    
     def wordfind
-        #        require './resource_methodsOO'
-        #        require './resource_classSW'
-        #        require './resource_classBoard'
-        
-        
-        
-        
-        #arraySWs.each {|aword| aword.print("initial")}
-        #Parallel Words
-        #this part finds words that can be placed in parallel to existing words wherever there are blank positions.
-        #it first finds words that can be made from tiles and also finds existing blank positions that are next to filled positions
-        #then it tries to place those words into blank positions, trying each possible register, ensuring that the word falls on the board and
-        #ensuring that it does not replace an already filled positions with a different letter.
-        #this does not account for trying words that can be created by combining tile letters with already placed letters -this happens below
-
-        
-        #for every word already on the board
-        #find words that can be made with tiles by placing them orthoganal to the start, middle letters, or end letters
-        #find words that can be made with tiles by placing them in line with existing words
-        #then test to see if the possible words are entirely on the board (testwordonboard) and select only those
-        #then test to see if placing the word will change the letter in any already filled position (testwordoverlap) and reject those
-        #then test to see if placing the word incidentally creates another nonword orthogonal/next to the word being placed and reject those
-        #then test to see if placing the word incidentally creates another nonword inline with the word being placed and reject those
-        #for these last two steps is it incdentally creates a valid word in either (ortho or inline) then computer the supplemental score due to those
-        
-        #does not use wordfindcontains.  why?
-        
-        #the word generaters below do their own testing of onboard etc.
-        puts "This is wordfind"
-        wfparalleltime = 0
-        wforthotime = 0
-        wforthomidtime = 0
-        wfinlinetime = 0
-        
-        t1 = Time.now
-        allpossibles = self.myboard.wordfindparallel
-        wfparalleltime = (Time.now - t1)
-        self.myboard.boardSWs.each {|currentSW|
-            t1 = Time.now
-            allpossibles = allpossibles + self.myboard.wordfindortho(currentSW)
-            wforthotime = wforthotime + (Time.now - t1)
-            t1 = Time.now
-            allpossibles = allpossibles +  self.myboard.wordfindorthomid(currentSW)
-            wforthomidtime = wforthomidtime + (Time.now - t1)
-            t1 = Time.now
-            allpossibles = allpossibles +  self.myboard.wordfindinline(currentSW)
-            wfinlinetime = wfinlinetime + (Time.now - t1)
-        }
-        allpossibles = allpossibles.uniqSWs
-        allpossibles = allpossibles.sort_by {|possible| [-(possible.score + possible.supplement)]}
-        self.possiblewords = allpossibles
-        puts "parallel: #{wfparalleltime}, ortho: #{wforthotime}, orthomid: #{wforthomidtime}, inline: #{wfinlinetime}"
+        self.myboard.findhotspots #finds blank coordinates near boardSWs i.e. usable
+        allpossibles = self.myboard.findhotspotSWs
         return allpossibles
 	end
     

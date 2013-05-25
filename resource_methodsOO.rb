@@ -110,7 +110,7 @@ class String
 end
 
 class String
-    def starttoallowedcharacters
+    def startoallowedcharacters
         set = [ self ] #at minimum retun self
         if self.include?('*')
             alpha = $allowedcharacters.to_chars #creates array of alphabetic letters

@@ -41,7 +41,8 @@ class Game
         self.tilesplayer2 = ''
         $aWordfriend = Wordfriend.new
         $aWordfriend.initialvalues
-        $maxallowed = 2
+        $allowedcharacters = 'abcdefghijklmnopqrstuvwxyz'
+        $maxallowed = 25
     end
     
     def getusergame
@@ -144,8 +145,6 @@ class Game
     def firstmove
         #self.initializegame #sets currentpayer = gameplayer1 and fills both players' tile sets;
         self.currentplayertileset = self.tilesplayer1
-        $aWordfriend.updatevalues(self.currentplayertileset) #findSWs, tilepermutedset, $possiblewords(words w tiles and board), $tilewords (words w tiles only)
-        
         aSW = $aWordfriend.firstword
         until (aSW)
             self.tilesplayer1 = self.replacealltiles(self.tilesplayer1)  #in case initial tiles generated no possible words, replace and try again.
@@ -172,8 +171,8 @@ class Game
     def resumegamePvC
         self.currentplayer = 0
         self.currentplayertileset = self.tilesplayer1
-        $aWordfriend.updatevalues(self.currentplayertileset) #findSWs, tilepermutedset, $possiblewords(words w tiles and board), $tilewords (words w tiles only)
-        $aWordfriend.wordfind
+        $aWordfriend.updatevalues(self.currentplayertileset)
+        $aWordfriend.wordfind(self.currentplayertileset)
         aSW = $aWordfriend.possiblewords[0] #get the highest scoring result
         if aSW
             self.placewordfromtiles(aSW)
@@ -222,7 +221,7 @@ class Game
         self.resetnewindicator
         self.currentplayertileset = self.tilesplayer1
         $aWordfriend.updatevalues(self.currentplayertileset)
-        $aWordfriend.wordfind
+        $aWordfriend.wordfind(self.currentplayertileset)
         aSW = $aWordfriend.possiblewords[0] #get the highest scoring result
         if aSW
             self.placewordfromtiles(aSW)
