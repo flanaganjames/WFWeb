@@ -1,5 +1,5 @@
 class ScrabbleBoard
-	attr_accessor :lettergrid, :pushlettergrid, :tileword, :newtileword, :scoregrid, :pushscoregrid, :newgrid, :pushnewgrid, :dimension, :lettervalues, :boardSWs, :boardLetters, :hotspots, :filledcoordinates, :boardchanged
+	attr_accessor :lettergrid, :pushlettergrid, :tileword, :newtileword, :scoregrid, :pushscoregrid, :newgrid, :pushnewgrid, :dimension, :lettervalues, :boardSWs, :boardLetters, :hotspots, :filledcoordinates, :boardchanged, :tilewordwords, :hotspotSWs
 	
 	
 	def initialvalues #this method fills the letter grid array dimension x dimension with nil, the scoregrid with 1s except as defined
@@ -71,7 +71,7 @@ class ScrabbleBoard
         end
     end
 
-    #first approach
+    #deprecated first approach
 	def findhotspots #find all blank positions where a tileword could be placed - in any register -; note a coordinate is a vector: x, y, direction, distoRchars, Rchars, distoLchars, Lchars
 		self.hotspots = [] #array of hotspot vectors
         currentSWs = self.boardSWs
@@ -166,16 +166,17 @@ class ScrabbleBoard
 	end
     
 	def describehotspots
-		arr = []
+		self.hotspots = []
 		col = 0
 		while col < self.dimension # for the jth column
 			row = 0
 			while row < (self.dimension - 1) #and the ith row
                 if isblankwithonesideoccupied(row,col)
-                    rstrdistance = findcharstoright(row,col) #returns vector [chars, diastance to chars]
-                    lstrdistance = findcharstoleft(row,col)
-                    astrdistance = findcharsabove(row,col)
-                    bstrdistance = findcharsbelow(row,col)
+                    rstrdist = findcharstoright(row,col) #returns vector [chars, distance to chars]
+                    lstrdist = findcharstoleft(row,col)
+                    ustrdist = findcharstoup(row,col)
+                    dstrdist = findcharstodown(row,col)
+                    self.hotspots << {'row' => row,'col' => col,'leftdist' => lstrdist['distance'],'leftchars' => lstrdist['chars'],'rightdist' => rstrdist['distance'],'rightchars' => rstrdist['chars'],'updist' => ustrdist['distance'],'upchars' => ustrdist['chars'],'downdist' => dstrdist['distance'],'downchars' => dstrdist['chars']}
                 end
             row += 1
             end
@@ -183,15 +184,28 @@ class ScrabbleBoard
         end
     end
 
-    def isblankwithonesideoccupied(row,col)
-        if (self.lettergrid[row][col] == '-'
-            &&
-            (self.lettergrid[row-1][col] != '-' if row > 0
-            || self.lettergrid[row+1][col] != '-' if row < self.dimension - 1
-            || self.lettergrid[row][col-1] != '-' if col > 0
-            || self.lettergrid[row][col+1] != '-' if col < self.dimension - 1
-            )
-            )
+    def isblankwithonesideoccupied (row,col)
+        self.lettergrid[row][col] == '-' && onesideoccupied(row,col)
+    end
+        
+    def onesideoccupied (row,col)
+        leftsideoccupied(row,col) || rightsideoccupied(row,col) || upsideoccupied(row,col) || downsideoccupied(row,col)
+    end
+    
+    def leftsideoccupied (row,col)
+        col > 0 && self.lettergrid[row][col - 1] != '-'
+    end
+    
+    def rightsideoccupied (row,col)
+        col < (self.dimension - 1) && self.lettergrid[row][col + 1] != '-'
+    end
+    
+    def upsideoccupied (row,col)
+        row > 0 && self.lettergrid[row - 1][col] != '-'
+    end
+        
+    def downsideoccupied (row,col)
+        row < (self.dimension - 1) && self.lettergrid[row + 1][col] != '-'
     end
 
     def findcharstoright (row, col)
@@ -210,7 +224,7 @@ class ScrabbleBoard
                 when startchars && self.lettergrid[row][col+i] == '-'
                     endchars = true
                     chars = arr.join('')
-                    vector = [distance, chars]
+                vector = {'distance' => distance, 'chars' => chars}
                     return vector
             end
         i += 1
@@ -218,10 +232,38 @@ class ScrabbleBoard
         distance = nil if !startchars #if no startchars found
         chars = '' if !startchars #if no startchars found
         chars = arr.join('') if startchars && !endchars  #if startchars found but not end chars found
-        vector = [distance, chars]
+        vector = {'distance' => distance, 'chars' => chars}
         return vector
     end
-        
+    
+    def findcharstodown (row, col)
+        startchars = nil
+        endchars = nil
+        arr = []
+        i = 1
+        while row + i < self.dimension
+            case
+                when !startchars && self.lettergrid[row+i][col] != '-'
+                startchars = row + i
+                distance = startchars - row
+                arr << self.lettergrid[row+i][col]
+                when startchars &&  self.lettergrid[row+i][col] != '-'
+                arr << self.lettergrid[row+i][col]
+                when startchars && self.lettergrid[row+i][col] == '-'
+                endchars = true
+                chars = arr.join('')
+                vector = {'distance' => distance, 'chars' => chars}
+                return vector
+            end
+            i += 1
+        end
+        distance = nil if !startchars #if no startchars found
+        chars = '' if !startchars #if no startchars found
+        chars = arr.join('') if startchars && !endchars  #if startchars found but not end chars found
+        vector = {'distance' => distance, 'chars' => chars}
+        return vector
+    end
+    
     def findcharstoleft (row, col)
         startchars = nil
         endchars = nil
@@ -229,27 +271,55 @@ class ScrabbleBoard
         i = 1
         while col - i > 0
             case
-                when !startchars && self.lettergrid[row][col+i] != '-'
+                when !startchars && self.lettergrid[row][col - i] != '-'
                     startchars = col - i
                     distance = col - startchars
-                    arr << self.lettergrid[row][col+i]
-                when startchars &&  self.lettergrid[row][col+i] != '-'
-                    arr << self.lettergrid[row][col+i]
-                when startchars && self.lettergrid[row][col+i] == '-'
+                    arr << self.lettergrid[row][col-i]
+                when startchars &&  self.lettergrid[row][col-i] != '-'
+                    arr << self.lettergrid[row][col-i]
+                when startchars && self.lettergrid[row][col-i] == '-'
                     endchars = true
                     chars = arr. reverse.join('')
-                    vector = [distance, chars]
+                    vector = {'distance' => distance, 'chars' => chars}
                     return vector
             end
-        i-= 1
+        i += 1
         end
         distance = nil if !startchars #if no startchars found
         chars = '' if !startchars #if no startchars found
         chars = arr.reverse.join('') if startchars && !endchars  #if startchars found but not end chars found
-        vector = [distance, chars]
+        vector = {'distance' => distance, 'chars' => chars}
         return vector
     end
-        
+    
+    def findcharstoup (row, col)
+        startchars = nil
+        endchars = nil
+        arr = []
+        i = 1
+        while row - i > 0
+            case
+                when !startchars && self.lettergrid[row-i][col] != '-'
+                startchars = row - i
+                distance = row - startchars
+                arr << self.lettergrid[row-i][col]
+                when startchars &&  self.lettergrid[row-i][col] != '-'
+                arr << self.lettergrid[row-i][col]
+                when startchars && self.lettergrid[row-i][col] == '-'
+                endchars = true
+                chars = arr. reverse.join('')
+                vector = {'distance' => distance, 'chars' => chars}
+                return vector
+            end
+            i += 1
+        end
+        distance = nil if !startchars #if no startchars found
+        chars = '' if !startchars #if no startchars found
+        chars = arr.reverse.join('') if startchars && !endchars  #if startchars found but not end chars found
+        vector = {'distance' => distance, 'chars' => chars}
+        return vector
+    end
+    
 	def placetilewords (tilewords, coordinates) #return possibleSWs formed by placing each tileword in every blankposition in every register as long as the SW does not cover a non-empty grid location with a different letter; the coordinates have a direction
 		possibles = []
 		tilewords.each {|word|
@@ -358,31 +428,32 @@ class ScrabbleBoard
     def findhotspotSWs #for each hotspot review all possible SWs in both directions, saving the top $maxallowed scoring
         setSWs = []
         #puts "hotspots: #{self.hotspots.size}"
-        self.hotspots.each {|c|
-            cr = c.dup << "right"
-            cd = c.dup << "down"
-            possSWs =
-            placetilewordsat(findPossibleWords(''), cr) + placetilewordsat(findPossibleWords(''), cd)  #self.letterssamerow(c) #self.letterssamecol(c)
-            
-            possSWs = possSWs.uniqSWs
-            #puts "possSWs initial: #{possSWs.size}"
-            selectSWs = possSWs.select {|aSW|
-                self.autowordtest(aSW)
-            }
-            #puts "possSWs after select : #{selectSWs.size}"
-            selectSWs.each {|aSW|
-                if setSWs.size > $maxallowed
-                    if (setSWs[0].score + setSWs[0].supplement) < (aSW.score + aSW.supplement)
-                        setSWs = setSWs - [setSWs[0]]
-                        setSWs << aSW
-                    end
-                else
-                    setSWs << aSW
-                end
-                setSWs.sort_by {|possible| [(possible.score + possible.supplement)]}
-            }
+        blankrightleft = self.hotspots.select {|hs| isblankrightleft(hs)}
+        blankupdown = self.hotspots.select {|hs| isblankupdown(hs)}
+        blankrightleft.each {|hs|
+        setSWs = (setSWs + wordsonblank(hs,"right")).uniqSWs.maxallowedSWs
         }
-        return setSWs.uniqSWs
+        blankupdown.each {|hs|
+            setSWs = (setSWs + wordsonblank(hs,"down")).uniqSWs.maxallowedSWs
+        }
+        
+        self.hotspotSWs = setSWs.sort_by {|possible| [-(possible.score + possible.supplement)]}
+    end
+    
+    def isblankrightleft(hs)
+        hs["rightchars"] == "" && hs["leftchars"] == ""
+    end
+
+    def isblankupdown(hs)
+        hs["upchars"] == "" && hs["downchars"] == ""
+    end
+    
+    def wordsonblank(hs,direction)
+        set = []
+            self.tilewordwords.each {|aword| aSW = ScrabbleWord.new(aword,hs["row"],hs["col"],direction,0,0)
+                set << aSW if self.testwordonboard(aSW) && self.testwordsgeninline(aSW) && self.testwordsgenortho(aSW) && self.scoreandplacewordfromtiles(aSW, self.tileword, nil)
+            }
+        return set
     end
     
     def autowordtest(aSW) #this tests a proposed move for validity:

@@ -172,7 +172,7 @@ class Game
         self.currentplayer = 0
         self.currentplayertileset = self.tilesplayer1
         $aWordfriend.updatevalues(self.currentplayertileset)
-        $aWordfriend.wordfind(self.currentplayertileset)
+        $aWordfriend.wordfind
         aSW = $aWordfriend.possiblewords[0] #get the highest scoring result
         if aSW
             self.placewordfromtiles(aSW)
@@ -221,7 +221,7 @@ class Game
         self.resetnewindicator
         self.currentplayertileset = self.tilesplayer1
         $aWordfriend.updatevalues(self.currentplayertileset)
-        $aWordfriend.wordfind(self.currentplayertileset)
+        $aWordfriend.wordfind
         aSW = $aWordfriend.possiblewords[0] #get the highest scoring result
         if aSW
             self.placewordfromtiles(aSW)

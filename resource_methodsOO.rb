@@ -9,6 +9,20 @@ class Array
 	end
 	return newarray
 	end
+    
+    def maxallowedSWs
+    newarray =[]
+        while self.size > 0
+            aSW = self.pop
+            if newarray.size < $maxallowed
+                newarray << aSW
+                newarray = newarray.sort_by {|possible| [(possible.score + possible.supplement)]}
+            else
+                newarray[0] = aSW if (aSW.score + aSW.supplement) > (newarray[0].score + newarray[0].supplement)
+            end
+        end
+    return newarray
+    end
 end
 
 class String

@@ -1,30 +1,30 @@
 ---------------
 ---------------
+------if-------
+-----stet------
+-----u-no------
+-----q-de------
+-------ed------
+-------r-------
+-------shop----
+--------ayin---
+----------sori-
+----------ore--
+-----------it--
 ---------------
 ---------------
----------------
----------------
----------------
----------------
----------------
----------------
----------------
----------------
----------------
----------------
----------------
-tiles1: ldahe*n
-tiles2: uneorxb
-tilesr: aaaaaaaabccdddeeeeeeeeeeffggghiiiiiiiiijklllmmnnnnoooooooppqrrrrrssssttttttuuuvvwwyyz*
+tiles1: eoeoevn
+tiles2: vuatax*
+tilesr: aaaaaabbccddeeeeeefggghiiiiijkllllmmnnnooprrrsttuuwwyz
 mode: PlayerVsComputer
-score1: 0
-score2: 0
+score1: 108
+score2: 78
 ---W--L-L--W---
 --l--w---w--l--
 -l--l-----l--l-
 W--L---w---L--W
 --l---l-l---l--
--w---L---L---w-
+-w---L--*L---w-
 L---l-----l---L
 ---w-------w---
 L---l-----l---L

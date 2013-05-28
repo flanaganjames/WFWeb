@@ -5,8 +5,8 @@
 ---------------
 ---------------
 ---------------
+-------i-------
 -------d-------
--------u-------
 -------o-------
 -------m-------
 -------o-------
@@ -14,7 +14,7 @@
 ---------------
 ---------------
 tiles1: dotoutm
-tiles2: lynsewa
+tiles2: lynseqi
 tilesr: aaaaaaaabbccdddeeeeeeeeeeeffggghhiiiiiiiiijklllmnnnnnooooooppqrrrrrrsssttttuuuvvwxyz**
 mode: PlayerVsComputer
 score1: 0

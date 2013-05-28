@@ -1,5 +1,5 @@
 class Wordfriend
-	attr_accessor :myboard, :gameuser, :gamefile, :usergames, :newgame
+	attr_accessor :myboard, :gameuser, :gamefile, :usergames, :newgame, :possiblewords
     #these instance variables view the current user (user whose turn it is currently)
     #the board is the same, though out of phase as each turn occurs, and the tiles are different
     #see Class Game which supports two users - usually a user versus the computer
@@ -91,7 +91,8 @@ class Wordfriend
     
     def updatevalues(aplayertileset)
         self.myboard.tileword = aplayertileset
-        self.myboard.findBoardSWs
+        self.myboard.describehotspots
+        self.myboard.tilewordwords = self.myboard.findPossibleWords('')
     end
     
     def firstword
@@ -116,7 +117,7 @@ class Wordfriend
         #must be placed using user tiles or letters on board
         status = nil
         (puts('notaword');return status) if not(aSW.astring.isaword)  #returns nil if not a word
-        (puts('notvalidcoord');return status) if not(self.usesvalidmovecoordinates(aSW)) #returns nil if does not cross (intersect) or be adjacent to an existing word
+        (puts('notvalidcoord');return status) if not(self.myboard.usesvalidmovecoordinates(aSW)) #returns nil if does not cross (intersect) or be adjacent to an existing word
         (puts('notonboard');return status) if not(self.myboard.testwordonboard(aSW))
         (puts('overlap');return status) if not(self.myboard.testwordoverlap(aSW))
         (puts('geninline');return status) if not(self.myboard.testwordsgeninline(aSW)) #updates score or supplement or returns nil
@@ -126,10 +127,8 @@ class Wordfriend
         return status
     end
     
-    def wordfind
-        self.myboard.findhotspots #finds blank coordinates near boardSWs i.e. usable
-        allpossibles = self.myboard.findhotspotSWs
-        return allpossibles
+    def wordfind 
+        self.possiblewords = self.myboard.findhotspotSWs
 	end
     
 end
