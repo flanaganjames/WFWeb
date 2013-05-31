@@ -19,6 +19,7 @@ class Array
                 newarray = newarray.sort_by {|possible| [(possible.score + possible.supplement)]}
             else
                 newarray[0] = aSW if (aSW.score + aSW.supplement) > (newarray[0].score + newarray[0].supplement)
+                newarray = newarray.sort_by {|possible| [(possible.score + possible.supplement)]}
             end
         end
     return newarray
@@ -39,26 +40,6 @@ end
 #	end
 #end
 
-class String
-    def readwordfile
-        $words = {}
-        wordarray = File.readlines("wordlist.txt").map { |line| line.chomp }
-        i = 0
-        while i < wordarray.size
-            $words[wordarray[i]] = 'true'
-            i += 1
-        end
-        
-        $words_plus = {}
-		wordarray = File.readlines("wordlist_plus.txt").map { |line| line.chomp }
-        #this word list has every possible word with * in place of every possible letter
-		i = 0
-		while i < wordarray.size
-			$words_plus[wordarray[i]] = 'true'
-			i += 1
-		end
-    end
-end
 
 class String
     def writewordfile
@@ -221,8 +202,8 @@ class String
         $words.has_key?(self)
     end
     
-    def isaword_plus  #this looks in the file of words with every possible possible postion substituted with a '*'
-        $words_plus.has_key?(self)
+    def isaword_plus  #this looks in the hash of words with every possible possible position substituted with a '*'
+        return $words_plus[ self ] #returns an array of words consistent with a string that may have a start in it
     end
 end
 

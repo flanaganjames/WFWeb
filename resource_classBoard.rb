@@ -431,10 +431,10 @@ class ScrabbleBoard
         blankrightleft = self.hotspots.select {|hs| isblankrightleft(hs)}
         blankupdown = self.hotspots.select {|hs| isblankupdown(hs)}
         blankrightleft.each {|hs|
-        setSWs = (setSWs + wordsonblank(hs,"right")).uniqSWs.maxallowedSWs
+        setSWs = (setSWs + wordsonblank(hs,"right"))
         }
         blankupdown.each {|hs|
-            setSWs = (setSWs + wordsonblank(hs,"down")).uniqSWs.maxallowedSWs
+            setSWs = (setSWs + wordsonblank(hs,"down"))
         }
         
         self.hotspotSWs = setSWs.sort_by {|possible| [-(possible.score + possible.supplement)]}
@@ -450,9 +450,25 @@ class ScrabbleBoard
     
     def wordsonblank(hs,direction)
         set = []
-            self.tilewordwords.each {|aword| aSW = ScrabbleWord.new(aword,hs["row"],hs["col"],direction,0,0)
-                set << aSW if self.testwordonboard(aSW) && self.testwordsgeninline(aSW) && self.testwordsgenortho(aSW) && self.scoreandplacewordfromtiles(aSW, self.tileword, nil)
-            }
+        failcount = 0  #quit trying once stops adding to $maxallowed more than $stopafter
+        self.tilewordwords.each {|aword| aSW = ScrabbleWord.new(aword,hs["row"],hs["col"],direction,0,0)
+            if self.testwordonboard(aSW) && self.testwordsgeninline(aSW) && self.testwordsgenortho(aSW) && self.scoreandplacewordfromtiles(aSW, self.tileword, nil)
+                if set.size < $maxallowed
+                    set << aSW
+                    set = set.sort_by {|possible| [(possible.score + possible.supplement)]}
+                else
+                    if (set[0].score + set[0].supplement) < (aSW.score + aSW.supplement)
+                    set[0] = aSW
+                    set = set.sort_by {|possible| [(possible.score + possible.supplement)]}
+                    else
+                        failcount += 1
+                    end
+                end
+            end
+            if failcount > $stopafter
+                return set
+            end
+        }
         return set
     end
     
@@ -1167,11 +1183,26 @@ class ScrabbleBoard
 	def findPossibleWords(astring) #finds all words that can be made with tiles plus the letter specified as argument;; words inlcude words that can be made with a single * character that will later be resolved to an actual letter.
 		allpossiblewords = []
         tilesplus = self.tileword + astring
-        tilepermutes = tilesplus.permutedset_expandstar #expandstart version returns strings after '*' expanded by allowedchars
-        tilewords_plus = tilepermutes.select {|astring| astring.isaword}
-        tilewords_plus.each {|aword| allpossiblewords.push(aword) if !allpossiblewords.include?(aword)}
-		return allpossiblewords
+        tilepermutes = tilesplus.permutedset
+        tilewords_plus = []
+        tilepermutes.each {|astring|
+            aset = astring.isaword_plus
+            if aset
+                aset.each {|aword| tilewords_plus << aword }
+            end
+        }
+		return self.sortwords(tilewords_plus)
 	end
+
+    def sortwords(set)
+        set.sort_by {|word| [-(self.wordscore(word))]}
+    end
+
+    def wordscore(word)
+            sum = 0
+            word.scan(/./).each{|letter| sum = sum + lettervalues[letter]}
+            return sum/word.size
+    end
                 
     def firstword #returns a ScrabbleWord or nil
         coordinates = [[7,7,'right'], [7,7,'down']] #the tilewords must overlap this position on either axis

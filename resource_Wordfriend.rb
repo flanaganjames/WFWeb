@@ -14,25 +14,28 @@ class Wordfriend
         self.myboard = ScrabbleBoard.new
 		self.myboard.initialvalues
         
-
-		$words = {}
-		wordarray = File.readlines("wordlist.txt").map { |line| line.chomp }
-        #this word list has every possible word with * in place of every possible letter
-		i = 0
-		while i < wordarray.size
-			$words[wordarray[i]] = 'true'
-			i += 1
-		end
+        $words = {}
+        wordarray = File.readlines("wordlist.txt").map { |line| line.chomp }
+        i = 0
+        while i < wordarray.size
+            $words[wordarray[i]] = 'true'
+            i += 1
+        end
         
         $words_plus = {}
 		wordarray = File.readlines("wordlist_plus.txt").map { |line| line.chomp }
         #this word list has every possible word with * in place of every possible letter
 		i = 0
 		while i < wordarray.size
-			$words_plus[wordarray[i]] = 'true'
+            aword = wordarray[i] if wordarray[i].isaword
+			if !$words_plus[wordarray[i]]
+                then
+                $words_plus[wordarray[i]] = [aword]
+                else
+                $words_plus[wordarray[i]] << aword
+            end
 			i += 1
 		end
-        #self.saveboard($aGame.tilesplayer1, $aGame.tilesplayer2, $aGame.tilesremain.join('')) #
 	end
     
     def removeuserdirectoryifempty

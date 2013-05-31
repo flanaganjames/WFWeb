@@ -42,7 +42,8 @@ class Game
         $aWordfriend = Wordfriend.new
         $aWordfriend.initialvalues
         $allowedcharacters = 'abcdefghijklmnopqrstuvwxyz'
-        $maxallowed = 25
+        $maxallowed = 10
+        $stopafter = 2
     end
     
     def getusergame
