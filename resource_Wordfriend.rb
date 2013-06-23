@@ -96,6 +96,9 @@ class Wordfriend
         self.myboard.tileword = aplayertileset
         self.myboard.describehotspots
         self.myboard.tilewordwords = self.myboard.findPossibleWords('')
+        self.myboard.tilewordstrings = self.myboard.findPossibleStrings
+        self.myboard.tilewordstringsofsize = self.myboard.findPossibleStringsofSize
+        self.myboard.tilewordwordsofsize = self.myboard.findPossibleWordsofSize
     end
     
     def firstword

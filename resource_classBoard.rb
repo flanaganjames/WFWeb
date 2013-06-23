@@ -1,5 +1,5 @@
 class ScrabbleBoard
-	attr_accessor :lettergrid, :pushlettergrid, :tileword, :newtileword, :scoregrid, :pushscoregrid, :newgrid, :pushnewgrid, :dimension, :lettervalues, :boardSWs, :boardLetters, :hotspots, :filledcoordinates, :boardchanged, :tilewordwords, :hotspotSWs
+	attr_accessor :lettergrid, :pushlettergrid, :tileword, :newtileword, :scoregrid, :pushscoregrid, :newgrid, :pushnewgrid, :dimension, :lettervalues, :boardSWs, :boardLetters, :hotspots, :filledcoordinates, :boardchanged, :tilewordwords, :tilewordstrings, :tilewordstringsofsize, :tilewordwordsofsize, :hotspotSWs
 	
 	
 	def initialvalues #this method fills the letter grid array dimension x dimension with nil, the scoregrid with 1s except as defined
@@ -428,30 +428,40 @@ class ScrabbleBoard
     def findhotspotSWs #for each hotspot review all possible SWs in both directions, saving the top $maxallowed scoring
         setSWs = []
         #puts "hotspots: #{self.hotspots.size}"
-        blankrightleft = self.hotspots.select {|hs| isblankrightleft(hs)}
-        blankupdown = self.hotspots.select {|hs| isblankupdown(hs)}
-        blankrightleft.each {|hs|
-        setSWs = (setSWs + wordsonblank(hs,"right"))
+        self.hotspots.each {|hs|
+        case
+            when isblankright(hs)
+                setSWs = setSWs + wordsonblank(hs,"right")
+            when isblankdown(hs)
+                setSWs = setSWs + wordsonblank(hs,"down")
+            when hs["rightdist"]
+                setSWs = setSWs + wordsonblanksize(hs,"right", hs["rightdist"] - 1) if hs["rightdist"] > 1
+                setSWs = setSWs + stringsplusright(hs) if hs["rightdist"] == 1
+            when hs["downdist"]
+                setSWs = setSWs + wordsonblanksize(hs, "down", hs["downdist"] - 1) if hs["downdist"] > 1
+                setSWs = setSWs + stringsplusdown(hs) if hs["downdist"] == 1
+            when hs["leftdist"]
+                setSWs = setSWs + stringsplusleft(hs) if hs["leftdist"] == 1
+            when hs["updist"]
+                setSWs = setSWs + stringsplusup(hs) if hs["updist"] == 1
+        end
         }
-        blankupdown.each {|hs|
-            setSWs = (setSWs + wordsonblank(hs,"down"))
-        }
-        
         self.hotspotSWs = setSWs.sort_by {|possible| [-(possible.score + possible.supplement)]}
     end
     
-    def isblankrightleft(hs)
-        hs["rightchars"] == "" && hs["leftchars"] == ""
+    def isblankright(hs)
+        hs["rightchars"] == "" 
     end
 
-    def isblankupdown(hs)
-        hs["upchars"] == "" && hs["downchars"] == ""
+    def isblankdown(hs)
+        hs["downchars"] == ""
     end
     
     def wordsonblank(hs,direction)
         set = []
         failcount = 0  #quit trying once stops adding to $maxallowed more than $stopafter
-        self.tilewordwords.each {|aword| aSW = ScrabbleWord.new(aword,hs["row"],hs["col"],direction,0,0)
+        self.tilewordwords.each {|aword|
+            aSW = ScrabbleWord.new(aword,hs["row"],hs["col"],direction,0,0)
             if self.testwordonboard(aSW) && self.testwordsgeninline(aSW) && self.testwordsgenortho(aSW) && self.scoreandplacewordfromtiles(aSW, self.tileword, nil)
                 if set.size < $maxallowed
                     set << aSW
@@ -470,6 +480,88 @@ class ScrabbleBoard
             end
         }
         return set
+    end
+    
+    def wordsonblanksize(hs, direction, maxsize)
+        set = []
+        i = 1
+        while i < maxsize
+        if self.tilewordwordsofsize[i]
+        then
+            self.tilewordwordsofsize[i].each {|aword|
+            aSW = ScrabbleWord.new(aword,hs["row"],hs["col"],direction,0,0)
+            if self.testwordonboard(aSW) && self.testwordsgeninline(aSW) && self.testwordsgenortho(aSW) && self.scoreandplacewordfromtiles(aSW, self.tileword, nil)
+                set << aSW
+            end
+            }
+        end
+        i+= 1
+        end
+        return set
+    end
+    
+    def stringsplusright(hs)
+        someSWs = []
+        tilewordstrings.each {|astring|
+            somewords = (astring + hs["rightchars"]).isaword_plus
+            if somewords
+                somewords.each{|aword|
+                aSW = ScrabbleWord.new(aword,hs["row"],hs["col"],"right",0,0)
+                if self.testwordonboard(aSW) && self.testwordsgeninline(aSW) && self.testwordsgenortho(aSW) && self.scoreandplacewordfromtiles(aSW, self.tileword, nil)
+                    someSWs << aSW
+                end
+                }
+            end
+        }
+        return someSWs
+    end
+ 
+    def stringsplusleft(hs)
+        someSWs = []
+        tilewordstrings.each {|astring|
+            somewords = (hs["leftchars"] + astring).isaword_plus
+            if somewords
+                somewords.each{|aword|
+                    aSW = ScrabbleWord.new(aword,hs["row"],hs["col"],"right",0,0)
+                    if self.testwordonboard(aSW) && self.testwordsgeninline(aSW) && self.testwordsgenortho(aSW) && self.scoreandplacewordfromtiles(aSW, self.tileword, nil)
+                        someSWs << aSW
+                    end
+                }
+            end
+        }
+        return someSWs
+    end
+    
+    def stringsplusup(hs)
+        someSWs = []
+        tilewordstrings.each {|astring|
+            somewords = (hs["upchars"] + astring).isaword_plus
+            if somewords
+                somewords.each{|aword|
+                    aSW = ScrabbleWord.new(aword,hs["row"],hs["col"],"down",0,0)
+                    if self.testwordonboard(aSW) && self.testwordsgeninline(aSW) && self.testwordsgenortho(aSW) && self.scoreandplacewordfromtiles(aSW, self.tileword, nil)
+                        someSWs << aSW
+                    end
+                }
+            end
+        }
+        return someSWs
+    end
+    
+    def stringsplusdown(hs)
+        someSWs = []
+        tilewordstrings.each {|astring|
+            somewords = (astring + hs["downchars"]).isaword_plus
+            if somewords
+                somewords.each{|aword|
+                    aSW = ScrabbleWord.new(aword,hs["row"],hs["col"],"down",0,0)
+                    if self.testwordonboard(aSW) && self.testwordsgeninline(aSW) && self.testwordsgenortho(aSW) && self.scoreandplacewordfromtiles(aSW, self.tileword, nil)
+                        someSWs << aSW
+                    end
+                }
+            end
+        }
+        return someSWs
     end
     
     def autowordtest(aSW) #this tests a proposed move for validity:
@@ -1193,6 +1285,33 @@ class ScrabbleBoard
         }
 		return self.sortwords(tilewords_plus)
 	end
+
+    def findPossibleStrings
+        aset = self.tileword.permutedset
+        return aset
+    end
+
+    def findPossibleStringsofSize
+        ahash = {}
+        i = 1
+        while i < self.tileword.size + 1
+            ahash[i] = self.tileword.permutedsetofsize(i) #returns an array of strings of size i
+            i += 1
+        end
+        return ahash
+    end
+
+def findPossibleWordsofSize
+    ahash = {}
+    self.tilewordwords.each {|aword|
+    if ahash[aword.size]
+    then ahash[aword.size] << aword
+    else
+        ahash[aword.size] = [aword]
+    end
+    }
+    return ahash
+end
 
     def sortwords(set)
         set.sort_by {|word| [-(self.wordscore(word))]}

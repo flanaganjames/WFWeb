@@ -10,4 +10,4 @@ $aGame.resumegameCheat
 $wf = $aWordfriend
 $board = $wf.myboard
 $board.describehotspots
-#$board.findhotspotSWs
+$board.findhotspotSWs

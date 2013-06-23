@@ -24,6 +24,7 @@ class Array
         end
     return newarray
     end
+    
 end
 
 class String
@@ -71,6 +72,12 @@ class String
 	end
 	set.collect {|aset| aset.join('')}
 	end
+    
+    def permutedsetofsize(size)  #returns a set of strings representing every permutation of size "size"
+        arr = self.to_chars
+        set = arr.permutation(size).to_a
+        set.collect {|aset| aset.join('')}
+    end
 end
 
 class Array
@@ -203,7 +210,7 @@ class String
     end
     
     def isaword_plus  #this looks in the hash of words with every possible possible position substituted with a '*'
-        return $words_plus[ self ] #returns an array of words consistent with a string that may have a start in it
+        return $words_plus[ self ] #returns an array of words consistent with a string that may have a star in it
     end
 end
 
