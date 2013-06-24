@@ -422,7 +422,7 @@ class ScrabbleBoard
             somewords = (astring + hs["rightchars"]).isaword_plus
             if somewords
                 somewords.each{|aword|
-                aSW = ScrabbleWord.new(aword,hs["row"] - astring.size + 1,hs["col"],"right",0,0)
+                aSW = ScrabbleWord.new(aword,hs["row"],hs["col"] - astring.size + 1,"right",0,0)
                 if self.testwordonboard(aSW) && self.testwordsgeninline(aSW) && self.testwordsgenortho(aSW) && self.scoreandplacewordfromtiles(aSW, self.tileword, nil)
                     someSWs << aSW
                 end
@@ -438,7 +438,7 @@ class ScrabbleBoard
             somewords = (hs["leftchars"] + astring).isaword_plus
             if somewords
                 somewords.each{|aword|
-                    aSW = ScrabbleWord.new(aword,hs["row"] - hs["leftchars"].size,hs["col"],"right",0,0)
+                    aSW = ScrabbleWord.new(aword,hs["row"],hs["col"] - hs["leftchars"].size,"right",0,0)
                     if self.testwordonboard(aSW) && self.testwordsgeninline(aSW) && self.testwordsgenortho(aSW) && self.scoreandplacewordfromtiles(aSW, self.tileword, nil)
                         someSWs << aSW
                     end
@@ -454,7 +454,7 @@ class ScrabbleBoard
             somewords = (hs["upchars"] + astring).isaword_plus
             if somewords
                 somewords.each{|aword|
-                    aSW = ScrabbleWord.new(aword,hs["row"],hs["col"] - hs["upchars"].size,"down",0,0)
+                    aSW = ScrabbleWord.new(aword,hs["row"] - hs["upchars"].size,hs["col"],"down",0,0)
                     if self.testwordonboard(aSW) && self.testwordsgeninline(aSW) && self.testwordsgenortho(aSW) && self.scoreandplacewordfromtiles(aSW, self.tileword, nil)
                         someSWs << aSW
                     end
@@ -470,7 +470,7 @@ class ScrabbleBoard
             somewords = (astring + hs["downchars"]).isaword_plus
             if somewords
                 somewords.each{|aword|
-                    aSW = ScrabbleWord.new(aword,hs["row"],hs["col"] - astring.size + 1,"down",0,0)
+                    aSW = ScrabbleWord.new(aword,hs["row"] - astring.size + 1,hs["col"],"down",0,0)
                     if self.testwordonboard(aSW) && self.testwordsgeninline(aSW) && self.testwordsgenortho(aSW) && self.scoreandplacewordfromtiles(aSW, self.tileword, nil)
                         someSWs << aSW
                     end

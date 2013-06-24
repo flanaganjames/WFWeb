@@ -1,34 +1,34 @@
----------------
----------------
----------------
----------------
----------------
------------tho-
-----------sweet
-------goalie---
-------r-robe---
------ma---stang
-------c-----nu-
----moped-----nu
----ire-a-------
----r-d-w-okeh--
----i---tun-----
-tiles1: gpais*r
-tiles2: jzdtnft
-tilesr: aaaabcdeeeeefiiiiilllnoooqrssuvvxyy
+--repave---swig
+--oxo---duke---
+--bel--qi-aloof
+---cactus-t---i
+-------oh---wiz
+na--alated----z
+on--punas-----l
+ti-femes-----he
+ami--i------rod
+-a---nor-----g-
+-t---aye-----g-
+bender-i-------
+-ruity-n-------
+---v-----------
+--re-----------
+tiles1: j
+tiles2: 
+tilesr: 
 mode: PlayerVsComputer
-score1: 240
-score2: 120
+score1: 390
+score2: 330
 ---W--L-L--W---
 --l--w---w--l--
 -l--l-----l--l-
 W--L---w---L--W
 --l---l-l---l--
--w---L---L---w-
+-w---L*--L---w*
 L---l-----l---L
 ---w-------w---
 L---l-----l---L
--w---L---L*--w-
+-w---L---L---w-
 --l---l-l---l--
 W--L---w---L--W
 -l--l-----l--l-
