@@ -1,0 +1,36 @@
+---------------
+---------------
+---------------
+---------------
+---------------
+-----------ream
+----------barge
+----vugg-kit-el
+-----poove-----
+-----toe-fur---
+---obi-r--neif-
+----om-si--gnar
+---waes-n------
+-ana-sh-tace---
+-dex--a-i------
+tiles1: jiqivta
+tiles2: zuoooni
+tilesr: cdddeeehilllnprsttuwyy
+mode: PlayerVsComputer
+score1: 219
+score2: 181
+---W--L-L--W---
+--l--w---w--l--
+-l--l-----l--l-
+W--L---w---L--W
+--l---l-l---l--
+-w---L---L---w-
+L---l-----l---L
+---w-------w---
+L---l---*-l---L
+-w---L---L---w-
+--l---l-l---l--
+W--L---w---*--W
+-l--l-----l--l-
+--l--w---w--l--
+---W--L-L--W---

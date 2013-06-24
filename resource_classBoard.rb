@@ -71,106 +71,12 @@ class ScrabbleBoard
         end
     end
 
-    #deprecated first approach
-	def findhotspots #find all blank positions where a tileword could be placed - in any register -; note a coordinate is a vector: x, y, direction, distoRchars, Rchars, distoLchars, Lchars
-		self.hotspots = [] #array of hotspot vectors
-        currentSWs = self.boardSWs
-		currentSWs.each { |aSW|
-			case
-			when aSW.direction == "right"
-                x = aSW.xcoordinate 
-                y = aSW.ycoordinate - 1
-                if (y > -1)  #if a valid coordinate
-                    then
-                    if self.lettergrid[x][y] == '-'
-                        then
-                        self.hotspots << [x,y, "right", 1, aSW.astring, self.distoleft(x,y)] #distoleft returns distoLchars and the chars separated by a comma
-                    end
-                end
-                x = aSW.xcoordinate
-                y = aSW.ycoordinate + aSW.astring.size
-                if (y < self.dimension)  #if a valid coordinate
-                    then
-                    if self.lettergrid[x][y] == '-'
-                        then
-                                self.hotspots << [x,y]
-                    end
-                end
-                i = 0
-                while i < aSW.astring.size
-						x = aSW.xcoordinate - 1
-						y = aSW.ycoordinate + i
-						if (x > -1)  #if a valid coordinate
-						then	
-							if self.lettergrid[x][y] == '-'
-                            then
-                                self.hotspots << [x,y]
-							end
-						end		
-						x = aSW.xcoordinate + 1
-						y = aSW.ycoordinate + i
-						if (x < (self.dimension)) #if a valid coordinate
-						then	
-							if self.lettergrid[x][y] == '-'
-                            then
-                                self.hotspots << [x,y]
-							end
-						end
-                i += 1
-                end
-			when aSW.direction == "down"
-                x = aSW.xcoordinate - 1
-                y = aSW.ycoordinate
-                if (x > -1)  #if a valid coordinate
-                    then
-                    if self.lettergrid[x][y] == '-'
-                        then
-                                self.hotspots << [x,y]
-                    end
-                end
-                x = aSW.xcoordinate + aSW.astring.size
-                y = aSW.ycoordinate 
-                if (x < self.dimension)  #if a valid coordinate
-                    then
-                    if self.lettergrid[x][y] == '-'
-                        then
-                                self.hotspots << [x,y]
-                    end
-                end
-					i = 0
-					while i < aSW.astring.size
-						x = aSW.xcoordinate + i
-						y = aSW.ycoordinate - 1
-						
-						if (y > -1) #if a valid coordinate
-						then
-							if self.lettergrid[x][y] == '-'
-							then
-                                self.hotspots << [x,y]
-							end
-						end		
-						x = aSW.xcoordinate + i
-						y = aSW.ycoordinate + 1
-						if (y < (self.dimension)) #if a valid coordinate
-						then
-							if self.lettergrid[x][y] == '-'
-							then
-                                self.hotspots << [x,y]
-							end
-						end
-					i += 1
-					end
-			end
-			}
-		
-	end
-    
 	def describehotspots
 		self.hotspots = []
 		col = 0
 		while col < self.dimension # for the jth column
 			row = 0
-			while row < (self.dimension - 1) #and the ith row
+			while row < (self.dimension) #and the ith row
                 if isblankwithonesideoccupied(row,col)
                     rstrdist = findcharstoright(row,col) #returns vector [chars, distance to chars]
                     lstrdist = findcharstoleft(row,col)
@@ -182,6 +88,13 @@ class ScrabbleBoard
             end
         col += 1
         end
+    end
+    
+    def printhotspots
+        puts "row, col, leftdist, leftchars, rightdist, rightchars, updist, upchars, downdist, downchars"
+        self.hotspots.each {|hs|
+            puts "[#{hs["row"]}, #{hs["col"]}, #{hs["leftdist"]}, #{hs["leftchars"]}, #{hs["rightdist"]}, #{hs["rightchars"]}, #{hs["updist"]}, #{hs["upchars"]}, #{hs["downdist"]}, #{hs["downchars"]}]"
+        }
     end
 
     def isblankwithonesideoccupied (row,col)
@@ -429,24 +342,41 @@ class ScrabbleBoard
         setSWs = []
         #puts "hotspots: #{self.hotspots.size}"
         self.hotspots.each {|hs|
-        case
-            when isblankright(hs)
-                setSWs = setSWs + wordsonblank(hs,"right")
-            when isblankdown(hs)
-                setSWs = setSWs + wordsonblank(hs,"down")
-            when hs["rightdist"]
-                setSWs = setSWs + wordsonblanksize(hs,"right", hs["rightdist"] - 1) if hs["rightdist"] > 1
-                setSWs = setSWs + stringsplusright(hs) if hs["rightdist"] == 1
-            when hs["downdist"]
-                setSWs = setSWs + wordsonblanksize(hs, "down", hs["downdist"] - 1) if hs["downdist"] > 1
-                setSWs = setSWs + stringsplusdown(hs) if hs["downdist"] == 1
-            when hs["leftdist"]
-                setSWs = setSWs + stringsplusleft(hs) if hs["leftdist"] == 1
-            when hs["updist"]
-                setSWs = setSWs + stringsplusup(hs) if hs["updist"] == 1
-        end
+            
+            (setSWs = setSWs + wordsonblank(hs,"right")) if isblankright(hs)
+            
+            (setSWs = setSWs + wordsonblank(hs,"down")) if isblankdown(hs)
+            
+            (setSWs = setSWs + stringsplusright(hs)) if hs["rightdist"] == 1
+
+            (setSWs = setSWs + stringsplusdown(hs)) if hs["downdist"] == 1
+            
+            (setSWs = setSWs + stringsplusleft(hs)) if hs["leftdist"] == 1
+            
+            (setSWs = setSWs + stringsplusup(hs)) if hs["updist"] == 1
+            
+            if hs["rightdist"]
+                if hs["rightdist"] > 1
+                    (setSWs = setSWs + wordsonblanksize(hs,"right", hs["rightdist"] - 1))
+                end
+            end
+            
+            if hs["downdist"]
+                if hs["downdist"] > 1
+                    (setSWs = setSWs + wordsonblanksize(hs, "down", hs["downdist"] - 1))
+                end
+            end
         }
         self.hotspotSWs = setSWs.sort_by {|possible| [-(possible.score + possible.supplement)]}
+        self.hotspotSWs.each {|aSW|
+            aSW.print("inline")
+        }
+    end
+    
+    def printhotspotSWs
+        hotspotSWs.each {|aSW|
+            aSW.print("test")
+        }
     end
     
     def isblankright(hs)
@@ -459,24 +389,10 @@ class ScrabbleBoard
     
     def wordsonblank(hs,direction)
         set = []
-        failcount = 0  #quit trying once stops adding to $maxallowed more than $stopafter
         self.tilewordwords.each {|aword|
             aSW = ScrabbleWord.new(aword,hs["row"],hs["col"],direction,0,0)
             if self.testwordonboard(aSW) && self.testwordsgeninline(aSW) && self.testwordsgenortho(aSW) && self.scoreandplacewordfromtiles(aSW, self.tileword, nil)
-                if set.size < $maxallowed
                     set << aSW
-                    set = set.sort_by {|possible| [(possible.score + possible.supplement)]}
-                else
-                    if (set[0].score + set[0].supplement) < (aSW.score + aSW.supplement)
-                    set[0] = aSW
-                    set = set.sort_by {|possible| [(possible.score + possible.supplement)]}
-                    else
-                        failcount += 1
-                    end
-                end
-            end
-            if failcount > $stopafter
-                return set
             end
         }
         return set
@@ -506,7 +422,7 @@ class ScrabbleBoard
             somewords = (astring + hs["rightchars"]).isaword_plus
             if somewords
                 somewords.each{|aword|
-                aSW = ScrabbleWord.new(aword,hs["row"],hs["col"],"right",0,0)
+                aSW = ScrabbleWord.new(aword,hs["row"] - astring.size + 1,hs["col"],"right",0,0)
                 if self.testwordonboard(aSW) && self.testwordsgeninline(aSW) && self.testwordsgenortho(aSW) && self.scoreandplacewordfromtiles(aSW, self.tileword, nil)
                     someSWs << aSW
                 end
@@ -522,7 +438,7 @@ class ScrabbleBoard
             somewords = (hs["leftchars"] + astring).isaword_plus
             if somewords
                 somewords.each{|aword|
-                    aSW = ScrabbleWord.new(aword,hs["row"],hs["col"],"right",0,0)
+                    aSW = ScrabbleWord.new(aword,hs["row"] - hs["leftchars"].size,hs["col"],"right",0,0)
                     if self.testwordonboard(aSW) && self.testwordsgeninline(aSW) && self.testwordsgenortho(aSW) && self.scoreandplacewordfromtiles(aSW, self.tileword, nil)
                         someSWs << aSW
                     end
@@ -538,7 +454,7 @@ class ScrabbleBoard
             somewords = (hs["upchars"] + astring).isaword_plus
             if somewords
                 somewords.each{|aword|
-                    aSW = ScrabbleWord.new(aword,hs["row"],hs["col"],"down",0,0)
+                    aSW = ScrabbleWord.new(aword,hs["row"],hs["col"] - hs["upchars"].size,"down",0,0)
                     if self.testwordonboard(aSW) && self.testwordsgeninline(aSW) && self.testwordsgenortho(aSW) && self.scoreandplacewordfromtiles(aSW, self.tileword, nil)
                         someSWs << aSW
                     end
@@ -554,7 +470,7 @@ class ScrabbleBoard
             somewords = (astring + hs["downchars"]).isaword_plus
             if somewords
                 somewords.each{|aword|
-                    aSW = ScrabbleWord.new(aword,hs["row"],hs["col"],"down",0,0)
+                    aSW = ScrabbleWord.new(aword,hs["row"],hs["col"] - astring.size + 1,"down",0,0)
                     if self.testwordonboard(aSW) && self.testwordsgeninline(aSW) && self.testwordsgenortho(aSW) && self.scoreandplacewordfromtiles(aSW, self.tileword, nil)
                         someSWs << aSW
                     end

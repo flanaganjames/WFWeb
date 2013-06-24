@@ -3,7 +3,7 @@ $aGame = Game.new
 $aGame.initialvalues
 $aGame.gameuser="UnitTests"
 $aWordfriend.gameuser = $aGame.gameuser
-$aGame.gamefile="wordscores6.txt"
+$aGame.gamefile="wordscores9.txt"
 $aWordfriend.gamefile = $aGame.gamefile
 $aGame.readgame
 $aGame.resumegameCheat
