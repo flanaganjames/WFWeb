@@ -1,5 +1,5 @@
 class ScrabbleBoard
-	attr_accessor :lettergrid, :pushlettergrid, :tileword, :newtileword, :scoregrid, :pushscoregrid, :newgrid, :pushnewgrid, :dimension, :lettervalues, :boardSWs, :boardLetters, :hotspots, :filledcoordinates, :boardchanged, :tilewordwords, :tilewordstrings, :tilewordstringsofsize, :tilewordwordsofsize, :hotspotSWs
+	attr_accessor :lettergrid, :pushlettergrid, :tileword, :newtileword, :scoregrid, :pushscoregrid, :newgrid, :pushnewgrid, :dimension, :lettervalues, :boardSWs, :boardLetters, :hotspots, :hotspotcoords, :filledcoordinates, :boardchanged, :tilewordwords, :tilewordstrings, :tilewordstringsofsize, :tilewordwordsofsize, :hotspotSWs
 	
 	
 	def initialvalues #this method fills the letter grid array dimension x dimension with nil, the scoregrid with 1s except as defined
@@ -73,6 +73,7 @@ class ScrabbleBoard
 
 	def describehotspots
 		self.hotspots = []
+        self.hotspotcoords = []
 		col = 0
 		while col < self.dimension # for the jth column
 			row = 0
@@ -82,6 +83,7 @@ class ScrabbleBoard
                     lstrdist = findcharstoleft(row,col)
                     ustrdist = findcharstoup(row,col)
                     dstrdist = findcharstodown(row,col)
+                    self.hotspotcoords << [row, col]
                     self.hotspots << {'row' => row,'col' => col,'leftdist' => lstrdist['distance'],'leftchars' => lstrdist['chars'],'rightdist' => rstrdist['distance'],'rightchars' => rstrdist['chars'],'updist' => ustrdist['distance'],'upchars' => ustrdist['chars'],'downdist' => dstrdist['distance'],'downchars' => dstrdist['chars']}
                 end
             row += 1
@@ -506,7 +508,7 @@ class ScrabbleBoard
             i = 0
             while i < aSW.astring.length
                 #puts "coordinate #{[aSW.xcoordinate, aSW.ycoordinate + i]}"
-                status = 'true' if self.hotspots.include?([aSW.xcoordinate, aSW.ycoordinate + i])
+                status = 'true' if self.hotspotcoords.include?([aSW.xcoordinate, aSW.ycoordinate + i])
                 #puts "status #{status}"
                 i += 1
             end
@@ -514,7 +516,7 @@ class ScrabbleBoard
             i = 0
             while i < aSW.astring.length
                 #puts "coordinate #{[aSW.xcoordinate + i, aSW.ycoordinate]}"
-                status = 'true' if self.hotspots.include?([aSW.xcoordinate + i, aSW.ycoordinate])
+                status = 'true' if self.hotspotcoords.include?([aSW.xcoordinate + i, aSW.ycoordinate])
                 #puts "status #{status}"
                 i += 1
             end

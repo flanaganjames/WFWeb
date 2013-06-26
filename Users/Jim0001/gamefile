@@ -1,36 +1,36 @@
---repave---swig
---oxo---duke---
---bel--qi-aloof
----cactus-t---i
--------oh---wiz
-na--alated----z
-on--punas-----l
-ti-femes-----he
-ami--i------rod
--a---nor-----g-
--t---aye-----g-
-bender-i-------
--ruity-n-------
----v-----------
---re-----------
-tiles1: j
-tiles2: 
-tilesr: 
+--------hymned-
+-------------r-
+-------------em
+-------pa----de
+-------aw----g-
+-------gate--e-
+-------e--fords
+-------riots--w
+---------l----i
+---------i----v
+---------v----e
+-------plunkers
+---------n-----
+---------e-----
+---------------
+tiles1: irgieot
+tiles2: aaanjze
+tilesr: aaabbccdefhiiiillnnnnoooooqrstttuuuxy
 mode: PlayerVsComputer
-score1: 390
-score2: 330
----W--L-L--W---
+score1: 144
+score2: 191
+---W--L-L--*---
 --l--w---w--l--
 -l--l-----l--l-
 W--L---w---L--W
 --l---l-l---l--
--w---L*--L---w*
+-w---L---L---w-
 L---l-----l---L
 ---w-------w---
 L---l-----l---L
 -w---L---L---w-
 --l---l-l---l--
-W--L---w---L--W
+W--L---w--*L--W
 -l--l-----l--l-
 --l--w---w--l--
 ---W--L-L--W---
