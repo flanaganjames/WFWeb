@@ -101,8 +101,6 @@ class Game
         self.tilesplayer2 = '-------'
         self.scoreplayer2 = 0
         self.scoreplayer1 = 0
-        #cannot do the following until mode is set
-        #$aWordfriend.saveboard(self.tilesplayer1, self.tilesplayer2, $aGame.tilesremain, self.mode, self.scoreplayer1.to_s, self.scoreplayer2.to_s)
     end
     
     def initializegameCheat
@@ -112,7 +110,7 @@ class Game
         $aGame.gameplayer1 = "none"
         self.currentplayertileset = self.tilesplayer2
         $aWordfriend.updatevalues(self.currentplayertileset)
-        $aWordfriend.saveboard(self.tilesplayer1, self.tilesplayer2, self.tilesremain, self.mode, self.scoreplayer1.to_s, self.scoreplayer2.to_s )
+        self.saveboard
     end
     
     def initializegamePvC
@@ -124,7 +122,7 @@ class Game
         self.currentplayer = 0
         self.currentplayertileset = self.tilesplayer1
         $aWordfriend.updatevalues(self.currentplayertileset)
-        $aWordfriend.saveboard(self.tilesplayer1, self.tilesplayer2, self.tilesremain, self.mode, self.scoreplayer1.to_s, self.scoreplayer2.to_s)
+        self.saveboard
     end
     
     def revertPvC
@@ -215,7 +213,7 @@ class Game
     end
     
     def nextmovePlayer1
-        $aWordfriend.saveboard(self.tilesplayer1,self.tilesplayer2,self.tilesremain, self.mode, self.scoreplayer1.to_s, self.scoreplayer2.to_s) #saves board after player2 accepts move
+        self.saveboard #saves board after player2 accepts move
         self.tilesplayer2 = self.currentplayertileset  #the move just reviewed in '/updated' is now accepted, the remaining tiles in currentplayertileset transferred to  tilesplater2
         self.scoreplayer2 = self.scoreplayer2 + self.scoreadd
         self.tilesplayer2 = $aGame.filltiles(self.tilesplayer2) #player2 just moved and used some tiles
@@ -232,7 +230,6 @@ class Game
         end
         self.currentplayertileset = self.tilesplayer2
         $aWordfriend.updatevalues(self.currentplayertileset)
-        $aWordfriend.saveboard(self.tilesplayer1, self.tilesplayer2, $aGame.tilesremain, self.mode, self.scoreplayer1.to_s, self.scoreplayer2.to_s) #saves board after player 1 moves
     end
 
 end

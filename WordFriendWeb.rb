@@ -58,9 +58,34 @@ def choosenextpagenewgame
 end
 
 post '/resumegame' do  #this posts from askresume.erb
+    i= 0
+    @posname = {}
+    while i < 15
+        j = 0
+        lhash = {}
+        while j < 15
+            lhash[j] = ":i" + i.to_s + "j" + j.to_s
+            j += 1
+        end
+        @posname[i] = lhash
+        i += 1
+    end
+    @tilename = {}
+    i = 0
+    while i < 7
+        @tilename[i] = "tile" + i.to_s
+        i += 1
+    end
+    
     $aGame.newgame = "no"
     $aGame.readgame
-    erb:showaskmode
+    if $aGame.mode = "PlayerVsComputer"
+        $aGame.resumegamePvC
+        erb:showArcaneUsergameboard
+    else
+        $aGame.resumegameCheat
+        erb:showCheatgameboard
+    end
 end
 
 post '/newgame' do #this posts from askresume.erb
@@ -147,6 +172,7 @@ post '/manualmovePvC' do #posted from showArcanUsergameboard
     #puts "hello if nil" if not(status)
     erb:showinvalidmove if not(status)
     $aGame.placewordfromtiles2(aSW) if status
+    $aGame.saveboard
     erb:showupdatedPvC if status
 end
 

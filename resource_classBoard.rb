@@ -369,7 +369,7 @@ class ScrabbleBoard
                 end
             end
         }
-        self.hotspotSWs = setSWs.sort_by {|possible| [-(possible.score + possible.supplement)]}.take($maxallowed)
+        self.hotspotSWs = setSWs.uniqSWs.sort_by {|possible| [-(possible.score + possible.supplement)]}.take($maxallowed)
         self.hotspotSWs.each {|aSW|
             aSW.print("inline")
         }
