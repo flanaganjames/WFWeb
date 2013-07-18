@@ -1,25 +1,25 @@
---------hymned-
--------------r-
--------------em
--------pa----de
--------aw----g-
--------gate--e-
--------e--fords
--------riots--w
----------l----i
----------i----v
----------v----e
--------plunkers
----------n-----
----------e-----
 ---------------
-tiles1: irgieot
-tiles2: aaanjze
-tilesr: aaabbccdefhiiiillnnnnoooooqrstttuuuxy
+---------------
+---------------
+---------------
+---------------
+---------------
+-------m-------
+-------o-------
+-------r-------
+-------g-------
+------cup------
+------heh------
+------i-t------
+------d--------
+---------------
+tiles1: wsfeawo
+tiles2: lsnnnck
+tilesr: aaaaaaaabbdddeeeeeeeeeefggiiiiiiiijlllmnnnoooooopqrrrrrsstttttuuuvvxyyz**
 mode: PlayerVsComputer
-score1: 144
-score2: 191
----W--L-L--*---
+score1: 59
+score2: 26
+---W--L-L--W---
 --l--w---w--l--
 -l--l-----l--l-
 W--L---w---L--W
@@ -30,7 +30,7 @@ L---l-----l---L
 L---l-----l---L
 -w---L---L---w-
 --l---l-l---l--
-W--L---w--*L--W
+W--L---w---L--W
 -l--l-----l--l-
 --l--w---w--l--
 ---W--L-L--W---
