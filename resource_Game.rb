@@ -137,6 +137,10 @@ class Game
         $aWordfriend.revertboard
     end
     
+    def nextmoveCheat
+        self.tilesplayer2 = self.currentplayertileset
+    end
+    
     def resetnewindicator
         $aWordfriend.resetnewindicator
     end

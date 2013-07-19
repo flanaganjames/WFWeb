@@ -79,10 +79,12 @@ post '/resumegame' do  #this posts from askresume.erb
     
     $aGame.newgame = "no"
     $aGame.readgame
-    if $aGame.mode = "PlayerVsComputer"
+    if $aGame.mode == "PlayerVsComputer"
+        puts "resume PVC"
         $aGame.resumegamePvC
         erb:showArcaneUsergameboard
     else
+        puts "resume Cheat"
         $aGame.resumegameCheat
         erb:showCheatgameboard
     end
@@ -517,7 +519,8 @@ post '/nextmove' do   #posted from showupdated
         @tilename[i] = "tile" + i.to_s
         i += 1
     end
-    
+    $aGame.nextmoveCheat
+    $aGame.saveboard
     erb:showCheatgameboard
 end
 
