@@ -134,7 +134,7 @@ class Wordfriend
     end
     
     def wordfind 
-        self.possiblewords = self.myboard.findhotspotSWs
+        self.myboard.findhotspotSWs
 	end
     
 end

@@ -5,8 +5,10 @@ aForm = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www
 aForm = aForm + " <form action=\"/board\" method=\"post\"> "
 aForm = aForm + "<html xmlns=\"http://www.w3.org/1999/xhtml\" lang=\"en\" xml:lang=\"en\"> "
 
-aForm = aForm + "<head> <title>Please Wait</title> </head> <body>"
-aForm = aForm + " <div> This will take 5-7 seconds (30-40 seocnds with a '*' character). </div> "
+aForm = aForm + "<head> <title>Be Right Back</title> </head> <body>"
+aForm = aForm + " <div> Back in 5-7 seconds (30-40 seconds with a '*' character). </div> "
+
+aForm = aForm  + "<div> <input type = \"submit\" name=\"Show Results\" value = \"Show Results So Far\" formaction = \"/results\"/> <div> "
 
 aForm = aForm + "</body> </form> "
 

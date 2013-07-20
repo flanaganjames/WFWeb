@@ -341,38 +341,36 @@ class ScrabbleBoard
 	end
     
     def findhotspotSWs #for each hotspot review all possible SWs in both directions, saving the top $maxallowed scoring
-        setSWs = []
+        $aWordfriend.possiblewords = []
         #puts "hotspots: #{self.hotspots.size}"
         self.hotspots.each {|hs|
             
-            (setSWs = setSWs + wordsonblank(hs,"right")) if isblankright(hs)
+            ($aWordfriend.possiblewords = $aWordfriend.possiblewords + wordsonblank(hs,"right")) if isblankright(hs)
             
-            (setSWs = setSWs + wordsonblank(hs,"down")) if isblankdown(hs)
+            ($aWordfriend.possiblewords = $aWordfriend.possiblewords  + wordsonblank(hs,"down")) if isblankdown(hs)
             
-            (setSWs = setSWs + stringsplusright(hs)) if hs["rightdist"] == 1
+            ($aWordfriend.possiblewords = $aWordfriend.possiblewords + stringsplusright(hs)) if hs["rightdist"] == 1
 
-            (setSWs = setSWs + stringsplusdown(hs)) if hs["downdist"] == 1
+            ($aWordfriend.possiblewords = $aWordfriend.possiblewords + stringsplusdown(hs)) if hs["downdist"] == 1
             
-            (setSWs = setSWs + stringsplusleft(hs)) if hs["leftdist"] == 1
+            ($aWordfriend.possiblewords = $aWordfriend.possiblewords + stringsplusleft(hs)) if hs["leftdist"] == 1
             
-            (setSWs = setSWs + stringsplusup(hs)) if hs["updist"] == 1
+            ($aWordfriend.possiblewords = $aWordfriend.possiblewords + stringsplusup(hs)) if hs["updist"] == 1
             
             if hs["rightdist"]
                 if hs["rightdist"] > 1
-                    (setSWs = setSWs + wordsonblanksize(hs,"right", hs["rightdist"] - 1))
+                    ($aWordfriend.possiblewords = $aWordfriend.possiblewords + wordsonblanksize(hs,"right", hs["rightdist"] - 1))
                 end
             end
             
             if hs["downdist"]
                 if hs["downdist"] > 1
-                    (setSWs = setSWs + wordsonblanksize(hs, "down", hs["downdist"] - 1))
+                    ($aWordfriend.possiblewords = $aWordfriend.possiblewords + wordsonblanksize(hs, "down", hs["downdist"] - 1))
                 end
             end
         }
-        self.hotspotSWs = setSWs.uniqSWs.sort_by {|possible| [-(possible.score + possible.supplement)]}.take($maxallowed)
-        self.hotspotSWs.each {|aSW|
-            aSW.print("inline")
-        }
+        $aWordfriend.possiblewords = $aWordfriend.possiblewords.uniqSWs.sort_by {|possible| [-(possible.score + possible.supplement)]}.take($maxallowed)
+        
     end
     
     def printhotspotSWs
@@ -397,6 +395,7 @@ class ScrabbleBoard
                     set << aSW
             end
         }
+        set = set.uniqSWs.sort_by {|possible| [-(possible.score + possible.supplement)]}.take($maxallowed)
         return set
     end
     
@@ -415,6 +414,7 @@ class ScrabbleBoard
         end
         i+= 1
         end
+        set = set.uniqSWs.sort_by {|possible| [-(possible.score + possible.supplement)]}.take($maxallowed)
         return set
     end
     
@@ -431,6 +431,7 @@ class ScrabbleBoard
                 }
             end
         }
+        someSWs = someSWs.uniqSWs.sort_by {|possible| [-(possible.score + possible.supplement)]}.take($maxallowed)
         return someSWs
     end
  
@@ -447,6 +448,7 @@ class ScrabbleBoard
                 }
             end
         }
+        someSWs = someSWs.uniqSWs.sort_by {|possible| [-(possible.score + possible.supplement)]}.take($maxallowed)
         return someSWs
     end
     
@@ -463,6 +465,7 @@ class ScrabbleBoard
                 }
             end
         }
+        someSWs = someSWs.uniqSWs.sort_by {|possible| [-(possible.score + possible.supplement)]}.take($maxallowed)
         return someSWs
     end
     
@@ -479,6 +482,7 @@ class ScrabbleBoard
                 }
             end
         }
+        someSWs = someSWs.uniqSWs.sort_by {|possible| [-(possible.score + possible.supplement)]}.take($maxallowed)
         return someSWs
     end
     

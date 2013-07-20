@@ -432,16 +432,38 @@ post '/gettingresults' do
     #puts "tileset captured: #{$aGame.currentplayertileset }"
     $aGame.saveboard
     $aWordfriend.updatevalues($aGame.tilesplayer2)
-    $aWordfriend.wordfind
-    erb:showresults
-    #Daemons.run_proc('wordfinder', wordfinder)
-    #erb:showberightback
+    task = Thread.new {
+        $aWordfriend.wordfind
+        #redirect '/results'
+        #task.join
+        #erb:showresults
+    }
+    erb:showberightback
+    #task.join
 end
 
-def wordfinder
-    $aWordfriend.wordfind
+get '/results' do
+    i=0
+    @posname = {}
+    while i < 15
+        j = 0
+        lhash = {}
+        while j < 15
+            lhash[j] = ":i" + i.to_s + "j" + j.to_s
+            j += 1
+        end
+        @posname[i] = lhash.dup
+        i += 1
+    end
+    
+    @tilename = {}
+    i = 0
+    while i < 7
+        @tilename[i] = "tile" + i.to_s
+        i += 1
+    end
+    
     erb:showresults
-    #post('/results')
 end
 
 post '/results' do
@@ -467,6 +489,7 @@ post '/results' do
     
     erb:showresults
 end
+
 
 post '/updated' do
     i=0

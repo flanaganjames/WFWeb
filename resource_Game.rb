@@ -42,7 +42,7 @@ class Game
         $aWordfriend = Wordfriend.new
         $aWordfriend.initialvalues
         $allowedcharacters = 'abcdefghijklmnopqrstuvwxyz'
-        $maxallowed = 10
+        $maxallowed = 25
         $stopafter = 2
     end
     
