@@ -46,6 +46,7 @@ class Game
         $stopafter = 2
     end
     
+    
     def getusergame
         $aWordfriend.getusergames
         self.gamefile = "gamefile" #in this version, only one gamefile permitted
