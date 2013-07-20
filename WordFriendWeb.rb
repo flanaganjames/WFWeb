@@ -385,8 +385,6 @@ post '/startgameCheat' do  #this from showaskmode.erb if Cheat is chosen and ass
     erb:showCheatgameboard
 end
 
-
-
 post '/gettingresults' do
     i=0
     @posname = {}
@@ -442,29 +440,6 @@ post '/gettingresults' do
     #task.join
 end
 
-get '/results' do
-    i=0
-    @posname = {}
-    while i < 15
-        j = 0
-        lhash = {}
-        while j < 15
-            lhash[j] = ":i" + i.to_s + "j" + j.to_s
-            j += 1
-        end
-        @posname[i] = lhash.dup
-        i += 1
-    end
-    
-    @tilename = {}
-    i = 0
-    while i < 7
-        @tilename[i] = "tile" + i.to_s
-        i += 1
-    end
-    
-    erb:showresults
-end
 
 post '/results' do
     i=0
