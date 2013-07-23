@@ -427,17 +427,17 @@ post '/gettingresults' do
     end
     $aGame.tilesplayer2 = anarray.join('')
     $aGame.currentplayertileset = $aGame.tilesplayer2
-    #puts "tileset captured: #{$aGame.currentplayertileset }"
     $aGame.saveboard
     $aWordfriend.updatevalues($aGame.tilesplayer2)
-    task = Thread.new {
+    $task = Thread.new {
         $aWordfriend.wordfind
+        #call '/results'
         #redirect '/results'
         #task.join
-        #erb:showresults
+        erb:showresults
     }
     erb:showberightback
-    #task.join
+    #$task.join
 end
 
 
@@ -465,6 +465,29 @@ post '/results' do
     erb:showresults
 end
 
+get '/results' do
+    i=0
+    @posname = {}
+    while i < 15
+        j = 0
+        lhash = {}
+        while j < 15
+            lhash[j] = ":i" + i.to_s + "j" + j.to_s
+            j += 1
+        end
+        @posname[i] = lhash.dup
+        i += 1
+    end
+    
+    @tilename = {}
+    i = 0
+    while i < 7
+        @tilename[i] = "tile" + i.to_s
+        i += 1
+    end
+    
+    erb:showresults
+end
 
 post '/updated' do
     i=0
