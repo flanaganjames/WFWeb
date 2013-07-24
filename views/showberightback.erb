@@ -11,8 +11,6 @@ aForm = aForm + " <div> Finding possible moves ... Results will take 5-7 seconds
 
 aForm = aForm + " <div> Results will appear when ready. You can ask for interim results using the button below. </div> "
 
-aForm = aForm  + "<div> <input type = \"submit\" name=\"Show Results\" value = \"Show Results So Far\" formaction = \"/results\"/> <\div> </body> </form>"
-
 timeout = 10000
 i = 0
 while i < 7
@@ -27,6 +25,7 @@ aForm =  aForm +  "form.setAttribute(\"action\", \"/results\");"
 aForm =  aForm +   "t = setTimeout(function(){form.submit()}, #{timeout});"
 aForm = aForm + "</script>"
 
+aForm = aForm + "</body> </form>"
 aForm = aForm + "</html>"
 
 return aForm
