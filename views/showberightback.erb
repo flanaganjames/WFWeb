@@ -1,24 +1,37 @@
 <%
 aForm = ""
 aForm = aForm + "<html>"
+aForm = aForm + "<head><title>Generating Results</title>"
+aForm = aForm + "<script>"
+aForm = aForm + "function setPercentage()"
+aForm = aForm + "{"
+aForm = aForm + "div = document.getElementById(\"inner\");"
+aForm = aForm + "div.style.width = \"77%\";"
+aForm = aForm + "}"
+aForm = aForm + "</script>"
+aForm = aForm + "</head>"
 
 aForm = aForm + "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">"
-
 aForm = aForm + " <form action=\"/board\" method=\"post\"> "
-
-aForm = aForm + "<head> <title>Generating Results</title> </head> <body>"
+aForm = aForm + "<body>"
 aForm = aForm + " <div> Finding possible moves ... Results will take 5-7 seconds (40 seconds with a '*' character)."
 
-aForm = aForm + " <div> Results will appear when ready. You can ask for interim results using the button below. </div> "
+aForm = aForm + " <div> Results will appear when ready. </div> "
+aForm = aForm  + "<button type=\"button\" onclick=\"setPercentage()\">Click Me!</button> </div>"
 
-timeout = 10000
+timeout = 5000
 i = 0
 while i < 7
     timeout = 40000 if $aGame.currentplayertileset[i] == '*'
     i += 1
 end
 
-aForm =  aForm + "<script>"
+
+aForm =  aForm + "    <div id=\"progress\" style=\"border: 1px solid black;\">"
+aForm = aForm +  "   <div id=\"inner\" style=\"background-color:green; width:20%\">&nbsp;</div>"
+aForm = aForm + "</div>"
+
+aForm = aForm + "<script>"
 aForm = aForm +  "var form = document.createElement(\"form\");"
 aForm =  aForm +  "form.setAttribute(\"method\", \"POST\");"
 aForm =  aForm +  "form.setAttribute(\"action\", \"/results\");"
