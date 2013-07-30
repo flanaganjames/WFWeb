@@ -1,0 +1,62 @@
+<%
+aForm = ""
+aForm = aForm + "<html>"
+aForm = aForm + "<head><title>Generating Results</title>"
+aForm = aForm + "<script>"
+aForm = aForm + "function setPercentage(id, percent)"
+aForm = aForm + "{"
+aForm = aForm + "div = document.getElementById(id);"
+aForm = aForm + "div.style.width = percent;"
+aForm = aForm + "}"
+
+aForm = aForm + "function donothing()"
+aForm = aForm + "{"
+aForm = aForm + "}"
+
+aForm = aForm + "</script>"
+aForm = aForm + "</head>"
+
+aForm = aForm + "<body>"
+aForm = aForm + " <div> Finding possible moves ... Results will take 5-7 seconds (40 seconds with a '*' character)."
+
+aForm = aForm + " <div> Results will appear when ready. </div> "
+aForm = aForm  + "<button type=\"button\" onclick=\"setPercentage('inner','77%')\">Click Me!</button> </div>"
+
+timeout = 5000
+i = 0
+while i < 7
+    timeout = 40000 if $aGame.currentplayertileset[i] == '*'
+    i += 1
+end
+
+
+aForm =  aForm + "    <div id=\"progress\" style=\"border: 1px solid black;\">"
+aForm = aForm +  "   <div id=\"inner\" style=\"background-color:green; width:0%\">&nbsp;</div>"
+aForm = aForm + "</div>"
+
+aForm = aForm + "<script>"
+aForm = aForm + "var i = 0;"
+aForm = aForm + "var percentage;"
+aForm = aForm + "var t;"
+aForm = aForm + "while i <= #{timeout}"
+aForm = aForm + "{"
+aForm = aForm + "percentage = 100*i/#{timeout} + '%';"
+aForm = aForm + "t = setTimeout(function(){donothing()}, 1000);"
+aForm = aForm + "setPercentage('inner',percentage);"
+
+aForm = aForm + "i += 1000;"
+aForm = aForm + "};"
+
+aForm = aForm +  "var form = document.createElement(\"form\");"
+aForm =  aForm +  "form.setAttribute(\"method\", \"POST\");"
+aForm =  aForm +  "form.setAttribute(\"action\", \"/results\");"
+aForm =  aForm +   "t = setTimeout(function(){form.submit()}, 5000);"
+aForm = aForm + "</script>"
+
+aForm = aForm + "</body>"
+aForm = aForm + "</html>"
+
+return aForm
+
+%>
+

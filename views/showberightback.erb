@@ -1,24 +1,4 @@
 <%
-aForm = ""
-aForm = aForm + "<html>"
-aForm = aForm + "<head><title>Generating Results</title>"
-aForm = aForm + "<script>"
-aForm = aForm + "function setPercentage()"
-aForm = aForm + "{"
-aForm = aForm + "div = document.getElementById(\"inner\");"
-aForm = aForm + "div.style.width = \"77%\";"
-aForm = aForm + "}"
-aForm = aForm + "</script>"
-aForm = aForm + "</head>"
-
-aForm = aForm + "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">"
-aForm = aForm + " <form action=\"/board\" method=\"post\"> "
-aForm = aForm + "<body>"
-aForm = aForm + " <div> Finding possible moves ... Results will take 5-7 seconds (40 seconds with a '*' character)."
-
-aForm = aForm + " <div> Results will appear when ready. </div> "
-aForm = aForm  + "<button type=\"button\" onclick=\"setPercentage()\">Click Me!</button> </div>"
-
 timeout = 5000
 i = 0
 while i < 7
@@ -26,22 +6,54 @@ while i < 7
     i += 1
 end
 
+aForm = "
+<html
+<head><title>Generating Results</title>
+<script>
+function setPercentage(id, percent)
+{
+div = document.getElementById(id);
+div.style.width = percent;
+}
 
-aForm =  aForm + "    <div id=\"progress\" style=\"border: 1px solid black;\">"
-aForm = aForm +  "   <div id=\"inner\" style=\"background-color:green; width:20%\">&nbsp;</div>"
-aForm = aForm + "</div>"
+function donothing()
+{
+}
 
-aForm = aForm + "<script>"
-aForm = aForm +  "var form = document.createElement(\"form\");"
-aForm =  aForm +  "form.setAttribute(\"method\", \"POST\");"
-aForm =  aForm +  "form.setAttribute(\"action\", \"/results\");"
-aForm =  aForm +   "t = setTimeout(function(){form.submit()}, #{timeout});"
-aForm = aForm + "</script>"
+</script>
+</head>
 
-aForm = aForm + "</body> </form>"
-aForm = aForm + "</html>"
+<body>
+<div> Finding possible moves ....
+
+<button type=\"button\" onclick=\"setPercentage('inner','77%')\">Click Me!</button> </div>
+
+<div id=\"progress\" style=\"border: 1px solid black;\">
+<div id=\"inner\" style=\"background-color:green; width:0%\">&nbsp;</div>
+</div>"
+
+<script>
+var i = 0;
+var percentage;
+var t;
+
+while i <= #{timeout}
+{
+percentage = 100*i/#{timeout} + '%';
+t = setTimeout(function(){donothing()}, 1000);
+setPercentage('inner',percentage);
+i += 1000;
+};
+
+var form = document.createElement(\"form\");
+form.setAttribute(\"method\", \"POST\");
+form.setAttribute(\"action\", \"/results\");
+t = setTimeout(function(){form.submit()}, 5000);
+</script>
+
+</body>
+</html>"
 
 return aForm
-
 %>
 
