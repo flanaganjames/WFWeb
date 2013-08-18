@@ -180,6 +180,39 @@ post '/manualmovePvC' do #posted from showArcanUsergameboard
 end
 
 
+post '/gettingresultsPvC' do  #posted from showArcanUsergameboard
+    i=0
+    @posname = {}
+    while i < 15
+        j = 0
+        lhash = {}
+        while j < 15
+            lhash[j] = ":i" + i.to_s + "j" + j.to_s
+            j += 1
+        end
+        @posname[i] = lhash
+        i += 1
+    end
+    
+    @tilename = {}
+    i = 0
+    while i < 7
+        @tilename[i] = "tile" + i.to_s
+        i += 1
+    end
+    
+    #$aGame.nextmovePlayer2
+    
+    $aGame.currentplayertileset = $aGame.tilesplayer2
+    #$aGame.saveboard
+    $aWordfriend.updatevalues($aGame.tilesplayer2)
+    $task = Thread.new {
+        $aWordfriend.wordfind
+    }
+    erb:showberightbackPvC
+  
+end
+
 post '/resultsPvC' do  #posted from showArcanUsergameboard
     i=0
     @posname = {}
@@ -201,12 +234,9 @@ post '/resultsPvC' do  #posted from showArcanUsergameboard
         i += 1
     end
     
-    $aGame.nextmovePlayer2
-    
     erb:showresultsPvC
+    
 end
-
-
 
 post '/updatedPvC' do  #posted from showresultsPvC after manual move
     i=0
