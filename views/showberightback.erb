@@ -1,8 +1,10 @@
 <%
 timeout = 5000
+message = "this will take just a few seconds"
 i = 0
 while i < 7
     timeout = 50000 if $aGame.currentplayertileset[i] == '*'
+    message = "patience! with a * character this takes about 40 seconds" if $aGame.currentplayertileset[i] == '*'
     i += 1
 end
 
@@ -25,9 +27,7 @@ function donothing()
 </head>
 
 <body>
-<div> Finding possible moves ....</div>
-
-<button type=\"button\" onclick=\"setPercentage('inner','77%')\">Click Me!</button> </div>
+<div> Finding possible moves .... #{message}</div>
 
 <div id=\"progress\" style=\"border: 1px solid black;\">
 <div id=\"inner\" style=\"background-color:green; width:0%\">&nbsp;</div>
