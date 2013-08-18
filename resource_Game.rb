@@ -225,7 +225,9 @@ class Game
         self.resetnewindicator
         self.currentplayertileset = self.tilesplayer1
         $aWordfriend.updatevalues(self.currentplayertileset)
-        $aWordfriend.wordfind
+     end
+    
+     def finishnextmovePlayer1
         aSW = $aWordfriend.possiblewords[0] #get the highest scoring result
         if aSW
             self.placewordfromtiles(aSW)

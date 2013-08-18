@@ -204,8 +204,7 @@ post '/gettingresultsPvC' do  #posted from showArcanUsergameboard
     #$aGame.saveboard
     $aWordfriend.updatevalues($aGame.tilesplayer2)
     $task = Thread.new {
-        $aWordfriend.wordfind
-    }
+        $aWordfriend.wordfind}
     erb:showberightbackPvC
   
 end
@@ -362,6 +361,14 @@ post '/revertPvCFind' do
 end
 
 post '/nextmovePlayer1' do   #posted from showupdatePvC
+
+    $aGame.nextmovePlayer1
+    $task = Thread.new {
+        $aWordfriend.wordfind}
+    erb:showberightbackArcaneMove
+end
+
+post '/shownextmovePlayer1' do
     i=0
     @posname = {}
     while i < 15
@@ -374,8 +381,7 @@ post '/nextmovePlayer1' do   #posted from showupdatePvC
         @posname[i] = lhash
         i += 1
     end
-    $aGame.nextmovePlayer1
-
+    $aGame.finishnextmovePlayer1
     erb:showArcaneUsergameboard
 end
 
@@ -461,7 +467,7 @@ post '/gettingresults' do
         #call '/results'
         #redirect '/results'
         #task.join
-        erb:showresults
+        #erb:showresults
     }
     erb:showberightback
     #$task.join
