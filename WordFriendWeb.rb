@@ -44,19 +44,15 @@ post '/usergame' do
             $aWordfriend.gameuser = $aGame.gameuser
             $aWordfriend.createuserdirectory #creates the user directory if it does not exist already
             $aGame.getusergame
-            choosenextpagenewgame
+            if $aGame.newgame == "no" 
+                erb:showaskresume 
+            else
+                $aGame.initializegame
+                erb:showaskmode
+            end
     end
 end
 
-def choosenextpagenewgame
-    if $aGame.newgame == "yes" #set to yes if usergame file does not exist already
-        $aGame.initializegame
-        erb:showaskmode
-    end
-    if $aGame.newgame != "yes"
-        erb:showaskresume
-    end
-end
 
 post '/resumegame' do  #this posts from askresume.erb
     i= 0
@@ -94,6 +90,7 @@ end
 post '/newgame' do #this posts from askresume.erb
     $aGame.newgame = "yes"
     $aGame.initializegame
+    puts "about to ask mode 2"  #the following works
     erb:showaskmode
 end
 
@@ -213,7 +210,7 @@ post '/gettingresultsPvC' do  #posted from showArcanUsergameboard
   
 end
 
-post '/resultsPvC' do  #posted from showArcanUsergameboard
+post '/resultsPvC' do  #posted from showberightback
     i=0
     @posname = {}
     while i < 15

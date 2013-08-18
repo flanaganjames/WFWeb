@@ -50,6 +50,7 @@ class Wordfriend
     
     def creategamefile #create the game file if it does not exist
         #        if !(File.exist?("./Users/" + self.gameuser + "/" + self.gamefile))
+        self.newgame = "no"
         if not(self.usergames.include? self.gamefile)
             self.newgame = "yes"
             aFile = File.open("./Users/" + self.gameuser + "/" + self.gamefile, "w")
