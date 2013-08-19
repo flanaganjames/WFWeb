@@ -170,10 +170,18 @@ post '/manualmovePvC' do #posted from showArcanUsergameboard
     #puts "status = #{status}"
     #puts "hello if true" if status
     #puts "hello if nil" if not(status)
-    erb:showinvalidmove if not(status)
-    $aGame.placewordfromtiles2(aSW) if status
-    $aGame.saveboard
-    erb:showupdatedPvC if status
+    if status
+        $aGame.placewordfromtiles2(aSW)
+        $aGame.saveboard
+        erb:showupdatedPvC
+    else
+        dummy = 0
+        erb:showinvalidmove  #for some reason this cannot be the first staement after else
+    end 
+    #erb:showinvalidmove if not(status)
+    #$aGame.placewordfromtiles2(aSW) if status
+    #$aGame.saveboard
+    #erb:showupdatedPvC if status
 end
 
 
